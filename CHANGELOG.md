@@ -1,3 +1,33 @@
+# [0.6.0](https://github.com/uplbtools/gradesim-website/compare/v0.5.0...v0.6.0) (2026-11-15)
+
+
+### Bug Fixes
+
+* **curricula:** BS ME and BS Agriculture checklist images from the 2025 catalogs ([#81](https://github.com/uplbtools/gradesim-website/issues/81)) ([163c418](https://github.com/uplbtools/gradesim-website/commit/163c418cd4a83e0c362c93e93894f432a8e70912))
+* **curricula:** plain program list in place of the card grid ([#43](https://github.com/uplbtools/gradesim-website/issues/43)) ([c0f6843](https://github.com/uplbtools/gradesim-website/commit/c0f6843037c796438e31662524761b6b9ed9dfd1))
+* **curriculum:** BSCS special problem, practicum and seminar rows ([#39](https://github.com/uplbtools/gradesim-website/issues/39)) ([d2ccead](https://github.com/uplbtools/gradesim-website/commit/d2cceade6a79dd255ea7afa488b4787c166beca3)), closes [uplbtools/gradesim#125](https://github.com/uplbtools/gradesim/issues/125)
+* **curriculum:** sync split rows, checklist fixes and titles from the extension ([#65](https://github.com/uplbtools/gradesim-website/issues/65)) ([a61967e](https://github.com/uplbtools/gradesim-website/commit/a61967eb4f62e9555f7eabb7ea2df2ff09e0bcc9))
+* **planner:** a reload keeps the blank plan open ([#77](https://github.com/uplbtools/gradesim-website/issues/77)) ([0de7d63](https://github.com/uplbtools/gradesim-website/commit/0de7d63c431118c91431b3e9ad90ac1702c8097e))
+* **planner:** CMSC 131 title and elective critical line ([#56](https://github.com/uplbtools/gradesim-website/issues/56)) ([b564539](https://github.com/uplbtools/gradesim-website/commit/b56453910ccd6217ddea16e63c9111d05cb92e6b))
+* **planner:** follow the checklist order when prerequisites tie ([#67](https://github.com/uplbtools/gradesim-website/issues/67)) ([bed91b5](https://github.com/uplbtools/gradesim-website/commit/bed91b5fc8623d15cf41695cb88f1e85344c2035))
+* **planner:** HK and NSTP don't count toward the 18-unit cap ([#73](https://github.com/uplbtools/gradesim-website/issues/73)) ([598f658](https://github.com/uplbtools/gradesim-website/commit/598f658d01e973ec768f0a96fd1e31d6ea5c5a1d))
+* **shell:** keep the header on one row and fit the tabs on phones ([#41](https://github.com/uplbtools/gradesim-website/issues/41)) ([82dd62e](https://github.com/uplbtools/gradesim-website/commit/82dd62ec5668e6cc02fcd1bac61380ff1ada5aab))
+
+
+### Features
+
+* **curricula:** BS MST checklist images from the CAS catalog ([#85](https://github.com/uplbtools/gradesim-website/issues/85)) ([1a81a3b](https://github.com/uplbtools/gradesim-website/commit/1a81a3ba43ae9d0d1b0342a276a81c904c22c090))
+* **curricula:** checklist images from the 2025 catalogs for eight more programs ([#83](https://github.com/uplbtools/gradesim-website/issues/83)) ([5835bb8](https://github.com/uplbtools/gradesim-website/commit/5835bb88ce109e229d2ee3470f6719cfea12cbed))
+* **curriculum:** BS Biology majors and BS MST specializations ([#59](https://github.com/uplbtools/gradesim-website/issues/59)) ([7400ea0](https://github.com/uplbtools/gradesim-website/commit/7400ea0f8c0a000fba560236bb524fb0f69321d1))
+* **grades:** removal exam result for a 4.00 ([#61](https://github.com/uplbtools/gradesim-website/issues/61)) ([26ffb9b](https://github.com/uplbtools/gradesim-website/commit/26ffb9bcc805e95714f97759b53cc96247f890b2))
+* **honors:** Latin honors GWA counts only the required electives ([#63](https://github.com/uplbtools/gradesim-website/issues/63)) ([612dcc0](https://github.com/uplbtools/gradesim-website/commit/612dcc0a4c276ea85c9425f74f8eb520fe9a37c8))
+* **install:** a bookmark that saves AMIS grades on phones ([#69](https://github.com/uplbtools/gradesim-website/issues/69)) ([db5fb5a](https://github.com/uplbtools/gradesim-website/commit/db5fb5a52cdc96529a625cc4ddcb5e6209befbef))
+* **planner:** fix a wrong checklist course and send the fix ([#42](https://github.com/uplbtools/gradesim-website/issues/42)) ([f17270b](https://github.com/uplbtools/gradesim-website/commit/f17270bc19fe2d8b6adc03669da58656fccad272))
+* **planner:** Max load can follow the checklist's load each sem ([#75](https://github.com/uplbtools/gradesim-website/issues/75)) ([3e97391](https://github.com/uplbtools/gradesim-website/commit/3e9739151a4e6dfff514feda9e8f6edef98b9d77))
+* **planner:** open a program's checklist without grades ([#45](https://github.com/uplbtools/gradesim-website/issues/45)) ([5c78699](https://github.com/uplbtools/gradesim-website/commit/5c786993ff1e061b591f389943b1375a83c13751))
+* **planner:** print the checklist sheet ([#44](https://github.com/uplbtools/gradesim-website/issues/44)) ([4c26f41](https://github.com/uplbtools/gradesim-website/commit/4c26f41e5e6fec7cb9bf6cef2a4f7da46686ec2d))
+* **planner:** show the plan as a checklist sheet ([#40](https://github.com/uplbtools/gradesim-website/issues/40)) ([d4f42ed](https://github.com/uplbtools/gradesim-website/commit/d4f42ede2b5fd47959d1014bb9b21616cb78b90a))
+
 # [0.5.0](https://github.com/uplbtools/gradesim-website/compare/v0.4.1...v0.5.0) (2026-10-06)
 
 
