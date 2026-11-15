@@ -132,7 +132,7 @@ function thisSemPanel(courses: Course[], d: Data, pick?: number): Panel | null {
 		value: g.toFixed(4),
 		subtitle: sem.name,
 		message,
-		highlights: t ? [{ label: '🏆 Top grade', name: t.code, detail: t.grade.toFixed(2) }] : [],
+		highlights: t ? [{ label: '🏆 Best course', name: t.code, detail: t.grade.toFixed(2) }] : [],
 		extra,
 		frame: 'sem'
 	};
@@ -253,6 +253,8 @@ export interface IdCard {
 	top?: boolean;
 	/** The student's own line on the sem card. */
 	line?: string;
+	/** Leave a spot for a photo the student adds in Instagram or Facebook. */
+	photo?: boolean;
 }
 
 export type GwaShow = 'none' | 'xx' | 'bx' | 'xc' | 'bc' | 'full';
@@ -399,7 +401,7 @@ export async function drawCard(canvas: HTMLCanvasElement, p: Panel, id: IdCard):
 
 
 /** Reann Vargas's pages. Each tin, tray and note is tilted, so text is drawn turned with it. */
-const FRAMES = { sem: 'tin-grass', id: 'tin-id', tin: 'tin', note: 'tin-note', tray: 'tray', open: 'tin-red' };
+const FRAMES = { sem: 'tin-note', id: 'tin-id', tin: 'tin', note: 'tin', tray: 'tray', open: 'tin-red' };
 const INK = '#1c1917';
 const SOFT = '#4a3f3c';
 const RED = '#7b2a22';
@@ -423,13 +425,52 @@ async function drawFrame(ctx: CanvasRenderingContext2D, p: Panel, font: string, 
 		ctx.fillStyle = color;
 		ctx.fillText(t, x, y, max);
 	};
-	const onGrass = (t: string, weight: number, size: number, x: number, y: number) => {
-		ctx.save();
-		ctx.shadowColor = 'rgba(0,0,0,0.75)';
-		ctx.shadowBlur = 18;
-		text(t, weight, size, '#ffffff', y, 1000, x);
-		ctx.restore();
+	const shadow = (blur: number) => {
+		ctx.shadowColor = 'rgba(0,0,0,0.35)';
+		ctx.shadowBlur = blur;
+		ctx.shadowOffsetY = blur / 3;
 	};
+	// A cream label on the picnic cloth or grass.
+	const tag = (t: string, size: number, x: number, y: number, turn: number) =>
+		at(x, y, turn, () => {
+			ctx.font = `800 ${size}px ${font}`;
+			const w = ctx.measureText(t).width + size * 1.4;
+			ctx.save();
+			shadow(16);
+			ctx.fillStyle = '#fbf5ea';
+			ctx.beginPath();
+			ctx.roundRect(-w / 2, -size * 0.95, w, size * 1.5, 10);
+			ctx.fill();
+			ctx.restore();
+			text(t, 800, size, INK, size * 0.18);
+		});
+	const star = (x: number, y: number, r: number, turn: number) =>
+		at(x, y, turn, () => {
+			ctx.fillStyle = '#f2c230';
+			ctx.beginPath();
+			for (let i = 0; i < 10; i++) {
+				const a = (Math.PI / 5) * i - Math.PI / 2;
+				const d = i % 2 ? r * 0.45 : r;
+				ctx.lineTo(Math.cos(a) * d, Math.sin(a) * d);
+			}
+			ctx.fill();
+		});
+	const photo = new Image();
+	if (id.photo && p.frame !== 'id') {
+		photo.src = '/frames/photo.jpg';
+		await photo.decode();
+	}
+	// A polaroid with Reann's picture placeholder, for a photo added in Instagram.
+	const polaroid = (x: number, y: number, w: number, turn: number) =>
+		at(x, y, turn, () => {
+			const h = w * 1.07;
+			ctx.save();
+			shadow(24);
+			ctx.fillStyle = '#ffffff';
+			ctx.fillRect(-w / 2 - 16, -h / 2 - 16, w + 32, h + 70);
+			ctx.restore();
+			ctx.drawImage(photo, -w / 2, -h / 2, w, h);
+		});
 	const url = 'gradesim.uplb.tools';
 	const g = shownGwa(p.value, id.show);
 
@@ -459,19 +500,48 @@ async function drawFrame(ctx: CanvasRenderingContext2D, p: Panel, font: string, 
 		ctx.textAlign = 'center';
 	}
 
+	if (id.photo && (p.frame === 'tin' || p.frame === 'note')) polaroid(722, 455, 220, 0.12);
+	if (id.photo && (p.frame === 'tray' || p.frame === 'open')) polaroid(842, 420, 230, 0.1);
+
 	if (p.frame === 'sem') {
 		const top = id.top === false ? undefined : p.highlights?.[0];
-		ctx.translate(540, 1040);
-		ctx.rotate(-0.08);
-		ctx.translate(-540, -1040);
-		onGrass(`My ${p.subtitle}`, 700, 50, 540, 760);
-		if (g) {
-			onGrass(g, 800, 220, 540, 990);
-			onGrass(p.title, 800, 76, 540, 1090);
-		} else onGrass(p.title, 800, 112, 540, 960);
-		onGrass(id.line || p.extra || '', 700, 50, 540, g ? 1180 : 1070);
-		if (top) onGrass(`Top grade ${top.name}, ${top.detail}`, 600, 44, 540, g ? 1260 : 1150);
-		onGrass(url, 600, 38, 540, g ? 1350 : 1250);
+		const [term, ay] = (p.subtitle ?? '').split(' AY ');
+		if (id.photo) at(345, 744, -0.163, () => ctx.drawImage(photo, -175, -185, 350, 375));
+		at(752, 730, -0.16, () => {
+			text('My', 600, 36, SOFT, -66, 280);
+			text(term, 800, 56, INK, 0, 290);
+			if (ay) text(`AY ${ay}`, 700, 38, RED, 56, 290);
+		});
+		at(595, 1228, -0.14, () => {
+			const lines: [string, number, number, string][] = [];
+			if (id.line || p.extra) lines.push([id.line || p.extra!, 700, 44, INK]);
+			if (top) lines.push([`Best course ${top.name}, ${top.detail}`, 600, 38, SOFT]);
+			let y = g ? -150 : -95;
+			if (/Scholar$/.test(p.title)) {
+				ctx.font = `800 58px ${font}`;
+				const w = ctx.measureText(p.title).width + 120;
+				ctx.fillStyle = RED;
+				ctx.beginPath();
+				ctx.moveTo(-w / 2 - 40, y - 52);
+				ctx.lineTo(w / 2 + 40, y - 52);
+				ctx.lineTo(w / 2 + 10, y - 8);
+				ctx.lineTo(w / 2 + 40, y + 36);
+				ctx.lineTo(-w / 2 - 40, y + 36);
+				ctx.lineTo(-w / 2 - 10, y - 8);
+				ctx.closePath();
+				ctx.fill();
+				text(p.title, 800, 58, '#fff4e0', y + 12, w - 60);
+				star(-w / 2 + 6, y - 56, 40, -0.3);
+				star(w / 2 - 6, y - 52, 32, 0.25);
+			} else text(p.title, 800, g ? 72 : 96, INK, y + 10, 680);
+			if (g) text(g, 800, 170, RED, (y += 175));
+			y += g ? 70 : 85;
+			lines.forEach(([t, weight, size, color]) => {
+				text(t, weight, size, color, y, 680);
+				y += size + 22;
+			});
+			text(url, 600, 32, SOFT, Math.max(y + 8, 200));
+		});
 		return;
 	}
 
@@ -499,7 +569,7 @@ async function drawFrame(ctx: CanvasRenderingContext2D, p: Panel, font: string, 
 
 	if (p.frame === 'tin') {
 		at(500, 690, -0.17, () => {
-			text(`${p.value} ${p.value === '1' ? 'sem' : 'sems'} done`, 800, 68, INK, -110, 380, -120);
+			text(`${p.value} ${p.value === '1' ? 'sem' : 'sems'} done`, 800, 68, INK, -110, id.photo ? 300 : 380, id.photo ? -170 : -120);
 			const g = p.sems ?? [];
 			if (g.length > 1) {
 				const x = (i: number) => -280 + (560 * i) / (g.length - 1);
@@ -517,12 +587,12 @@ async function drawFrame(ctx: CanvasRenderingContext2D, p: Panel, font: string, 
 					ctx.fill();
 				});
 			}
-			text(url, 600, 36, SOFT, 175);
 		});
 		const rows = p.highlights ?? [];
+		at(596, 1225, -0.17, () => text(url, 600, 32, SOFT, 222));
 		rows.forEach((h, i) =>
 			at(596, 1225, -0.17, () => {
-				const y = rows.length > 1 ? i * 205 - 150 : -30;
+				const y = rows.length > 1 ? i * 195 - 180 : -40;
 				text(bare(h.label), 600, 38, SOFT, y);
 				text(h.name, 800, 62, INK, y + 72, 700);
 				text(h.detail, 700, 40, RED, y + 130, 700);
@@ -544,8 +614,8 @@ async function drawFrame(ctx: CanvasRenderingContext2D, p: Panel, font: string, 
 				text(b.text, 800, 34, '#ffffff', cy + 12, 100, cx);
 			});
 		});
-		at(770, 700, -0.17, () => {
-			text(p.value, 800, 160, RED, 40, 300);
+		at(770, id.photo ? 770 : 700, -0.17, () => {
+			text(p.value, 800, id.photo ? 130 : 160, RED, 40, 300);
 			text(p.subtitle ?? '', 700, 38, INK, 100, 300);
 		});
 		at(590, 1215, -0.18, () => {
@@ -559,7 +629,7 @@ async function drawFrame(ctx: CanvasRenderingContext2D, p: Panel, font: string, 
 
 	if (p.frame === 'tray') {
 		const [best, low, kept] = p.highlights ?? [];
-		onGrass('My highlights', 800, 76, 470, 540);
+		tag('My highlights', 64, 430, 520, -0.1);
 		at(375, 1070, -0.1, () => {
 			text(bare(best.label), 600, 36, SOFT, -170, 330);
 			text(best.name, 800, 80, INK, -80, 330);
@@ -574,7 +644,7 @@ async function drawFrame(ctx: CanvasRenderingContext2D, p: Panel, font: string, 
 			});
 		corner(838, 805, low, ['', '', '']);
 		corner(860, 1185, kept, ['So far', p.extra ?? '', 'and counting']);
-		onGrass(url, 700, 40, 540, 1555);
+		tag(url, 36, 540, 1560, -0.05);
 		return;
 	}
 
