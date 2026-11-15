@@ -385,5 +385,13 @@ export const CHECKLIST_PROGRAM: Record<string, string> = {
 	'BS-Nutrition': 'BSNUTRI',
 	'Doctor-of-Veterinary-Medicine': 'DVM',
 	'BS-Development-Communication': 'BSDC',
-	'BS-Agricultural-Chemistry': 'BSACHEM'
+	'BS-Agricultural-Chemistry': 'BSACHEM',
+	'BS-Computer-Science': 'BSCS',
+	'BS-Accountancy': 'BSACCT',
+	'BS-Agricultural-and-Biosystems-Engineering': 'BSABE',
+	'BS-Materials-Engineering': 'BSMATE',
+	'AA-Sports-Studies': 'AASS',
+	'AA-Entrepreneurship': 'AAENTREP',
+	'Associate-in-Forestry': 'AAFOR',
+	'AS-Development-Communication': 'ASDC'
 };

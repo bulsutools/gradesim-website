@@ -8,6 +8,7 @@
 	// Checklist images in static/curricula/<college>/<slug>-<page>.png
 	const CHECKLISTS: Record<string, [name: string, slug: string, pages: number][]> = {
 		CAS: [
+			['Associate in Arts in Sports Studies', 'AA-Sports-Studies', 1],
 			['BA Communication Arts', 'BA-Communication-Arts', 2],
 			['BA Philosophy', 'BA-Philosophy', 2],
 			['BA Sociology', 'BA-Sociology', 2],
@@ -16,6 +17,7 @@
 			['BS Applied Physics', 'BS-Applied-Physics', 2],
 			['BS Biology', 'BS-Biology', 2],
 			['BS Chemistry', 'BS-Chemistry', 2],
+			['BS Computer Science', 'BS-Computer-Science', 1],
 			['BS Mathematics', 'BS-Mathematics', 2],
 			['BS Statistics', 'BS-Statistics', 2]
 		],
@@ -24,20 +26,30 @@
 			['BS Agriculture', 'BS-Agriculture', 2],
 			['BS Food Science and Technology', 'BS-Food-Science-and-Technology', 2]
 		],
-		CDC: [['BS Development Communication', 'BS-Development-Communication', 2]],
+		CDC: [
+			['Associate of Science in Development Communication', 'AS-Development-Communication', 1],
+			['BS Development Communication', 'BS-Development-Communication', 2]
+		],
 		CEM: [
+			['Associate in Arts in Entrepreneurship', 'AA-Entrepreneurship', 1],
+			['BS Accountancy', 'BS-Accountancy', 1],
 			['BS Agribusiness Management and Entrepreneurship', 'BS-Agribusiness-Management-Entrepreneurship', 2],
 			['BS Agricultural and Applied Economics', 'BS-Agricultural-and-Applied-Economics', 2],
 			['BS Economics', 'BS-Economics', 2]
 		],
 		CEAT: [
+			['BS Agricultural and Biosystems Engineering', 'BS-Agricultural-and-Biosystems-Engineering', 1],
 			['BS Chemical Engineering', 'BS-Chemical-Engineering', 2],
 			['BS Civil Engineering', 'BS-Civil-Engineering', 2],
 			['BS Electrical Engineering', 'BS-Electrical-Engineering', 1],
 			['BS Industrial Engineering', 'BS-Industrial-Engineering', 1],
+			['BS Materials Engineering', 'BS-Materials-Engineering', 1],
 			['BS Mechanical Engineering', 'BS-Mechanical-Engineering', 1]
 		],
-		CFNR: [['BS Forestry', 'BS-Forestry', 1]],
+		CFNR: [
+			['Associate in Forestry', 'Associate-in-Forestry', 1],
+			['BS Forestry', 'BS-Forestry', 1]
+		],
 		CHE: [
 			['BS Human Ecology', 'BS-Human-Ecology', 2],
 			['BS Nutrition', 'BS-Nutrition', 1]

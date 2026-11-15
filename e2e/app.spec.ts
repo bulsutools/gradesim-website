@@ -30,9 +30,11 @@ test('unknown URLs get the branded 404', async ({ page }) => {
 	await expect(page.getByRole('link', { name: 'Open Elbi GradeSim' })).toHaveAttribute('href', '/');
 });
 
-test('curricula lists planner programs that have no checklist image', async ({ page }) => {
+test('curricula opens a checklist with a link to plan it', async ({ page }) => {
 	await page.goto('/curricula/');
-	await expect(page.getByRole('link', { name: /BS Computer Science.*planner only/ })).toHaveAttribute('href', '/?program=BSCS#planner');
+	await page.getByRole('button', { name: 'BS Computer Science' }).click();
+	await expect(page.getByAltText('BS Computer Science checklist, page 1')).toBeVisible();
+	await expect(page.getByRole('link', { name: 'Plan BS Computer Science in GradeSim' })).toHaveAttribute('href', '/?program=BSCS#planner');
 });
 
 test('manual entry: add courses by hand and the GWA shows', async ({ page }) => {
