@@ -301,6 +301,29 @@ test('a copied link opens the grades in another browser, and asks before it repl
 	await expect(page.getByTestId('gwa')).toHaveText('1.9773');
 });
 
+test('a plan link opens the same plan for someone else, with no grades and nothing saved', async ({ page, context, browser }) => {
+	await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+	await importFixture(page);
+	await page.getByRole('tab', { name: 'Planner' }).click();
+	const grad = await page.getByTestId('grad-term').locator('span').first().textContent();
+	await page.getByText('Plan settings').click();
+	await page.getByRole('button', { name: 'Copy a link to this plan' }).click();
+	await expect(page.getByText('The link is copied.')).toBeVisible();
+	const link = await page.evaluate(() => navigator.clipboard.readText());
+
+	const other = await (await browser.newContext()).newPage();
+	await other.goto(link);
+	await expect(other.getByText('plan someone shared with you')).toBeVisible();
+	await expect(other.getByTestId('grad-term').locator('span').first()).toHaveText(grad!);
+	await expect(other.getByTestId('planner-sheet').locator('.pl-row[data-code="CMSC 12"]')).toHaveClass(/st-passed/);
+	await expect(other.getByText('1.25')).toHaveCount(0);
+	await other.waitForTimeout(200);
+	expect(await other.evaluate(() => JSON.stringify(localStorage))).not.toContain('CMSC 12');
+	await other.getByRole('button', { name: 'Close it' }).click();
+	await expect(other.getByRole('heading', { level: 1 })).toContainText('Your GWA');
+	await other.context().close();
+});
+
 test('@phone the welcome screen leads with the AMIS bookmark', async ({ page }) => {
 	await page.goto('/');
 	await expect(page.locator('#main').getByRole('link', { name: 'Get my grades from AMIS' })).toHaveAttribute('href', /install\/#phone$/);

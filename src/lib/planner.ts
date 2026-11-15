@@ -79,6 +79,8 @@ export interface PlannerInput {
 	plannerPetitions: Record<string, true>;
 	plannerOptions: PlannerOptions;
 	whatif: { code: string; mode: WhatIfMode } | null;
+	/** A shared plan starts in its owner's next sem. */
+	startAbs?: number;
 }
 
 export interface Model {
@@ -253,7 +255,7 @@ export interface CourseInfo {
 export function compute(model: Model, input: PlannerInput, now = new Date()) {
 	const opts = input.plannerOptions;
 	const hist = readHistory(model, input, now);
-	const startAbs = Math.max(hist.latestAbs != null ? hist.latestAbs + 1 : 0, calendarAbs(now));
+	const startAbs = Math.max(hist.latestAbs != null ? hist.latestAbs + 1 : 0, calendarAbs(now), input.startAbs ?? 0);
 
 	// Per course: what the grades say, then any manual override.
 	const info: Record<string, CourseInfo> = {};
@@ -692,6 +694,10 @@ export interface PlanFile {
 	plannerPetitions: PlannerInput['plannerPetitions'];
 	plannerOptions: PlannerOptions;
 	substitutions: Record<string, string>;
+	/** Only in a link: what the plan needs in place of the owner's grades. */
+	track?: string | null;
+	specialization?: string | null;
+	startAbs?: number;
 }
 
 /** Returns a friendly reason the file can't be used, or '' when it's fine. */
