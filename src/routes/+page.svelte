@@ -72,7 +72,7 @@
 	async function fromExtension() {
 		const reply = await getExtensionGrades();
 		if (!reply) {
-			message = { text: 'The extension did not answer. Reload this page and try again.', tone: 'bad' };
+			message = { text: "The extension didn't answer. Reload this page and try again.", tone: 'bad' };
 			return;
 		}
 		const r = parseBackup(reply);

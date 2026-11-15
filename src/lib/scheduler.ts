@@ -64,7 +64,7 @@ const SEM_DIGIT: Record<Sem, 1 | 2 | 3> = { '1': 1, '2': 2, midyear: 3 };
 // Load rules from the UPLB catalog: 18 units a regular sem (21 with lab
 // courses), midyear 6 (the Dean may allow 9).
 export const DEFAULT_UNIT_CAPS: Record<Sem, number> = { '1': 18, '2': 18, midyear: 6 };
-// Assumption: UPLB does not publish standing thresholds in the catalog we have;
+// Assumption: UPLB doesn't publish standing thresholds in the catalog we have;
 // junior = 50% and senior = 75% of the program's total units.
 export const STANDING_FRACTION: Record<Standing, number> = { junior: 0.5, senior: 0.75 };
 
@@ -120,7 +120,7 @@ function absorb(groups: string[][]): string[][] {
  * Parse one AMIS req_courses string into CNF: pre is an AND of OR-groups.
  * "ABT 101 or COI" gives coi and no group (COI counts as satisfied).
  * "(CMSC 57 and CMSC 21)" gives [["CMSC 57"], ["CMSC 21"]].
- * "MATH 27 or Equivalent" gives [["MATH 27"]] (equivalents are not modelled).
+ * "MATH 27 or Equivalent" gives [["MATH 27"]] (equivalents aren't modelled).
  */
 export function parseRequisite(str: string | null | undefined): Requisite {
 	const out: Requisite = { pre: [], coi: false, standing: null, note: null };
@@ -659,7 +659,7 @@ export function scheduleEarliest(opts: ScheduleOptions): ScheduleResult {
 
 	const unschedulable = Array.from(remaining);
 	if (unschedulable.length > 0) {
-		warnings.push(`could not place: ${unschedulable.join(', ')}`);
+		warnings.push(`couldn't place: ${unschedulable.join(', ')}`);
 	}
 
 	const gradTermIndex = plan.length > 0 ? plan[plan.length - 1].termIndex : -1;

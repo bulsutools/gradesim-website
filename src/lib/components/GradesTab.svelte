@@ -58,7 +58,7 @@
 	}
 
 	function clearAll() {
-		if (!confirm('Clear everything GradeSim saved in this browser? Your grades, exclusions, substitutions and plan are removed. This cannot be undone, so export a backup first if you want one.')) return;
+		if (!confirm("Clear everything GradeSim saved in this browser? Your grades, exclusions, substitutions and plan are removed. This can't be undone, so export a backup first if you want one.")) return;
 		app.clear();
 	}
 </script>

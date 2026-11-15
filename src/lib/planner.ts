@@ -394,7 +394,7 @@ export function summary(v: View) {
 	const headline =
 		gradAbs == null
 			? r.unschedulable.length
-				? 'Some courses cannot be placed'
+				? "Some courses can't be placed"
 				: 'All planned requirements done'
 			: `Graduate ${absLabel(gradAbs)}`;
 
@@ -417,7 +417,7 @@ export function summary(v: View) {
 	const nowTaking = Object.values(v.info).some((i) => i.status === 'inprogress');
 	const sentences: string[] = [];
 	if (gradAbs != null)
-		sentences.push(`That is ${ayLabel(gradAbs)}, with ${termsText(termsLeft)} of classes from ${absLabel(v.startAbs)}.`);
+		sentences.push(`That's ${ayLabel(gradAbs)}, with ${termsText(termsLeft)} of classes from ${absLabel(v.startAbs)}.`);
 	sentences.push(`You have ${unitsText(v.left.units)} left to pass${nowTaking ? ', counting this term' : ''}.`);
 	const sub = sentences.join(' ');
 
@@ -644,7 +644,7 @@ export function pastFailMessage(v: View, code: string): string {
 	const retake = t === undefined ? '' : ` The retake is planned for ${absLabel(v.startAbs + t)}.`;
 	return past.cost > 0
 		? `${code} is failed on your record, which moves graduation ${termsText(past.cost)} later, to ${absLabel(v.startAbs + v.now.result.gradTermIndex)}.${retake}`
-		: `${code} is failed on your record, but it does not move graduation.${retake}`;
+		: `${code} is failed on your record, but it doesn't move graduation.${retake}`;
 }
 
 /** Courses whose planned term moved later between two runs. */
@@ -665,7 +665,7 @@ export function whatIfMessage(v: View): string {
 	const verb = wi.mode === 'fail' ? `Failing ${wi.code}` : `Taking ${wi.code} ${wi.mode === '1' ? 'a term' : 'a year'} later`;
 	return slip > 0
 		? `${verb} moves graduation to ${absLabel(v.startAbs + after.gradTermIndex)} (+${termsText(slip)}).${pushed.length ? ` Also pushed later are ${list}.` : ''}`
-		: `${verb} does not move graduation.${pushed.length ? ` It shifts ${list}.` : ' Nothing else shifts.'}`;
+		: `${verb} doesn't move graduation.${pushed.length ? ` It shifts ${list}.` : ' Nothing else shifts.'}`;
 }
 
 /* ---------- Save, load and export ---------- */
@@ -685,14 +685,14 @@ export interface PlanFile {
 	substitutions: Record<string, string>;
 }
 
-/** Returns a friendly reason the file can't be used, or '' when it is fine. */
+/** Returns a friendly reason the file can't be used, or '' when it's fine. */
 export function checkPlan(p: unknown): string {
 	const isObj = (x: unknown): x is Record<string, unknown> => x != null && typeof x === 'object' && !Array.isArray(x);
 	const all = (o: unknown, ok: (x: unknown) => boolean) => isObj(o) && Object.values(o).every(ok);
-	if (!isObj(p) || p.source !== 'elbi-gradesim-plan') return 'That file is not a GradeSim course plan. Pick a file made with Save plan.';
+	if (!isObj(p) || p.source !== 'elbi-gradesim-plan') return "That file isn't a GradeSim course plan. Pick a file made with Save plan.";
 	if (p.version !== 1) return 'That plan was saved by a newer GradeSim. Reload this page and try again.';
 	const prog = UPLB_PROGRAMS[String(p.program)];
-	if (!prog || !prog.majorCourses) return `That plan is for a program this version does not have (${String(p.program)}).`;
+	if (!prog || !prog.majorCourses) return `That plan is for a program this version doesn't have (${String(p.program)}).`;
 	const o = p.plannerOptions;
 	const w = p.whatif;
 	const ok =

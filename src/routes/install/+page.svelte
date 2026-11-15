@@ -43,7 +43,7 @@
 <div class="wrap">
 	<PageHead title="Install the extension">
 		The extension reads your grades when you open AMIS, then shows them in its popup and hands them to this web app when you
-		ask. It is free, open source, and keeps everything on your device.
+		ask. It's free, open source, and keeps everything on your device.
 	</PageHead>
 
 	<ul class="stores">
@@ -76,7 +76,7 @@
 	</section>
 
 	<section class="prose steps">
-		<h2>On a phone</h2>
+		<h2 id="phone">On a phone</h2>
 		<p>
 			Firefox for Android can install the extension from <a href={stores[1].href} rel="noopener" target="_blank">Firefox Add-ons</a>.
 			Chrome and Safari on phones can't install extensions, so use a bookmark that saves your grades as a file.

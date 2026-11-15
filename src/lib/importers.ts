@@ -29,7 +29,7 @@ export interface GradesPatch {
  */
 export function parseBackup(obj: unknown): GradesPatch | string {
 	if (isGradesData(obj)) return { gradesData: obj };
-	if (!isObj(obj) || obj.source !== 'elbi-gradesim') return 'That file is not a GradeSim backup. Use Export JSON in the extension, or a plan saved from the planner.';
+	if (!isObj(obj) || obj.source !== 'elbi-gradesim') return "That file isn't a GradeSim backup. Use Export JSON in the extension, or a plan saved from the planner.";
 	if (!isGradesData(obj.gradesData)) return 'That backup has no grades in it yet. Open AMIS with the extension installed, then export again.';
 	const patch: GradesPatch = { gradesData: obj.gradesData };
 	if (typeof obj.selectedProgram === 'string' && UPLB_PROGRAMS[obj.selectedProgram]) patch.selectedProgram = obj.selectedProgram;
@@ -54,7 +54,7 @@ export function parseImport(text: string): Imported {
 	try {
 		obj = JSON.parse(text);
 	} catch {
-		return { kind: 'error', message: 'That file is not valid JSON, so nothing was changed.' };
+		return { kind: 'error', message: "That file isn't valid JSON, so nothing was changed." };
 	}
 	if (isObj(obj) && obj.source === 'elbi-gradesim-plan') {
 		const problem = checkPlan(obj);

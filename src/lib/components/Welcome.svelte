@@ -38,12 +38,11 @@
 					<p class="hint">The extension on this browser already has your grades from AMIS.</p>
 				{:else if extension === 'empty'}
 					<Notice>
-						The extension is installed but has not seen your grades yet. Log in to AMIS, open your grades, then reload this
+						The extension is installed but hasn't seen your grades yet. Log in to AMIS, open your grades, then reload this
 						page.
 					</Notice>
 				{:else}
 					<a class="btn btn-primary btn-lg" href={resolve('install/')}>Install the extension</a>
-					<p class="hint">It reads your grades when you open AMIS and hands them to this page without any server in between.</p>
 				{/if}
 			</div>
 
@@ -55,7 +54,7 @@
 						<Icon name="pencil" />Enter grades by hand
 					</button>
 				</div>
-				<p class="hint">A file can be a JSON backup from the extension or a plan you saved from this planner.</p>
+				<p class="hint">Import takes a .json that GradeSim saved, like Export JSON in the extension or the <a href={resolve('install/') + '#phone'}>phone bookmark</a>.</p>
 				<p class="hint">No grades yet? <a href={resolve('curricula/')}>See your program's checklist</a>.</p>
 			</div>
 
