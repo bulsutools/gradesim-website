@@ -79,7 +79,6 @@
 		{:else}
 			<div class="frame loading" role="img" aria-label="Drawing your card"></div>
 		{/if}
-		<p class="muted">{p.message}</p>
 	{:else}
 		<article class="panel" aria-roledescription="slide" aria-label="Card {i + 1} of {panels.length}" aria-live="polite">
 			<span class="emoji" aria-hidden="true">{p.emoji}</span>
@@ -122,11 +121,13 @@
 		<label class="field">Your name on the card<input class="input" bind:value={name} maxlength="40" autocomplete="name" /></label>
 		{@render gwaPick(show, (v) => (show = v))}
 	{/if}
-	{#if p.frame && p.frame !== 'id'}
-		<label class="check"><input type="checkbox" bind:checked={photo} />Leave a spot for my photo</label>
-	{/if}
-	{#if p.frame === 'id' || (p.frame && photo)}
+	{#if p.frame === 'id'}
 		<p class="muted">Add your photo over the picture in Instagram or Facebook.</p>
+	{:else if p.frame}
+		<div>
+			<label class="check"><input type="checkbox" bind:checked={photo} />Leave a spot for my photo</label>
+			{#if photo}<p class="muted photo-hint">Add your photo over the picture in Instagram or Facebook.</p>{/if}
+		</div>
 	{/if}
 	{#if p.frame && !amis}
 		<p class="muted">Get your grades through the extension to add the From AMIS mark.</p>
@@ -161,6 +162,10 @@
 		background: hsl(5, 53%, 32%);
 		color: hsl(0, 0%, 100%);
 		box-shadow: var(--shadow-md);
+	}
+
+	.photo-hint {
+		margin: -6px 0 0 28px;
 	}
 
 	.frame {
