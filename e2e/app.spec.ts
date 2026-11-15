@@ -20,6 +20,9 @@ test('first visit leads with the extension and offers two other ways in', async 
 	await expect(page.getByText('Your grades stay in this browser.')).toBeVisible();
 	await expect(page.locator('#main').getByRole('link', { name: 'Get the extension' })).toHaveAttribute('href', /install\/$/);
 	await expect(page.getByRole('button', { name: 'Load backup' })).toBeVisible();
+	await expect(page.getByRole('heading', { name: 'A plan for the sems you have left' })).toBeVisible();
+	await page.getByRole('link', { name: 'Add my grades' }).click();
+	await expect(page.getByRole('heading', { level: 1 })).toBeInViewport();
 	await expect(page.getByRole('button', { name: 'Enter grades by hand' })).toBeVisible();
 });
 
