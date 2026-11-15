@@ -1,3 +1,10 @@
+# [0.17.0](https://github.com/uplbtools/gradesim-website/compare/v0.16.0...v0.17.0) (2026-11-15)
+
+
+### Features
+
+* **planner:** a link that opens the plan for someone else, with no grades ([#190](https://github.com/uplbtools/gradesim-website/issues/190)) ([cb7d166](https://github.com/uplbtools/gradesim-website/commit/cb7d16602f47c3725cb0f6346c75190f0e2a3d25))
+
 # [0.16.0](https://github.com/uplbtools/gradesim-website/compare/v0.15.0...v0.16.0) (2026-11-15)
 
 
