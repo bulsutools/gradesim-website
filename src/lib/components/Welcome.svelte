@@ -155,6 +155,12 @@
 		margin: 0;
 	}
 
+	@media (max-width: 719px) {
+		.shot {
+			display: none;
+		}
+	}
+
 	.manual {
 		margin-top: 32px;
 		scroll-margin-top: 76px;
