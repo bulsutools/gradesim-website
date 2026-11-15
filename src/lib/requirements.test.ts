@@ -53,7 +53,7 @@ test('GE by code, HK and NSTP complete, PEd and ECON 11 fill free electives', ()
 	expect(leftCodes.has('CMSC 21')).toBe(false);
 	['CMSC 123', 'MATH 27', 'CMSC 100', 'CMSC 127'].forEach((c) => expect(leftCodes.has(c), c).toBe(true));
 	// HK and NSTP units are left to take but do not count in the GWA.
-	expect(left.units - left.gwaUnits).toBe(2 + 3);
+	expect(left.units - left.gwaUnits).toBe(3 * 2 + 3);
 });
 
 test('What if units left equal what the scheduler places', () => {

@@ -39,7 +39,7 @@ test('generic requirement slots fill from completed courses', () => {
 
 	const bscsSlots = genericRequirementCourses(UPLB_PROGRAMS.BSCS);
 	expect(bscsSlots.filter((c) => c.genericRequirement === 'ge')).toHaveLength(9);
-	expect(bscsSlots.filter((c) => c.genericRequirement === 'hk')).toHaveLength(2);
+	expect(bscsSlots.filter((c) => c.genericRequirement === 'hk')).toHaveLength(4);
 	expect(bscsSlots.filter((c) => c.genericRequirement === 'nstp')).toHaveLength(2);
 
 	const done = getCompletedRequirementSlotCodes(completed, UPLB_PROGRAMS.BSCS);
