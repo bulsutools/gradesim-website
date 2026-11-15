@@ -1,3 +1,10 @@
+## [0.6.7](https://github.com/uplbtools/gradesim-website/compare/v0.6.6...v0.6.7) (2026-11-15)
+
+
+### Bug Fixes
+
+* **whatif:** the result no longer repeats your GWA and target ([#116](https://github.com/uplbtools/gradesim-website/issues/116)) ([9d25f5b](https://github.com/uplbtools/gradesim-website/commit/9d25f5be30ecd716f2828dba503d53fc0fa63501))
+
 ## [0.6.6](https://github.com/uplbtools/gradesim-website/compare/v0.6.5...v0.6.6) (2026-11-15)
 
 
