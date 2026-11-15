@@ -1,3 +1,10 @@
+# [0.25.0](https://github.com/uplbtools/gradesim-website/compare/v0.24.4...v0.25.0) (2026-11-15)
+
+
+### Features
+
+* **planner:** a map view with prerequisite arrows on wide screens ([#258](https://github.com/uplbtools/gradesim-website/issues/258)) ([541b926](https://github.com/uplbtools/gradesim-website/commit/541b926f584974e627c987f8683462cef9af2980))
+
 ## [0.24.4](https://github.com/uplbtools/gradesim-website/compare/v0.24.3...v0.24.4) (2026-11-15)
 
 
