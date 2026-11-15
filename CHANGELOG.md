@@ -1,3 +1,10 @@
+## [0.6.4](https://github.com/uplbtools/gradesim-website/compare/v0.6.3...v0.6.4) (2026-11-15)
+
+
+### Bug Fixes
+
+* **grades:** Leave out moves into edit mode ([#102](https://github.com/uplbtools/gradesim-website/issues/102)) ([f19e747](https://github.com/uplbtools/gradesim-website/commit/f19e747c1c564c2b5419798b8416b7c078222ae5))
+
 ## [0.6.3](https://github.com/uplbtools/gradesim-website/compare/v0.6.2...v0.6.3) (2026-11-15)
 
 
