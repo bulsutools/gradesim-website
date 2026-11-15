@@ -517,6 +517,13 @@
 		margin-top: 12px;
 	}
 
+	@media (max-width: 999px) {
+		.actions {
+			display: grid;
+			grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
+		}
+	}
+
 	@media (prefers-reduced-motion: reduce) {
 		.group > summary > :global(.icon),
 		.fold > summary > :global(.icon) {
@@ -571,7 +578,21 @@
 		}
 
 		.group li:has(.mini) .right {
-			margin-left: auto;
+			flex: 1 1 100%;
+		}
+
+		.group li:has(.mini) .right label {
+			flex: 1 1 auto;
+			min-width: 0;
+		}
+
+		.group li:has(.mini) .mini {
+			width: 100%;
+		}
+
+		.group li:has(.mini) :is(.excl, .units) {
+			flex: none;
+			white-space: nowrap;
 		}
 	}
 
