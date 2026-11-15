@@ -1,3 +1,11 @@
+## [0.6.5](https://github.com/uplbtools/gradesim-website/compare/v0.6.4...v0.6.5) (2026-11-15)
+
+
+### Bug Fixes
+
+* **about:** opening a question closes the one before it ([#110](https://github.com/uplbtools/gradesim-website/issues/110)) ([1aed942](https://github.com/uplbtools/gradesim-website/commit/1aed942962a20d5401d423a79d52c5cf4ab40bc4))
+* **about:** questions open one at a time instead of a wall of answers ([#105](https://github.com/uplbtools/gradesim-website/issues/105)) ([1485e64](https://github.com/uplbtools/gradesim-website/commit/1485e64f5017f12a8a6b2b377277d3d1653b6fc8))
+
 ## [0.6.4](https://github.com/uplbtools/gradesim-website/compare/v0.6.3...v0.6.4) (2026-11-15)
 
 
