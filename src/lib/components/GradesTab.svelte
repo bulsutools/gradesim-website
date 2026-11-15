@@ -12,6 +12,7 @@
 		substituteOptions
 	} from '#lib/grades.ts';
 	import { makeBackup, removeCourse, setGrade, VALID_GRADES } from '#lib/importers.ts';
+	import { packLink } from '#lib/link.ts';
 	import { today } from '#lib/planner.ts';
 	import { removalKey } from '#lib/requirements.ts';
 	import Icon from './Icon.svelte';
@@ -57,6 +58,15 @@
 	function exportBackup() {
 		const json = JSON.stringify(makeBackup(app.s), null, 2);
 		download(`elbi-gradesim-backup-${today()}.json`, new Blob([json], { type: 'application/json' }));
+	}
+
+	let link = $state<'copied' | 'failed' | null>(null);
+	async function copyLink() {
+		const url = await packLink(makeBackup(app.s), location.origin + resolve('/'));
+		link = await navigator.clipboard.writeText(url).then(
+			() => 'copied' as const,
+			() => 'failed' as const
+		);
 	}
 
 	function clearAll() {
@@ -132,8 +142,17 @@
 				{/if}
 				<FileButton label="Import a file" {onFile} />
 				<button class="btn btn-secondary" type="button" onclick={exportBackup}><Icon name="download" />Export backup</button>
+				<button class="btn btn-secondary" type="button" onclick={copyLink}><Icon name="external" />Copy a link to my grades</button>
 				<button class="btn btn-danger" type="button" onclick={clearAll}><Icon name="trash" />Clear my data</button>
 			</div>
+			<p class="small" aria-live="polite">
+				{#if link === 'failed'}
+					Your browser blocked the copy. Export a backup instead.
+				{:else}
+					{link === 'copied' ? 'The link is copied.' : 'The link opens your grades on another device, such as your phone.'}
+					It holds your grades, so send it only to yourself.
+				{/if}
+			</p>
 		</details>
 	</div>
 
