@@ -383,7 +383,7 @@ export function termsLate(v: Pick<View, 'startAbs' | 'input'>, fromT: number, to
 	}
 	return n;
 }
-export const termsText = (n: number) => `${n} term${n === 1 ? '' : 's'}`;
+export const termsText = (n: number) => `${n} sem${n === 1 ? '' : 's'}`;
 export const unitsText = (n: number) => `${n} unit${n === 1 ? '' : 's'}`;
 
 /* ---------- Summary ---------- */
@@ -405,18 +405,19 @@ export function summary(v: View) {
 		const culprits = v.costs.filter((c) => c.cost > 0);
 		const one = culprits.length === 1 ? culprits[0] : v.failures.length === 1 ? v.failures[0] : null;
 		const why = one
-			? `because ${one.code} ${one.source === 'whatif' ? 'is failed in this what-if' : 'failed'}`
+			? one.source === 'whatif' ? `because ${one.code} is failed in this what-if` : `because you failed ${one.code}`
 			: `because of ${v.failures.length} failed courses`;
-		deltaText = `+${termsText(delta)} ${why}`;
+		deltaText = `That's ${termsText(delta)} later, ${why}`;
 	} else if (v.failures.length) {
-		deltaText = `No delay from ${v.failures.length === 1 ? v.failures[0].code : v.failures.some((f) => f.source === 'whatif') ? 'your failed courses or the what-if' : 'your failed courses'}`;
+		deltaText = v.failures.length === 1 ? `${v.failures[0].code} doesn't delay you` : `Your failed courses${v.failures.some((f) => f.source === 'whatif') ? ' and the what-if' : ''} don't delay you`;
 		deltaOk = true;
 	}
 
-	const termsLeft = r.plan.filter((p) => p.courses.length).length;
+	const mids = r.plan.filter((p) => p.courses.length && (v.startAbs + p.termIndex) % 3 === 2).length;
+	const sems = r.plan.filter((p) => p.courses.length).length - mids;
 	const nowTaking = Object.values(v.info).some((i) => i.status === 'inprogress');
-	const left = gradAbs != null ? `${termsText(termsLeft)} and ${unitsText(v.left.units)}` : unitsText(v.left.units);
-	const sub = `${left} left${nowTaking ? ', counting this term' : ''}.`;
+	const left = gradAbs != null ? `${termsText(sems)}${mids ? `, ${mids} midyear${mids === 1 ? '' : 's'}` : ''} and ${unitsText(v.left.units)}` : unitsText(v.left.units);
+	const sub = `${left} left${nowTaking ? ', counting this sem' : ''}.`;
 
 	const showCosts = v.costs.length > 1;
 	return { headline, deltaText, deltaOk, sub, costs: showCosts ? v.costs : [] };
@@ -429,8 +430,8 @@ export function offeringLabel(c: PlanCourse): string {
 	const o2 = offeredIn(c, '2');
 	const off = c.offered as Record<number, number> | null | undefined;
 	const om = off ? off[3] > 0 : c.sem === 'midyear';
-	let base = o1 && o2 ? 'Any sem' : o1 ? '1st only' : o2 ? '2nd only' : om ? 'Midyear' : 'Not seen';
-	if (om && (o1 || o2)) base += ' + mid';
+	let base = o1 && o2 ? 'Any sem' : o1 ? '1st only' : o2 ? '2nd only' : om ? 'Midyear' : 'Not offered lately';
+	if (om && (o1 || o2)) base += ' and midyear';
 	return base;
 }
 
@@ -603,7 +604,7 @@ export function columnFacts(column: Column, v: View) {
 	let sub: string;
 	if (column.abs === -1) {
 		name = 'Credited';
-		sub = 'No term on record';
+		sub = 'No sem on record';
 	} else if (column.abs === Infinity) {
 		name = "Can't place";
 		sub = 'Check prerequisites';
@@ -623,7 +624,7 @@ export function columnFacts(column: Column, v: View) {
 		if (isMid && units > 6) warn = "Over 6 units in midyear needs the Dean's approval (max 9).";
 		else if (!isMid && units > v.capAt(column.abs)) warn = `Over your ${v.capAt(column.abs)}-unit cap. This needs an overload approval.`;
 		else if (!isMid && units > 18)
-			warn = v.byChecklist ? 'Over 18 units, which the checklist puts in this sem.' : 'Over 18 units. This is allowed up to 21 when the term has lab courses.';
+			warn = v.byChecklist ? 'Over 18 units, which the checklist puts in this sem.' : 'Over 18 units. This is allowed up to 21 when the sem has lab courses.';
 	}
 	const loud = !!warn && (isMid || units > v.capAt(column.abs));
 	return { isPast, name, sub, units, isMid, future, tag, warn, loud, cap: future ? (isMid ? v.unitCaps.midyear : v.capAt(column.abs)) : null };
@@ -659,9 +660,9 @@ export function whatIfMessage(v: View): string {
 		(c) => c !== wi.code && base.assignedTerm[c] !== undefined && after.assignedTerm[c] > base.assignedTerm[c]
 	);
 	const list = pushed.length > 5 ? `${pushed.slice(0, 5).join(', ')} and ${pushed.length - 5} more` : pushed.join(', ');
-	const verb = wi.mode === 'fail' ? `Failing ${wi.code}` : `Taking ${wi.code} ${wi.mode === '1' ? 'a term' : 'a year'} later`;
+	const verb = wi.mode === 'fail' ? `Failing ${wi.code}` : `Taking ${wi.code} ${wi.mode === '1' ? 'a sem' : 'a year'} later`;
 	return slip > 0
-		? `${verb} moves graduation to ${absLabel(v.startAbs + after.gradTermIndex)} (+${termsText(slip)}).${pushed.length ? ` Also pushed later are ${list}.` : ''}`
+		? `${verb} moves graduation to ${absLabel(v.startAbs + after.gradTermIndex)}, ${termsText(slip)} later.${pushed.length ? ` Also pushed later are ${list}.` : ''}`
 		: `${verb} doesn't move graduation.${pushed.length ? ` It shifts ${list}.` : ' Nothing else shifts.'}`;
 }
 
