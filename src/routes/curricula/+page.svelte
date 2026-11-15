@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
-	import { CHECKLIST_PROGRAM, COLLEGES, UPLB_PROGRAMS } from '#lib/curriculum.ts';
+	import { CHECKLIST_PROGRAM, COLLEGES } from '#lib/curriculum.ts';
 	import Seo from '#lib/components/Seo.svelte';
 	import Icon from '#lib/components/Icon.svelte';
 	import PageHead from '#lib/components/PageHead.svelte';
@@ -58,14 +58,6 @@
 		CVM: [['Doctor of Veterinary Medicine', 'Doctor-of-Veterinary-Medicine', 1]]
 	};
 
-	// Programs the planner has full data for but no checklist image here yet, by
-	// college. Programs that aren't available yet are coming soon, not planner only.
-	const withImage = new Set(Object.values(CHECKLIST_PROGRAM));
-	const plannerOnly = (college: string) =>
-		Object.values(UPLB_PROGRAMS)
-			.filter((p) => p.college === college && p.available && !withImage.has(p.code))
-			.sort((a, b) => a.name.localeCompare(b.name));
-
 	let dialog: HTMLDialogElement | undefined = $state();
 	let open = $state<{ college: string; name: string; slug: string; pages: number } | null>(null);
 
@@ -84,7 +76,7 @@
 <div class="wrap">
 	<PageHead title="UPLB curriculum checklists">
 		Official checklists for undergraduate programs, grouped by college. Open one to read it, or plan it term by term in
-		GradeSim. Programs marked planner only already work in the planner, and their checklist image will be added here later.
+		GradeSim.
 	</PageHead>
 
 	{#each Object.entries(CHECKLISTS) as [college, programs] (college)}
@@ -94,14 +86,6 @@
 				{#each programs as [name, slug, pages] (slug)}
 					<li>
 						<button class="program" type="button" onclick={() => show(college, name, slug, pages)}>{name}</button>
-					</li>
-				{/each}
-				{#each plannerOnly(college) as p (p.code)}
-					<li>
-						<a class="program" href="{resolve('/')}?program={p.code}#planner">
-							<span>{p.name}</span>
-							<span class="muted">planner only</span>
-						</a>
 					</li>
 				{/each}
 			</ul>
@@ -171,12 +155,6 @@
 
 	.program:hover {
 		color: var(--brand);
-	}
-
-	.program .muted {
-		font-weight: 400;
-		font-size: 0.8rem;
-		flex: none;
 	}
 
 	dialog {
