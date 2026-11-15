@@ -47,7 +47,7 @@
 			['BS Mechanical Engineering', 'BS-Mechanical-Engineering', 1]
 		],
 		CFNR: [
-			['Associate in Forestry', 'Associate-in-Forestry', 1],
+			['Associate of Science in Forestry', 'Associate-in-Forestry', 1],
 			['BS Forestry', 'BS-Forestry', 1]
 		],
 		CHE: [
