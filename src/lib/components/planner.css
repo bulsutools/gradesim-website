@@ -664,8 +664,13 @@ button.pl-link:hover {
 
 .pl-links {
   display: flex;
+  flex-wrap: wrap;
   gap: 4px 12px;
   margin: 6px 0 0 -8px;
+}
+
+.pl-links .textbtn {
+  white-space: nowrap;
 }
 
 .pl-actions .btn {

@@ -195,14 +195,14 @@
 		focusCard(code);
 	}
 
-	function act(name: 'passed' | 'failed' | 'undo' | 'later', code: string) {
+	function act(name: 'passed' | 'failed' | 'inprogress' | 'undo' | 'later', code: string) {
 		if (!view) return;
-		if (name === 'passed' || name === 'failed') {
+		if (name === 'passed' || name === 'failed' || name === 'inprogress') {
 			const next = { ...app.s.customCourseStatus };
 			if (name === view.info[code].auto) delete next[code];
 			else next[code] = name;
 			app.s.customCourseStatus = next;
-			status = `${code} marked ${name}`;
+			status = name === 'inprogress' ? `${code} marked as taking now` : `${code} marked ${name}`;
 		} else if (name === 'later') {
 			const t = view.now.result.assignedTerm[code];
 			app.s.plannerPins = { ...app.s.plannerPins, [code]: view.startAbs + t + 1 };
@@ -338,6 +338,7 @@
 		{@const canCredit = !c.genericRequirement && (app.s.substitutions[code] || (i.status !== 'passed' && subOptions.length))}
 		{@const passBlock = i.status !== 'passed' && markConflict(view, code, 'passed')}
 		{@const failBlock = i.status !== 'failed' && markConflict(view, code, 'failed')}
+		{@const canTake = t !== undefined && !passBlock && card?.status !== 'locked' && i.status !== 'passed' && i.status !== 'inprogress'}
 		<aside class="pl-detail" aria-label="Details for {code}">
 			<div class="pl-detail-head">
 				<div>
@@ -388,8 +389,9 @@
 				{#if i.status !== 'passed' && !passBlock}<button type="button" class="btn btn-secondary" onclick={() => act('passed', code)}><Icon name="check" />Mark passed</button>{/if}
 				{#if i.status !== 'failed' && !failBlock}<button type="button" class="btn btn-secondary" onclick={() => act('failed', code)}><Icon name="x" />{past || i.status === 'inprogress' ? 'Mark failed' : 'If I fail it'}</button>{/if}
 			</div>
-			{#if i.override || app.s.plannerPins[code] != null || t !== undefined}
+			{#if i.override || app.s.plannerPins[code] != null || t !== undefined || canTake}
 				<div class="pl-links">
+					{#if canTake}<button type="button" class="textbtn" onclick={() => act('inprogress', code)}>I'm taking it now</button>{/if}
 					{#if i.override || app.s.plannerPins[code] != null}<button type="button" class="textbtn" onclick={() => act('undo', code)}>Undo my changes</button>{/if}
 					{#if t !== undefined}<button type="button" class="textbtn" onclick={() => act('later', code)}>Can't get a slot</button>{/if}
 				</div>
@@ -471,6 +473,7 @@
 								</span>
 							</summary>
 							{#if f.warn}<p class="pl-term-warn">{f.warn}</p>{/if}
+							{#if f.tag === 'Now' && term.column.abs === view.startAbs && term.cards.some((c) => c.status !== 'inprogress')}<p class="pl-off">This sem has started. Open each course you're taking and pick I'm taking it now.</p>{/if}
 							<ul class="pl-rows" class:nograde={!term.cards.some((c) => c.grade)}>
 								{#each term.cards as card (card)}
 									{@const c = model.byCode.get(card.code)!}
@@ -511,7 +514,7 @@
 								{@const codes = term.cards.filter((c) => !model.byCode.get(c.code)?.genericRequirement && c.status !== 'passed' && c.status !== 'failed').map((c) => c.code)}
 								{#if codes.length}<a class="textbtn pl-roomtba" href={roomTbaLink(term.column.abs, codes)} target="_blank" rel="external noopener">Plan sections in Room TBA <Icon name="external" size={14} /></a>{/if}
 							{/if}
-							{#if f.tag === 'Next' && spare.length}
+							{#if term.column.abs === view.startAbs && spare.length}
 								<details class="pl-term pl-also">
 									<summary><Icon name="chevron" size={16} />You can also take {spare.length} other course{spare.length === 1 ? '' : 's'}</summary>
 									<p class="pl-muted">Their prerequisites are done, so swap one in if a section is full.</p>
