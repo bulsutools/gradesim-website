@@ -59,12 +59,12 @@ test('generic requirement slots fill from completed courses', () => {
 	expect(Array.from(listedOnly)).toEqual([]);
 });
 
-test('all 35 programs ship with a checklist, six of them coming soon', () => {
+test('all 35 programs ship with a checklist, five of them coming soon', () => {
 	const programs = Object.values(UPLB_PROGRAMS);
 	expect(programs).toHaveLength(35);
 	programs.forEach((p) => expect(p.majorCourses.length).toBeGreaterThan(0));
 	expect(programs.filter((p) => !p.available).map((p) => p.code).sort()).toEqual(
-		['AAENTREP', 'AAFOR', 'AASS', 'ASDC', 'BSMATE', 'BSMST']
+		['AAENTREP', 'AAFOR', 'AASS', 'ASDC', 'BSMST']
 	);
 });
 
