@@ -1,3 +1,15 @@
+# [0.14.0](https://github.com/uplbtools/gradesim-website/compare/v0.13.0...v0.14.0) (2026-11-15)
+
+
+### Bug Fixes
+
+* **planner:** history units leave out HK and NSTP ([#176](https://github.com/uplbtools/gradesim-website/issues/176)) ([d6763fa](https://github.com/uplbtools/gradesim-website/commit/d6763fa6267f2fa1c5c33a3a8fd18d07e6d03421))
+
+
+### Features
+
+* **planner:** a "You can also take" list under next sem ([#178](https://github.com/uplbtools/gradesim-website/issues/178)) ([e2c5ea0](https://github.com/uplbtools/gradesim-website/commit/e2c5ea05d4f6e19849a0ff2ff390edbaccf758b2))
+
 # [0.13.0](https://github.com/uplbtools/gradesim-website/compare/v0.12.2...v0.13.0) (2026-11-15)
 
 
