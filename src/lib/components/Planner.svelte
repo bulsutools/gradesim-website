@@ -507,7 +507,7 @@
 							{#if f.off}<p class="pl-off">You're taking this sem off. <button type="button" class="textbtn" onclick={() => setSkip(skipped.filter((a) => a !== term.column.abs))}>Take it after all</button></p>{/if}
 							{#if f.tag === 'Next' || f.tag === 'Now'}
 								{@const codes = term.cards.filter((c) => !model.byCode.get(c.code)?.genericRequirement && c.status !== 'passed' && c.status !== 'failed').map((c) => c.code)}
-								{#if codes.length}<a class="textbtn pl-roomtba" href={roomTbaLink(term.column.abs, codes)} target="_blank" rel="noopener">Plan sections in Room TBA <Icon name="external" size={14} /></a>{/if}
+								{#if codes.length}<a class="textbtn pl-roomtba" href={roomTbaLink(term.column.abs, codes)} target="_blank" rel="external noopener">Plan sections in Room TBA <Icon name="external" size={14} /></a>{/if}
 							{/if}
 							{#if f.tag === 'Next' && spare.length}
 								<details class="pl-term pl-also">
