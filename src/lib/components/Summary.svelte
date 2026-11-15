@@ -9,8 +9,8 @@
 	const g = $derived(app.gwa);
 	// Extra electives stay in the GWA but not in the one for Latin honors.
 	const surplus = $derived.by(() => {
-		const model = app.program.available ? modelFor(app.program.code, planTrack(app.program, app.s.gradesData, app.s.track), app.specialization, app.fixes) : null;
-		const passed = amisCourses(app.s.gradesData).filter((r) => r.result === 'passed');
+		const model = app.program.available ? modelFor(app.program.code, planTrack(app.program, app.grades, app.s.track), app.specialization, app.fixes) : null;
+		const passed = amisCourses(app.grades).filter((r) => r.result === 'passed');
 		return model ? surplusElectives(model.courses, passed, app.s.substitutions) : [];
 	});
 	const honors = $derived.by(() => {
