@@ -1,3 +1,10 @@
+# [0.10.0](https://github.com/uplbtools/gradesim-website/compare/v0.9.0...v0.10.0) (2026-11-15)
+
+
+### Features
+
+* **wrapped:** Semester stats in the tin frame, and no photo upload ([#153](https://github.com/uplbtools/gradesim-website/issues/153)) ([5543956](https://github.com/uplbtools/gradesim-website/commit/5543956d325eb0f46c5db31495d584aa45aded30))
+
 # [0.9.0](https://github.com/uplbtools/gradesim-website/compare/v0.8.1...v0.9.0) (2026-11-15)
 
 
