@@ -483,6 +483,8 @@ export interface ScheduleOptions {
 	totalUnits?: number;
 	/** false = only checklist midyear courses in midyear. */
 	useMidyear?: boolean;
+	/** Term indexes left empty (a leave of absence). */
+	skip?: Set<number>;
 	maxTerms?: number;
 }
 
@@ -582,6 +584,7 @@ export function scheduleEarliest(opts: ScheduleOptions): ScheduleResult {
 	let emptyStreak = 0;
 
 	for (let t = 0; t < maxTerms && remaining.size > 0; t++) {
+		if (opts.skip?.has(t)) continue;
 		const sem = semAt(t, startSem);
 		const base = opts.termCaps?.[t] ?? (unitCaps[sem] != null ? unitCaps[sem]! : DEFAULT_UNIT_CAPS[sem]);
 		const cap = base - (reserved[t] || 0);

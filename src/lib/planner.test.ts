@@ -3,6 +3,10 @@ import backup from './fixtures/backup.json';
 import type { GradesData } from './grades.ts';
 import {
 	absLabel,
+	absOfAmisTerm,
+	amisTerm,
+	roomTbaLink,
+	takeCourses,
 	buildColumns,
 	calendarAbs,
 	cardFacts,
@@ -127,4 +131,34 @@ test('the plan follows the track: SP keeps CMSC 190 and 18 free elective units',
 	expect(thesis.byCode.has('CMSC 200') && !thesis.byCode.has('CMSC 190')).toBe(true);
 	const fe = (m: typeof sp) => m.courses.filter((c) => /^FE /.test(c.code)).reduce((s, c) => s + c.units, 0);
 	expect([fe(sp), fe(thesis)]).toEqual([18, 15]);
+});
+
+test('Room TBA link converts AMIS term ids both ways', () => {
+	expect(absOfAmisTerm(1261)).toBe(2026 * 3);
+	expect(absOfAmisTerm(1253)).toBe(2025 * 3 + 2);
+	[1241, 1252, 1253, 1261].forEach((id) => expect(amisTerm(absOfAmisTerm(id))).toBe(id));
+});
+
+test('Room TBA link packs one row per course with no section or type', () => {
+	const url = new URL(roomTbaLink(2026 * 3, ['CMSC 190', 'CMSC 190 (2)', 'STAT 101']));
+	const plan = JSON.parse(atob(url.searchParams.get('plan')!.replace(/-/g, '+').replace(/_/g, '/')));
+	expect(url.origin + url.pathname).toBe('https://room-tba.uplb.tools/planner');
+	expect(plan).toEqual({ v: 1, t: 1261, s: [['CMSC 190', '', ''], ['STAT 101', '', '']] });
+});
+
+test('Room TBA link marks courses in progress in a sem that started and moves them in a later one', () => {
+	const now = new Date(2026, 8, 1);
+	const s = { customCourseStatus: {}, plannerPins: { 'MATH 27': 2026 * 3 } };
+	expect(takeCourses(['CMSC 21'], 2026 * 3, s, now)).toEqual({ customCourseStatus: { 'CMSC 21': 'inprogress' }, plannerPins: { 'MATH 27': 2026 * 3 } });
+	expect(takeCourses(['CMSC 21'], 2026 * 3 + 1, s, now).plannerPins).toEqual({ 'MATH 27': 2026 * 3, 'CMSC 21': 2026 * 3 + 1 });
+	expect(s.plannerPins).toEqual({ 'MATH 27': 2026 * 3 });
+});
+
+test('a sem off stays empty and moves graduation later', () => {
+	const base = compute(model, input(), now);
+	const off = base.startAbs;
+	const v = compute(model, input({ plannerOptions: { ...DEFAULT_PLANNER_OPTIONS, skip: [off] } }), now);
+	expect(v.now.result.plan.some((p) => p.termIndex === 0)).toBe(false);
+	expect(v.now.result.gradTermIndex).toBeGreaterThan(base.now.result.gradTermIndex);
+	expect(buildColumns(v).list.find((c) => c.abs === off)?.cards).toEqual([]);
 });

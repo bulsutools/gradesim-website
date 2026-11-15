@@ -49,6 +49,28 @@ export function absLabel(abs: number): string {
 }
 export const ayLabel = ayOfAbs;
 
+/** The AMIS term id of a sem, such as 1261 for 1st sem 2026 and 1253 for midyear 2026. */
+export const amisTerm = (abs: number) => (Math.floor(abs / 3) - 1900) * 10 + (abs % 3) + 1;
+export const absOfAmisTerm = (id: number) => (Math.floor(id / 10) + 1900) * 3 + (id % 10) - 1;
+
+/** Room TBA's planner with these courses for one sem, each on its first section. */
+export function roomTbaLink(abs: number, codes: string[]): string {
+	const s = [...new Set(codes.map((c) => c.replace(/ \(\d+\)$/, '')))].map((c) => [c, '', '']);
+	const plan = btoa(JSON.stringify({ v: 1, t: amisTerm(abs), s }));
+	return `https://room-tba.uplb.tools/planner?plan=${plan.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')}`;
+}
+
+/** Courses a student takes in one sem, from Room TBA. A sem that has started marks them in progress, and a later one moves them there. */
+export function takeCourses(codes: string[], abs: number, s: Pick<PlannerInput, 'customCourseStatus' | 'plannerPins'>, now = new Date()) {
+	const customCourseStatus = { ...s.customCourseStatus };
+	const plannerPins = { ...s.plannerPins };
+	codes.forEach((c) => {
+		if (abs <= calendarAbs(now)) customCourseStatus[c] = 'inprogress';
+		else plannerPins[c] = abs;
+	});
+	return { customCourseStatus, plannerPins };
+}
+
 // Month heuristic for the current term (Aug-Dec 1st, Jan-May 2nd,
 // Jun-Jul midyear). Only used when grades are older than the calendar.
 export function calendarAbs(now = new Date()): number {
@@ -69,6 +91,8 @@ export interface PlannerOptions {
 	midyear: boolean;
 	midyear9: boolean;
 	minLoad?: number;
+	/** Sems taken off (LOA or MRR), by abs. */
+	skip?: number[];
 }
 
 export interface PlannerInput {
@@ -314,6 +338,7 @@ export function compute(model: Model, input: PlannerInput, now = new Date()) {
 		unitCaps,
 		termCaps,
 		useMidyear: !!opts.midyear,
+		skip: new Set((opts.skip ?? []).map((abs) => abs - startAbs)),
 		totalUnits: Number(model.program.totalUnitsRequired) || undefined
 	};
 	const pinNotBefore: Record<string, number> = {};
@@ -629,10 +654,11 @@ export function columnFacts(column: Column, v: View) {
 		.reduce((s, c) => s + (Number(v.model.byCode.get(c.code)!.units) || 0), 0);
 	const isMid = column.abs % 3 === 2;
 	const future = !isPast && Number.isFinite(column.abs) && column.abs >= 0;
+	const off = future && !!v.input.plannerOptions.skip?.includes(column.abs);
 	const nowTerm = column.cards.some((c) => c.status === 'inprogress');
 	const tag = column.abs === v.startAbs ? 'Next' : nowTerm ? 'Now' : isPast && column.abs >= 0 ? 'Taken' : '';
 	let warn = '';
-	if (future) {
+	if (future && !off) {
 		if (isMid && units > 6) warn = "Over 6 units in midyear needs the Dean's approval (max 9).";
 		else if (!isMid && units > v.capAt(column.abs)) warn = `Over your ${v.capAt(column.abs)}-unit cap. This needs an overload approval.`;
 		else if (!isMid && units > 18)
@@ -640,7 +666,7 @@ export function columnFacts(column: Column, v: View) {
 		else if (!isMid && units < (v.input.plannerOptions.minLoad || 0)) warn = `Under your ${v.input.plannerOptions.minLoad}-unit minimum.`;
 	}
 	const loud = !!warn && (isMid || units > v.capAt(column.abs));
-	return { isPast, name, sub, units, isMid, future, tag, warn, loud, cap: future ? (isMid ? v.unitCaps.midyear : v.capAt(column.abs)) : null };
+	return { isPast, name, sub, units, isMid, future, off, tag, warn, loud, cap: future ? (isMid ? v.unitCaps.midyear : v.capAt(column.abs)) : null };
 }
 
 /**
@@ -718,6 +744,7 @@ export function checkPlan(p: unknown): string {
 		isObj(o) &&
 		(o.cap === 'checklist' || [18, 21].includes(Number(o.cap))) &&
 		(o.minLoad == null || [0, 12, 15, 18].includes(Number(o.minLoad))) &&
+		(o.skip == null || (Array.isArray(o.skip) && o.skip.every(Number.isInteger))) &&
 		(w == null || (isObj(w) && typeof w.code === 'string' && ['fail', '1', '3'].includes(w.mode as string)));
 	return ok ? '' : 'That plan file is damaged, so nothing changed. Save the plan again and load the new file.';
 }

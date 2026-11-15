@@ -10,13 +10,14 @@
 
 	let preview = $state('');
 	let name = $state('');
+	let number = $state(false);
 	const ordinal = ['1st', '2nd', '3rd'];
 	const id = $derived.by(() => {
 		const years = new Set(app.courses.map((c) => c.ay)).size;
-		return { name: name.trim(), year: `${ordinal[years - 1] ?? `${years}th`} year`, course: app.program.code };
+		return { name: name.trim(), year: `${ordinal[years - 1] ?? `${years}th`} year`, course: app.program.code, number };
 	});
 	const alt = $derived(
-		[p.title, p.frame === 'id' ? `GWA ${p.value}` : '', ...(p.highlights ?? []).map((h) => `${bare(h.label)} ${h.name}, ${h.detail}`), 'drawn in a tin on a picnic blanket']
+		[p.title, p.frame === 'id' && number ? `GWA ${p.value}` : '', ...(p.highlights ?? []).map((h) => `${bare(h.label)} ${h.name}, ${h.detail}`), 'drawn on a picnic blanket']
 			.filter(Boolean)
 			.join(', ')
 	);
@@ -50,7 +51,7 @@
 			if (!blob) return;
 			const name = `elbi-gradesim-wrapped-${i + 1}.png`;
 			const file = new File([blob], name, { type: 'image/png' });
-			if (navigator.canShare?.({ files: [file] })) await navigator.share({ files: [file] }).catch(() => {});
+			if (navigator.canShare?.({ files: [file] })) await navigator.share({ files: [file], text: 'Make yours on gradesim.uplb.tools' }).catch(() => {});
 			else download(name, blob);
 		} finally {
 			busy = false;
@@ -91,6 +92,7 @@
 
 	{#if p.frame === 'id'}
 		<label class="field">Your name on the card<input class="input" bind:value={name} maxlength="40" autocomplete="name" /></label>
+		<label class="check"><input type="checkbox" bind:checked={number} />Show my GWA, not only its tier</label>
 		<p class="muted">Add your photo over the picture in Instagram or Facebook.</p>
 	{/if}
 

@@ -40,7 +40,7 @@
 					</Notice>
 				{:else}
 					<a class="btn btn-primary btn-lg laptop" href={resolve('install/')}>Get the extension</a>
-					<a class="btn btn-primary btn-lg phone" href={resolve('install/') + '#phone'}>Get my grades from AMIS</a>
+					<a class="btn btn-primary btn-lg phone" href="{resolve('install/')}#phone">Get my grades from AMIS</a>
 					<p class="hint phone">A phone can't install the extension, so a bookmark brings your grades over.</p>
 				{/if}
 			</div>
@@ -98,7 +98,7 @@
 		<section class="feature">
 			<div>
 				<h2>A plan for the sems you have left</h2>
-				<p>The planner puts each course in the earliest sem its prerequisites and AMIS offerings allow. It shows what a failed course or a full section does to your graduation.</p>
+				<p>The planner puts each course in the earliest sem its prerequisites and AMIS offerings allow. It shows what failing CHEM 18, a full section or a sem off does to your graduation. If you're shifting, pick your new program and credit the courses you already passed.</p>
 			</div>
 			<figure>
 				<ThemedShot name="planner-phone" alt="The planner. Graduation is the 2nd sem of 2029, and the next sem lists six courses with the retake of MATH 27." width={680} height={1222} />

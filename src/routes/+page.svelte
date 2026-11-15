@@ -5,6 +5,7 @@
 	import { unpackHash } from '#lib/link.ts';
 	import { UPLB_PROGRAMS } from '#lib/curriculum.ts';
 	import { parseBackup, parseImport } from '#lib/importers.ts';
+	import { absLabel, absOfAmisTerm, takeCourses } from '#lib/planner.ts';
 	import Seo from '#lib/components/Seo.svelte';
 	import Notice from '#lib/components/Notice.svelte';
 	import Welcome from '#lib/components/Welcome.svelte';
@@ -81,12 +82,24 @@
 		const fromPopup = url.searchParams.get('from') === 'extension';
 		const failed = url.searchParams.get('whatif');
 		if (failed) app.whatif = { code: failed, mode: 'fail' };
+		const take = url.searchParams.get('take');
+		const term = Number(url.searchParams.get('term'));
+		if (take && Number.isInteger(term) && term > 0) {
+			const checklist = new Set(UPLB_PROGRAMS[app.s.selectedProgram]?.majorCourses.map((c) => c.code));
+			const codes = take.split(',').map((c) => c.trim()).filter((c) => checklist.has(c));
+			const abs = absOfAmisTerm(term);
+			Object.assign(app.s, takeCourses(codes, abs, app.s));
+			tab = 'planner';
+			message = codes.length
+				? { text: `Room TBA put ${codes.join(', ')} in ${absLabel(abs)}.`, tone: 'ok' }
+				: { text: "None of the courses from Room TBA are on your checklist, so nothing changed.", tone: 'bad' };
+		}
 		if (program && UPLB_PROGRAMS[program]?.available) {
 			app.s.selectedProgram = program;
 			app.blank = true;
 		} else if (!app.hasData && tab === 'planner' && !fromPopup) app.blank = true;
 		if (url.search) {
-			['program', 'from', 'whatif'].forEach((k) => url.searchParams.delete(k));
+			['program', 'from', 'whatif', 'take', 'term'].forEach((k) => url.searchParams.delete(k));
 			history.replaceState(history.state, '', url.pathname + url.search + url.hash);
 		}
 		probeExtension().then(async (r) => {

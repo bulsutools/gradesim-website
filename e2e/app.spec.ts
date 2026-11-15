@@ -334,16 +334,41 @@ test('@phone the welcome screen leads with the AMIS bookmark', async ({ page }) 
 	await expect(page.locator('#main').getByRole('link', { name: 'Get the extension' })).toBeHidden();
 });
 
-test('the GWA and semester cards in Wrapped are drawn in the tin frame', async ({ page }) => {
+test('every Wrapped card is drawn on the picnic art, and the GWA shows only when asked', async ({ page }) => {
 	await importFixture(page);
 	await page.getByRole('tab', { name: 'Wrapped' }).click();
-	const card = page.getByRole('img', { name: /drawn in a tin/ });
+	const card = page.getByRole('img', { name: /drawn on a picnic blanket/ });
+	await expect(card).toHaveAccessibleName(/^Honor roll, drawn/);
+	await page.getByLabel('Show my GWA, not only its tier').check();
 	await expect(card).toHaveAccessibleName(/GWA 1\.9773/);
 	const blank = await card.getAttribute('src');
 	await page.getByRole('textbox', { name: 'Your name on the card' }).fill('Iska');
 	await expect(card).not.toHaveAttribute('src', blank!);
-	await page.getByRole('button', { name: 'Next' }).click();
-	await expect(card).toHaveAccessibleName(/Sem stats, Best sem/);
-	await page.getByRole('button', { name: 'Next' }).click();
-	await expect(card).toHaveCount(0);
+	for (const name of [/Sem stats, Best sem/, /Your highlights/, /Variety pack/, /Early days/]) {
+		await page.getByRole('button', { name: 'Next' }).click();
+		await expect(card).toHaveAccessibleName(name);
+	}
+});
+
+test('courses from Room TBA land in the plan, and the next sem links back', async ({ page }) => {
+	await importFixture(page);
+	await open(page, '/?take=CMSC 21,NOPE 1&term=1271#planner');
+	await expect(page.getByText('Room TBA put CMSC 21 in 1st sem 2027.')).toBeVisible();
+	await expect(page).toHaveURL(/\/#planner$/);
+	const link = page.getByRole('link', { name: 'Plan sections in Room TBA' }).first();
+	await expect(link).toHaveAttribute('href', /^https:\/\/room-tba\.uplb\.tools\/planner\?plan=/);
+});
+
+test('a sem off leaves that sem empty and can be undone', async ({ page }) => {
+	await importFixture(page);
+	await page.getByRole('tab', { name: 'Planner' }).click();
+	await page.getByText('Plan settings').click();
+	const pick = page.getByLabel('Take a sem off');
+	const first = await pick.locator('option').nth(1).textContent();
+	await pick.selectOption({ index: 1 });
+	const sheet = page.getByTestId('planner-sheet');
+	await expect(sheet.getByText("You're taking this sem off.")).toBeVisible();
+	await sheet.getByRole('button', { name: 'Take it after all' }).click();
+	await expect(sheet.getByText("You're taking this sem off.")).toHaveCount(0);
+	expect(first).toMatch(/sem \d{4}/);
 });
