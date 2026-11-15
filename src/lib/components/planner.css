@@ -184,6 +184,19 @@
   font-size: 0.875rem;
 }
 
+.pl-also {
+  margin: 0 0 12px 30px;
+}
+
+.pl-also > summary {
+  color: var(--muted);
+}
+
+.pl-also > .pl-muted {
+  margin: 0 0 4px;
+  font-size: 0.875rem;
+}
+
 .pl-past {
   margin-top: 28px;
   padding-top: 8px;
@@ -774,6 +787,7 @@ button.pl-link:hover {
   .pl-result,
   .pl-fixes,
   .pl-detail,
+  .pl-also,
   .pl-term > summary > .icon {
     display: none !important;
   }

@@ -492,6 +492,8 @@ export interface ScheduleResult {
 	assignedTerm: Record<string, number>;
 	conditional: Record<string, boolean>;
 	unschedulable: string[];
+	/** Ready for the first term but placed later. */
+	spare: string[];
 	warnings: string[];
 }
 
@@ -576,6 +578,7 @@ export function scheduleEarliest(opts: ScheduleOptions): ScheduleResult {
 	const assignedTerm: Record<string, number> = {};
 	const conditional: Record<string, boolean> = {};
 	const plan: ScheduleResult['plan'] = [];
+	let spare: string[] = [];
 	let emptyStreak = 0;
 
 	for (let t = 0; t < maxTerms && remaining.size > 0; t++) {
@@ -640,6 +643,10 @@ export function scheduleEarliest(opts: ScheduleOptions): ScheduleResult {
 				if (!offeredIn(byCode.get(c)!, sem)) conditional[c] = true;
 			});
 		});
+		if (t === 0) {
+			const kinds = new Set(placed.map(extraKind));
+			spare = candidates.filter((c) => assignedTerm[c] === undefined && !(extraKind(c) && kinds.has(extraKind(c))));
+		}
 		placed.forEach((c) => {
 			doneUnits += unitsOf(c);
 		});
@@ -663,7 +670,7 @@ export function scheduleEarliest(opts: ScheduleOptions): ScheduleResult {
 	}
 
 	const gradTermIndex = plan.length > 0 ? plan[plan.length - 1].termIndex : -1;
-	return { plan, gradTermIndex, assignedTerm, conditional, unschedulable, warnings };
+	return { plan, gradTermIndex, assignedTerm, conditional, unschedulable, spare, warnings };
 }
 
 /* ---------- Curricular Analytics metrics ---------- */

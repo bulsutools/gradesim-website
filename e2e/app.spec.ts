@@ -93,6 +93,11 @@ test('planner renders and a failed course shows a retake', async ({ page }) => {
 	await sheet.locator('.pl-row.st-retake[data-code="MATH 27"]').click();
 	await expect(page.getByRole('complementary', { name: 'Details for MATH 27' })).toContainText('Analytic Geometry');
 	await expect(page).toHaveURL(/#planner$/);
+	await sheet.getByText(/You can also take \d+ other course/).click();
+	const also = sheet.locator('[data-also]').first();
+	const code = await also.getAttribute('data-also');
+	await also.click();
+	await expect(page.getByRole('complementary', { name: `Details for ${code}` })).toBeVisible();
 });
 
 test('a checklist fix changes the plan and is listed for sending', async ({ page }) => {
