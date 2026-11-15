@@ -19,8 +19,8 @@ export interface Panel {
 	highlights?: Highlight[];
 	/** Caption under the highlights on the exported card. */
 	caption?: string;
-	/** Illustrated background for the exported card. */
-	frame?: string;
+	/** Draw the card in the tin frame, as the ID card or with the highlights in the tray. */
+	frame?: 'id' | 'tin';
 }
 
 interface Sem {
@@ -100,7 +100,7 @@ function gwaPanel(d: Data): Panel {
 		return ['🌱', 'Comeback arc', "Mababa man ngayon, pwede pa 'yan i-improve. Marami nang naka-recover from this. Kaya mo 'yan."];
 	};
 	const [emoji, title, message] = pick();
-	return { emoji, title, value: g > 0 ? g.toFixed(4) : '--', subtitle: 'My Elbi GWA', message, frame: g > 0 ? '/frames/tin.jpg' : undefined };
+	return { emoji, title, value: g > 0 ? g.toFixed(4) : '--', subtitle: 'My Elbi GWA', message, frame: g > 0 ? 'id' : undefined };
 }
 
 function semesterPanel(d: Data): Panel {
@@ -122,7 +122,7 @@ function semesterPanel(d: Data): Panel {
 		: n >= 4 ? `${n} sems in. You're halfway through.`
 		: n >= 2 ? `${n} semesters down, many more to go.`
 		: 'Just getting started. Enjoy the ride.';
-	return { emoji: '📅', title: 'Semester stats', value: String(n), subtitle: n === 1 ? 'semester with grades' : 'semesters with grades', message, highlights, caption: 'My lowest and highest semester' };
+	return { emoji: '📅', title: 'Semester stats', value: String(n), subtitle: n === 1 ? 'semester with grades' : 'semesters with grades', message, highlights, caption: 'My lowest and highest semester', frame: 'tin' };
 }
 
 function collectorPanel(d: Data): Panel {
@@ -197,10 +197,12 @@ export interface IdCard {
 	name: string;
 	year: string;
 	course: string;
-	photo?: ImageBitmap;
 }
 
-export async function drawCard(canvas: HTMLCanvasElement, p: Panel, id?: IdCard): Promise<void> {
+/** A highlight label without its leading emoji. */
+export const bare = (label: string) => label.replace(/^\P{L}+/u, '');
+
+export async function drawCard(canvas: HTMLCanvasElement, p: Panel, id: IdCard): Promise<void> {
 	const W = 1080;
 	const H = 1920;
 	canvas.width = W;
@@ -329,29 +331,25 @@ export async function drawCard(canvas: HTMLCanvasElement, p: Panel, id?: IdCard)
 }
 
 /** Reann Vargas's tin frame. The lid and the tray are tilted about 10 degrees. */
-async function drawFrame(ctx: CanvasRenderingContext2D, p: Panel, font: string, id?: IdCard) {
+async function drawFrame(ctx: CanvasRenderingContext2D, p: Panel, font: string, id: IdCard) {
+	const isId = p.frame === 'id';
 	const img = new Image();
-	img.src = id ? '/frames/tin-id.jpg' : p.frame!;
+	img.src = `/frames/${isId ? 'tin-id' : 'tin'}.jpg`;
 	await img.decode();
 	ctx.drawImage(img, 0, 0, 1080, 1920);
 	const tilted = (x: number, y: number, draw: () => void) => {
 		ctx.save();
 		ctx.translate(x, y);
-		ctx.rotate(id ? -0.19 : -0.17);
+		ctx.rotate(isId ? -0.19 : -0.17);
 		draw();
 		ctx.restore();
 	};
-	ctx.textAlign = 'center';
-	if (id) {
-		const { photo } = id;
-		if (photo)
-			tilted(118, 648, () => {
-				const scale = Math.max(297 / photo.width, 318 / photo.height);
-				ctx.beginPath();
-				ctx.rect(0, 0, 297, 318);
-				ctx.clip();
-				ctx.drawImage(photo, (297 - photo.width * scale) / 2, (318 - photo.height * scale) / 2, photo.width * scale, photo.height * scale);
-			});
+	const text = (t: string, style: string, color: string, y: number) => {
+		ctx.font = `${style} ${font}`;
+		ctx.fillStyle = color;
+		ctx.fillText(t, 0, y);
+	};
+	if (isId) {
 		ctx.textAlign = 'left';
 		ctx.fillStyle = '#1c1917';
 		const rows: [string, number, number, number][] = [
@@ -359,41 +357,34 @@ async function drawFrame(ctx: CanvasRenderingContext2D, p: Panel, font: string, 
 			[id.year, 566, 738, 295],
 			[id.course, 612, 830, 268]
 		];
-		rows.forEach(([text, x, y, max]) =>
+		rows.forEach(([t, x, y, max]) =>
 			tilted(x, y, () => {
 				let size = 40;
 				do ctx.font = `700 ${size}px ${font}`;
-				while (ctx.measureText(text).width > max && --size > 24);
-				ctx.fillText(text, 0, 0, max);
+				while (ctx.measureText(t).width > max && --size > 24);
+				ctx.fillText(t, 0, 0, max);
 			})
 		);
 		ctx.textAlign = 'center';
 		tilted(592, 1215, () => {
-			ctx.fillStyle = '#7b2a22';
-			ctx.font = `800 190px ${font}`;
-			ctx.fillText(p.value, 0, 0);
-			ctx.fillStyle = '#2b2321';
-			ctx.font = `800 64px ${font}`;
-			ctx.fillText(p.title, 0, 95);
-			ctx.fillStyle = '#4a3f3c';
-			ctx.font = `600 36px ${font}`;
-			ctx.fillText('My Elbi GWA on gradesim.uplb.tools', 0, 160);
+			text(p.value, '800 190px', '#7b2a22', 0);
+			text(p.title, '800 64px', '#2b2321', 95);
+			text('My Elbi GWA on gradesim.uplb.tools', '600 36px', '#4a3f3c', 160);
 		});
 		return;
 	}
+	ctx.textAlign = 'center';
 	tilted(500, 700, () => {
-		ctx.fillStyle = '#2b2321';
-		ctx.font = `800 ${p.title.length > 14 ? 76 : 88}px ${font}`;
-		ctx.fillText(p.title, 0, 0);
-		ctx.fillStyle = '#4a3f3c';
-		ctx.font = `600 40px ${font}`;
-		ctx.fillText('gradesim.uplb.tools', 0, 80);
+		text(p.title, '800 84px', '#2b2321', 0);
+		text('gradesim.uplb.tools', '600 40px', '#4a3f3c', 80);
 	});
-	tilted(596, 1225, () => {
-		ctx.fillStyle = '#7b2a22';
-		ctx.font = `800 190px ${font}`;
-		ctx.fillText(p.value, 0, 40);
-		ctx.font = `700 52px ${font}`;
-		ctx.fillText(p.subtitle ?? '', 0, 130);
-	});
+	const rows = p.highlights ?? [];
+	rows.forEach((h, i) =>
+		tilted(596, 1225, () => {
+			const y = rows.length > 1 ? i * 205 - 150 : -30;
+			text(bare(h.label), '600 38px', '#4a3f3c', y);
+			text(h.name, '800 62px', '#2b2321', y + 72);
+			text(h.detail, '700 42px', '#7b2a22', y + 130);
+		})
+	);
 }
