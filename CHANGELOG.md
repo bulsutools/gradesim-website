@@ -1,3 +1,10 @@
+## [0.24.4](https://github.com/uplbtools/gradesim-website/compare/v0.24.3...v0.24.4) (2026-11-15)
+
+
+### Bug Fixes
+
+* **planner:** a shorter Plan settings menu ([#254](https://github.com/uplbtools/gradesim-website/issues/254)) ([a245cc5](https://github.com/uplbtools/gradesim-website/commit/a245cc5f21087b0ad7eca60e095f53fc2ddd3965))
+
 ## [0.24.3](https://github.com/uplbtools/gradesim-website/compare/v0.24.2...v0.24.3) (2026-11-15)
 
 
