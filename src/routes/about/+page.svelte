@@ -31,7 +31,7 @@
 		},
 		{
 			q: 'Can I use it on my phone?',
-			a: 'Yes. Install it from your browser menu (Add to Home Screen) and it works offline after the first visit. The extension itself needs a desktop browser, so on a phone import a backup file or enter your grades by hand.'
+			a: 'Yes. Install it from your browser menu (Add to Home Screen) and it works offline after the first visit. Firefox for Android can install the extension, and in Chrome or Safari the bookmark on the Install page saves your AMIS grades as a file to import.'
 		}
 	];
 </script>
