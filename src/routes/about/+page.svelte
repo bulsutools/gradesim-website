@@ -72,6 +72,10 @@
 				<p>{item.a}</p>
 			</details>
 		{/each}
+		<p>
+			Still stuck? <a href="https://github.com/uplbtools/gradesim/discussions/categories/q-a" rel="noopener" target="_blank">Ask on GitHub</a>
+			and we'll answer there.
+		</p>
 
 		<h2>Credits</h2>
 		<p>
