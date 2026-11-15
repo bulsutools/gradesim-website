@@ -19,6 +19,8 @@ export interface Panel {
 	highlights?: Highlight[];
 	/** Caption under the highlights on the exported card. */
 	caption?: string;
+	/** Illustrated background for the exported card. */
+	frame?: string;
 }
 
 interface Sem {
@@ -98,7 +100,7 @@ function gwaPanel(d: Data): Panel {
 		return ['🌱', 'Comeback arc', "Mababa man ngayon, pwede pa 'yan i-improve. Marami nang naka-recover from this. Kaya mo 'yan."];
 	};
 	const [emoji, title, message] = pick();
-	return { emoji, title, value: g > 0 ? g.toFixed(4) : '--', subtitle: 'My Elbi GWA', message };
+	return { emoji, title, value: g > 0 ? g.toFixed(4) : '--', subtitle: 'My Elbi GWA', message, frame: g > 0 ? '/frames/tin.jpg' : undefined };
 }
 
 function semesterPanel(d: Data): Panel {
@@ -205,6 +207,7 @@ export async function drawCard(canvas: HTMLCanvasElement, p: Panel): Promise<voi
 	}
 	const display = 'Figtree, system-ui, sans-serif';
 	const body = display;
+	if (p.frame) return drawFrame(ctx, p, display);
 
 	ctx.fillStyle = '#7b2a22'; // hsl(5, 53%, 32%)
 	ctx.fillRect(0, 0, W, H);
@@ -316,4 +319,35 @@ export async function drawCard(canvas: HTMLCanvasElement, p: Panel): Promise<voi
 	ctx.font = `600 36px ${body}`;
 	ctx.fillStyle = '#f3c9c1';
 	ctx.fillText('gradesim.uplb.tools', cx, H - 110);
+}
+
+/** Reann Vargas's tin frame. The lid and the cloth are tilted about 10 degrees. */
+async function drawFrame(ctx: CanvasRenderingContext2D, p: Panel, font: string) {
+	const img = new Image();
+	img.src = p.frame!;
+	await img.decode();
+	ctx.drawImage(img, 0, 0, 1080, 1920);
+	ctx.textAlign = 'center';
+	const tilted = (x: number, y: number, draw: () => void) => {
+		ctx.save();
+		ctx.translate(x, y);
+		ctx.rotate(-0.17);
+		draw();
+		ctx.restore();
+	};
+	tilted(500, 700, () => {
+		ctx.fillStyle = '#2b2321';
+		ctx.font = `800 ${p.title.length > 14 ? 76 : 88}px ${font}`;
+		ctx.fillText(p.title, 0, 0);
+		ctx.fillStyle = '#4a3f3c';
+		ctx.font = `600 40px ${font}`;
+		ctx.fillText('gradesim.uplb.tools', 0, 80);
+	});
+	tilted(596, 1225, () => {
+		ctx.fillStyle = '#7b2a22';
+		ctx.font = `800 190px ${font}`;
+		ctx.fillText(p.value, 0, 40);
+		ctx.font = `700 52px ${font}`;
+		ctx.fillText(p.subtitle ?? '', 0, 130);
+	});
 }

@@ -8,13 +8,37 @@
 	let busy = $state(false);
 	const p = $derived(panels[Math.min(i, panels.length - 1)]);
 
+	let preview = $state('');
+
+	async function card() {
+		const canvas = document.createElement('canvas');
+		await drawCard(canvas, p);
+		return new Promise<Blob | null>((r) => canvas.toBlob(r, 'image/png'));
+	}
+
+	$effect(() => {
+		if (!p.frame) return;
+		let url = '';
+		let gone = false;
+		card().then((blob) => {
+			if (blob && !gone) preview = url = URL.createObjectURL(blob);
+		});
+		return () => {
+			gone = true;
+			URL.revokeObjectURL(url);
+			preview = '';
+		};
+	});
+
 	async function save() {
 		busy = true;
 		try {
-			const canvas = document.createElement('canvas');
-			await drawCard(canvas, p);
-			const blob = await new Promise<Blob | null>((r) => canvas.toBlob(r, 'image/png'));
-			if (blob) download(`elbi-gradesim-wrapped-${i + 1}.png`, blob);
+			const blob = await card();
+			if (!blob) return;
+			const name = `elbi-gradesim-wrapped-${i + 1}.png`;
+			const file = new File([blob], name, { type: 'image/png' });
+			if (navigator.canShare?.({ files: [file] })) await navigator.share({ files: [file] }).catch(() => {});
+			else download(name, blob);
 		} finally {
 			busy = false;
 		}
@@ -23,25 +47,29 @@
 
 <div class="wrapped">
 
-	<article class="panel" aria-roledescription="slide" aria-label="Card {i + 1} of {panels.length}" aria-live="polite">
-		<span class="emoji" aria-hidden="true">{p.emoji}</span>
-		<h2 class="title">{p.title}</h2>
-		{#if p.value}<p class="value">{p.value}</p>{/if}
-		{#if p.subtitle}<p class="subtitle">{p.subtitle}</p>{/if}
-		{#if p.badges?.length}
-			<ul class="badges" aria-label="Grades you have collected">
-				{#each p.badges as b (b.text)}<li class:special={b.special}>{b.text}</li>{/each}
-			</ul>
-		{/if}
-		{#if p.highlights?.length}
-			<ul class="highlights">
-				{#each p.highlights as h (h.label)}
-					<li><span class="hl-label">{h.label}</span><strong>{h.name}</strong><span>{h.detail}</span></li>
-				{/each}
-			</ul>
-		{/if}
-		<p class="message">{p.message}</p>
-	</article>
+	{#if p.frame && preview}
+		<img class="frame" src={preview} alt="{p.title}, GWA {p.value}, drawn in a tin on a picnic blanket" />
+	{:else}
+		<article class="panel" aria-roledescription="slide" aria-label="Card {i + 1} of {panels.length}" aria-live="polite">
+			<span class="emoji" aria-hidden="true">{p.emoji}</span>
+			<h2 class="title">{p.title}</h2>
+			{#if p.value}<p class="value">{p.value}</p>{/if}
+			{#if p.subtitle}<p class="subtitle">{p.subtitle}</p>{/if}
+			{#if p.badges?.length}
+				<ul class="badges" aria-label="Grades you have collected">
+					{#each p.badges as b (b.text)}<li class:special={b.special}>{b.text}</li>{/each}
+				</ul>
+			{/if}
+			{#if p.highlights?.length}
+				<ul class="highlights">
+					{#each p.highlights as h (h.label)}
+						<li><span class="hl-label">{h.label}</span><strong>{h.name}</strong><span>{h.detail}</span></li>
+					{/each}
+				</ul>
+			{/if}
+			<p class="message">{p.message}</p>
+		</article>
+	{/if}
 
 	<div class="nav">
 		<button class="btn btn-secondary" type="button" onclick={() => i--} disabled={i === 0}><Icon name="left" />Previous</button>
@@ -71,6 +99,13 @@
 		border-radius: 24px;
 		background: hsl(5, 53%, 32%);
 		color: hsl(0, 0%, 100%);
+		box-shadow: var(--shadow-md);
+	}
+
+	.frame {
+		width: 100%;
+		aspect-ratio: 9 / 16;
+		border-radius: 24px;
 		box-shadow: var(--shadow-md);
 	}
 
