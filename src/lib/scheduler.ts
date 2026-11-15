@@ -506,7 +506,10 @@ export function scheduleEarliest(opts: ScheduleOptions): ScheduleResult {
 
 	const byCode = new Map<string, PlanCourse>();
 	courses.forEach((c) => byCode.set(normCode(c.code), c));
+	const extraKind = (code: string) =>
+		/^NSTP\b/.test(code) ? 'NSTP' : /^(HK|PE)\b/.test(code) ? 'HK' : null;
 	const unitsOf = (code: string) => {
+		if (extraKind(code)) return 0;
 		const c = byCode.get(code);
 		return c && c.units != null ? Number(c.units) : 3;
 	};
@@ -617,6 +620,8 @@ export function scheduleEarliest(opts: ScheduleOptions): ScheduleResult {
 		let units = 0;
 		candidates.forEach((code) => {
 			if (assignedTerm[code] !== undefined) return;
+			const kind = extraKind(code);
+			if (kind && placed.some((c) => extraKind(c) === kind)) return;
 			// Place a course together with its unplaced coreqs, or not at all.
 			const bundle = [
 				code,
