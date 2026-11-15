@@ -1,3 +1,12 @@
+# [0.19.0](https://github.com/uplbtools/gradesim-website/compare/v0.18.1...v0.19.0) (2026-11-15)
+
+
+### Features
+
+* **planner:** plan a sem's sections in Room TBA and take courses back from it ([#206](https://github.com/uplbtools/gradesim-website/issues/206)) ([803482e](https://github.com/uplbtools/gradesim-website/commit/803482e0d3284054eb65c737b8fd9d4b85a21d41))
+* **planner:** take a sem off ([#208](https://github.com/uplbtools/gradesim-website/issues/208)) ([198e363](https://github.com/uplbtools/gradesim-website/commit/198e3632824df11628fa184bebada2b63de01bec))
+* **wrapped:** every card on the picnic art, tier first ([#210](https://github.com/uplbtools/gradesim-website/issues/210)) ([080649e](https://github.com/uplbtools/gradesim-website/commit/080649ef762188d786e7823f82e4233d57a2e9dc))
+
 ## [0.18.1](https://github.com/uplbtools/gradesim-website/compare/v0.18.0...v0.18.1) (2026-11-15)
 
 
