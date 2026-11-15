@@ -19,6 +19,7 @@
 			['BS Chemistry', 'BS-Chemistry', 2],
 			['BS Computer Science', 'BS-Computer-Science', 1],
 			['BS Mathematics', 'BS-Mathematics', 2],
+			['BS Mathematics and Science Teaching', 'BS-Mathematics-and-Science-Teaching', 4],
 			['BS Statistics', 'BS-Statistics', 2]
 		],
 		CAFS: [
