@@ -7,7 +7,6 @@
 	import Seo from '#lib/components/Seo.svelte';
 	import Notice from '#lib/components/Notice.svelte';
 	import Welcome from '#lib/components/Welcome.svelte';
-	import Summary from '#lib/components/Summary.svelte';
 	import GradesTab from '#lib/components/GradesTab.svelte';
 	import WhatIfTab from '#lib/components/WhatIfTab.svelte';
 	import Planner from '#lib/components/Planner.svelte';
@@ -158,7 +157,6 @@
 	<div class="dash">
 		<div class={tab === 'planner' ? 'wide' : 'wrap'}>
 			<h1 class="visually-hidden">Your dashboard</h1>
-			<Summary />
 			<div class="tabs" role="tablist" aria-label="GradeSim sections">
 				{#each TABS as t, i (t.id)}
 					<button
