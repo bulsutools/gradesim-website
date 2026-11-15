@@ -158,9 +158,8 @@
 				<details class="track">
 					<summary>{app.program.tracks![(detected ?? track)!].name}{detected ? '' : ' (assumed)'}</summary>
 					{#if detected}
-						<Notice tone="ok">Your grades show the {app.program.tracks![detected].name} ({app.program.tracks![detected].code}).</Notice>
+						<p class="muted small">Your grades show this track.</p>
 					{:else}
-						<Notice tone="warn">No SP or thesis course in your grades yet, so GradeSim assumes {app.program.tracks![track!].name} ({app.program.tracks![track!].code}). Pick yours below.</Notice>
 						<div class="tracks" role="radiogroup" aria-label="Track">
 							{#each tracks as [key, t] (key)}
 								<label class="check">
