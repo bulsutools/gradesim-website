@@ -150,8 +150,6 @@
 				{/snippet}
 			</Notice>
 			<dl>
-				<div><dt>Current GWA</dt><dd>{g.gwa > 0 ? g.gwa.toFixed(4) : 'None yet'}</dd></div>
-				<div><dt>Target</dt><dd>{target.toFixed(2)} or better</dd></div>
 				<div><dt>GWA units so far</dt><dd>{g.totalUnits}</dd></div>
 				<div><dt>GWA units left</dt><dd>{left.gwaUnits}</dd></div>
 			</dl>
