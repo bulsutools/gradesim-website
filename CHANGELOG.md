@@ -1,3 +1,10 @@
+# [0.24.0](https://github.com/uplbtools/gradesim-website/compare/v0.23.0...v0.24.0) (2026-11-15)
+
+
+### Features
+
+* **planner:** the sem that has started is Now, and a course can be marked as taken now ([#238](https://github.com/uplbtools/gradesim-website/issues/238)) ([9fab7e2](https://github.com/uplbtools/gradesim-website/commit/9fab7e2561d9b3686176d1b08db673bec093a843))
+
 # [0.23.0](https://github.com/uplbtools/gradesim-website/compare/v0.22.0...v0.23.0) (2026-11-15)
 
 
