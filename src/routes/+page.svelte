@@ -15,7 +15,7 @@
 
 	const TABS = [
 		{ id: 'grades', label: 'Grades' },
-		{ id: 'whatif', label: 'What if' },
+		{ id: 'whatif', label: 'Target' },
 		{ id: 'planner', label: 'Planner' },
 		{ id: 'wrapped', label: 'Wrapped' }
 	] as const;
@@ -114,7 +114,7 @@
 	async function fromExtension() {
 		const reply = await getExtensionGrades();
 		if (!reply) {
-			message = { text: "The extension didn't answer. Reload this page and try again.", tone: 'bad' };
+			message = { text: "The extension didn't answer, so nothing changed. Reload this page and try again.", tone: 'bad' };
 			return;
 		}
 		const r = parseBackup(reply);
@@ -123,7 +123,7 @@
 			return;
 		}
 		app.applyGrades(r, 'extension');
-		message = { text: `Imported ${app.courses.length} courses from the GradeSim extension.`, tone: 'ok' };
+		message = { text: `Imported ${app.courses.length} courses from the extension.`, tone: 'ok' };
 		manual = false;
 	}
 

@@ -66,7 +66,7 @@ test('reads a saved plan and refuses a damaged one', () => {
 	});
 	expect(parseImport(JSON.stringify(plan))).toMatchObject({ kind: 'plan', plan: { program: 'BSCS' } });
 	expect(parseImport(JSON.stringify({ ...plan, plannerOptions: { cap: 30 } }))).toMatchObject({ kind: 'error', message: expect.stringContaining('damaged') });
-	expect(parseImport(JSON.stringify({ ...plan, program: 'NOPE' }))).toMatchObject({ kind: 'error', message: expect.stringContaining('NOPE') });
+	expect(parseImport(JSON.stringify({ ...plan, program: 'NOPE' }))).toMatchObject({ kind: 'error', message: expect.stringContaining("doesn't have yet") });
 	expect(parseImport(JSON.stringify({ ...plan, version: 2 }))).toMatchObject({ kind: 'error', message: expect.stringContaining('newer') });
 });
 

@@ -244,9 +244,9 @@ export function groupCourses(courses: Course[], by: 'term' | 'year'): Group[] {
 
 // Latin honors only. Honor Roll isn't a Latin honor, so it isn't a target or a badge.
 export const HONORS = [
-	{ key: 'summa', name: 'Summa Cum Laude', max: 1.2 },
-	{ key: 'magna', name: 'Magna Cum Laude', max: 1.45 },
-	{ key: 'cum', name: 'Cum Laude', max: 1.75 }
+	{ key: 'summa', name: 'Summa cum laude', max: 1.2 },
+	{ key: 'magna', name: 'Magna cum laude', max: 1.45 },
+	{ key: 'cum', name: 'Cum laude', max: 1.75 }
 ] as const;
 
 /** The honor track for a GWA. None with zero graded units. */

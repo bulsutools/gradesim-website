@@ -25,12 +25,12 @@
 	<div class="hero">
 		<div class="copy">
 			<h1>Your GWA, Latin honors and graduation plan</h1>
-			<p class="lede">It computes your GWA the way UPLB does and plans the terms you have left.</p>
+			<p class="lede">GradeSim computes your GWA the way UPLB does and plans the sems you have left.</p>
 
 			<div class="start">
 				{#if extension === 'found'}
 					<button class="btn btn-primary btn-lg" type="button" onclick={onExtension}>
-						<Icon name="plug" />Import from the GradeSim extension
+						<Icon name="plug" />Import from the extension
 					</button>
 					<p class="hint">The extension on this browser already has your grades from AMIS.</p>
 				{:else if extension === 'empty'}
@@ -39,21 +39,19 @@
 						page.
 					</Notice>
 				{:else}
-					<a class="btn btn-primary btn-lg laptop" href={resolve('install/')}>Install the extension</a>
+					<a class="btn btn-primary btn-lg laptop" href={resolve('install/')}>Get the extension</a>
 					<a class="btn btn-primary btn-lg phone" href={resolve('install/') + '#phone'}>Get my grades from AMIS</a>
 					<p class="hint phone">A phone can't install the extension, so a bookmark brings your grades over.</p>
 				{/if}
 			</div>
 
 			<div class="other">
-				<p>No extension, or on a phone?</p>
 				<div class="links">
-					<FileButton label="Import a file" {onFile} quiet />
+					<FileButton label="Load backup" {onFile} quiet />
 					<button class="textbtn" type="button" onclick={onManual} aria-expanded={manual}>
 						<Icon name="pencil" />Enter grades by hand
 					</button>
 				</div>
-				<p class="hint">Import takes the .json from Export JSON or the <a href={resolve('install/') + '#phone'}>phone bookmark</a>.</p>
 				<p class="hint">No grades yet? <a href={resolve('curricula/')}>See your program's checklist</a>.</p>
 			</div>
 
@@ -63,7 +61,7 @@
 		<figure class="shot">
 			<ThemedShot
 				name="planner-crop"
-				alt="Part of the planner. The next term lists the planned courses and the retake of a failed MATH 27."
+				alt="Part of the planner. The next sem lists the planned courses and the retake of a failed MATH 27."
 				width={1086}
 				height={798}
 			/>
@@ -73,7 +71,7 @@
 	{#if manual}
 		<section class="card manual" aria-labelledby="manual-title" {@attach (el) => el.scrollIntoView()}>
 			<h2 id="manual-title">Add your first course</h2>
-			<p class="muted">Pick the term, then add each course. Your dashboard opens after the first one.</p>
+			<p class="muted">Pick the sem, then add each course. Your dashboard opens after the first one.</p>
 			<GradeEditor />
 		</section>
 	{/if}
