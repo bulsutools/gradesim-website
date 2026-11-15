@@ -227,7 +227,7 @@ test('newer grades from the extension load on the next visit', async ({ page }) 
 	await expect(page.getByTestId('gwa')).not.toHaveText('1.9773');
 });
 
-test('the phone bookmark saves AMIS grades as a file the app imports', async ({ page }) => {
+test('the phone bookmark opens GradeSim with the AMIS grades in the link', async ({ page }) => {
 	const { BOOKMARKLET } = await import('../src/lib/bookmarklet.ts');
 	const amis = JSON.parse(backup.toString()).gradesData;
 	await page.route('https://amis.uplb.edu.ph/**', (r) => r.fulfill({ contentType: 'text/html', body: '<p>AMIS</p>' }));
@@ -242,15 +242,41 @@ test('the phone bookmark saves AMIS grades as a file the app imports', async ({ 
 	await page.goto('https://amis.uplb.edu.ph/');
 	await page.evaluate(() => localStorage.setItem('auth._token.local', 'Bearer test'));
 	page.once('dialog', (d) => d.dismiss());
-	const [download] = await Promise.all([
-		page.waitForEvent('download'),
-		page.evaluate(decodeURIComponent(BOOKMARKLET.slice('javascript:'.length)))
-	]);
-	expect(download.suggestedFilename()).toBe('gradesim-amis.json');
-	const file = fs.readFileSync(await download.path());
-	await open(page);
-	await page.getByTestId('file-input').first().setInputFiles({ name: 'gradesim-amis.json', mimeType: 'application/json', buffer: file });
+	await page.route('https://gradesim.uplb.tools/**', (r) => r.fulfill({ contentType: 'text/html', body: '<p>GradeSim</p>' }));
+	await Promise.all([page.waitForURL(/gradesim\.uplb\.tools\/#d=/), page.evaluate(decodeURIComponent(BOOKMARKLET.slice('javascript:'.length)))]);
+	await open(page, '/' + new URL(page.url()).hash);
 	await expect(page.getByTestId('gwa')).toHaveText('1.9773');
+	await expect(page.getByRole('status').first()).toContainText('from your link');
+	expect(page.url()).toMatch(/#grades$/);
+});
+
+test('a copied link opens the grades in another browser, and asks before it replaces any', async ({ page, context, browser }) => {
+	await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+	await importFixture(page);
+	await page.getByText('Import, export or clear your data').click();
+	await page.getByRole('button', { name: 'Copy a link to my grades' }).click();
+	await expect(page.getByText('The link is copied.')).toBeVisible();
+	const link = await page.evaluate(() => navigator.clipboard.readText());
+
+	const other = await (await browser.newContext()).newPage();
+	await other.goto(link);
+	await expect(other.getByTestId('gwa')).toHaveText('1.9773');
+	await other.context().close();
+
+	let asked = '';
+	page.once('dialog', (d) => {
+		asked = d.message();
+		d.dismiss();
+	});
+	await page.goto(link);
+	await expect.poll(() => asked).toContain('Replace the grades');
+	await expect(page.getByTestId('gwa')).toHaveText('1.9773');
+});
+
+test('@phone the welcome screen leads with the AMIS bookmark', async ({ page }) => {
+	await page.goto('/');
+	await expect(page.locator('#main').getByRole('link', { name: 'Get my grades from AMIS' })).toHaveAttribute('href', /install\/#phone$/);
+	await expect(page.locator('#main').getByRole('link', { name: 'Install the extension' })).toBeHidden();
 });
 
 test('the GWA and semester cards in Wrapped are drawn in the tin frame', async ({ page }) => {

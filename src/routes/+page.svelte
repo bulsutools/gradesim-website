@@ -2,6 +2,7 @@
 	import { onMount, tick } from 'svelte';
 	import { app } from '#lib/app.svelte.ts';
 	import { getExtensionGrades, probeExtension } from '#lib/bridge.ts';
+	import { unpackHash } from '#lib/link.ts';
 	import { UPLB_PROGRAMS } from '#lib/curriculum.ts';
 	import { parseBackup, parseImport } from '#lib/importers.ts';
 	import Seo from '#lib/components/Seo.svelte';
@@ -29,6 +30,19 @@
 	function readHash() {
 		const h = location.hash.slice(1);
 		if (TABS.some((t) => t.id === h)) tab = h as Tab;
+		else if (h.startsWith('d=')) fromLink();
+	}
+
+	async function fromLink() {
+		const hash = location.hash;
+		history.replaceState(history.state, '', location.pathname + location.search + '#grades'); // the grades leave the address bar
+		const text = await unpackHash(hash).catch(() => null);
+		if (text == null) {
+			message = { text: "GradeSim can't read that link, so nothing changed. Copy a new one on the device that has your grades.", tone: 'bad' };
+			return;
+		}
+		if (app.hasData && !confirm('This link holds grades. Replace the grades saved in this browser with them?')) return;
+		fromText(text, 'your link');
 	}
 
 	function setTab(id: Tab) {
@@ -113,15 +127,17 @@
 		manual = false;
 	}
 
-	async function fromFile(file: File) {
-		const result = parseImport(await file.text());
+	const fromFile = async (file: File) => fromText(await file.text(), file.name);
+
+	function fromText(text: string, name: string) {
+		const result = parseImport(text);
 		if (result.kind === 'error') {
 			message = { text: result.message, tone: 'bad' };
 			return;
 		}
 		if (result.kind === 'grades') {
 			app.applyGrades(result.patch, 'file');
-			message = { text: `Imported ${app.courses.length} courses from ${file.name}.`, tone: 'ok' };
+			message = { text: `Imported ${app.courses.length} courses from ${name}.`, tone: 'ok' };
 			manual = false;
 			return;
 		}

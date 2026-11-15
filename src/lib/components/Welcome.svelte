@@ -39,7 +39,9 @@
 						page.
 					</Notice>
 				{:else}
-					<a class="btn btn-primary btn-lg" href={resolve('install/')}>Install the extension</a>
+					<a class="btn btn-primary btn-lg laptop" href={resolve('install/')}>Install the extension</a>
+					<a class="btn btn-primary btn-lg phone" href={resolve('install/') + '#phone'}>Get my grades from AMIS</a>
+					<p class="hint phone">A phone can't install the extension, so a bookmark brings your grades over.</p>
 				{/if}
 			</div>
 
@@ -78,6 +80,24 @@
 </div>
 
 <style>
+	.phone {
+		display: none;
+	}
+
+	@media (pointer: coarse) {
+		.laptop {
+			display: none;
+		}
+
+		.phone {
+			display: revert;
+		}
+
+		a.phone {
+			display: inline-flex;
+		}
+	}
+
 	.welcome {
 		padding-top: 32px;
 	}

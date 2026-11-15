@@ -1,3 +1,5 @@
+// Opens GradeSim with the grades packed into the link (see link.ts). An older
+// browser saves them as a file instead.
 const code = `(async () => {
 	if (location.hostname !== 'amis.uplb.edu.ph') return alert('Open AMIS, log in, then tap this bookmark there.');
 	const token = localStorage.getItem('auth._token.local');
@@ -21,6 +23,13 @@ const code = `(async () => {
 		};
 	}
 	const file = JSON.stringify({ source: 'elbi-gradesim', timestamp: new Date().toISOString(), gradesData: { student_grades: terms } });
+	try {
+		const packed = await new Response(new Blob([file]).stream().pipeThrough(new CompressionStream('deflate-raw'))).arrayBuffer();
+		let bin = '';
+		new Uint8Array(packed).forEach((b) => (bin += String.fromCharCode(b)));
+		location.href = 'https://gradesim.uplb.tools/#d=' + btoa(bin).replace(/\\+/g, '-').replace(/\\//g, '_').replace(/=+$/, '');
+		return;
+	} catch (e) {}
 	const a = document.createElement('a');
 	a.href = URL.createObjectURL(new Blob([file], { type: 'application/json' }));
 	a.download = 'gradesim-amis.json';
