@@ -6,6 +6,7 @@ import {
 	buildColumns,
 	calendarAbs,
 	cardFacts,
+	columnFacts,
 	compute,
 	DEFAULT_PLANNER_OPTIONS,
 	modelFor,
@@ -72,6 +73,26 @@ test('every program builds a plan without throwing', () => {
 		const v = compute(m, { ...input(), gradesData: null, plannerOptions: DEFAULT_PLANNER_OPTIONS }, now);
 		expect(buildColumns(v).list.length).toBeGreaterThan(0);
 	}
+});
+
+test('a term of 18 units plus HK and NSTP is not an overload', () => {
+	const m = modelFor('BACOMM')!;
+	const v = compute(m, { ...input(), gradesData: null, plannerOptions: DEFAULT_PLANNER_OPTIONS }, now);
+	const cols = buildColumns(v).list.map((c) => ({ c, f: columnFacts(c, v) }));
+	expect(cols.some(({ c }) => c.cards.some((k) => /^(HK|NSTP)\b/.test(k.code)))).toBe(true);
+	cols.forEach(({ f }) => expect(f.warn).toBe(''));
+});
+
+test('the checklist load lets a blank BS EE plan take its prescribed heavy sems', () => {
+	const m = modelFor('BSEE')!;
+	const facts = (cap: 18 | 'checklist') => {
+		const v = compute(m, { ...input(), gradesData: null, plannerOptions: { ...DEFAULT_PLANNER_OPTIONS, cap } }, now);
+		return buildColumns(v).list.map((c) => columnFacts(c, v));
+	};
+	expect(Math.max(...facts(18).map((f) => f.units))).toBeLessThanOrEqual(18);
+	const byChecklist = facts('checklist');
+	expect(byChecklist.some((f) => f.units > 18 && f.warn === 'Over 18 units, which the checklist puts in this sem.')).toBe(true);
+	expect(byChecklist.every((f) => !f.loud || f.isMid)).toBe(true);
 });
 
 test('a what-if fail on a course already failed reports what that failure costs', () => {

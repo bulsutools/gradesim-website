@@ -475,6 +475,8 @@ export interface ScheduleOptions {
 	/** {termIndex: units} taken by failed attempts. */
 	reserved?: Record<number, number>;
 	unitCaps?: Partial<Record<Sem, number>>;
+	/** {termIndex: units} in place of unitCaps. */
+	termCaps?: Record<number, number>;
 	/** Sem of termIndex 0. */
 	startSem?: Sem;
 	/** Program total, for standing. */
@@ -506,9 +508,16 @@ export function scheduleEarliest(opts: ScheduleOptions): ScheduleResult {
 
 	const byCode = new Map<string, PlanCourse>();
 	courses.forEach((c) => byCode.set(normCode(c.code), c));
+	const extraKind = (code: string) =>
+		/^NSTP\b/.test(code) ? 'NSTP' : /^(HK|PE)\b/.test(code) ? 'HK' : null;
 	const unitsOf = (code: string) => {
+		if (extraKind(code)) return 0;
 		const c = byCode.get(code);
 		return c && c.units != null ? Number(c.units) : 3;
+	};
+	const slotOf = (code: string) => {
+		const c = byCode.get(code)!;
+		return (c.year || 9) * 3 + (SEM_DIGIT[c.sem as Sem] || 0);
 	};
 	const totalUnits =
 		opts.totalUnits || Array.from(byCode.keys()).reduce((s, c) => s + unitsOf(c), 0);
@@ -571,7 +580,8 @@ export function scheduleEarliest(opts: ScheduleOptions): ScheduleResult {
 
 	for (let t = 0; t < maxTerms && remaining.size > 0; t++) {
 		const sem = semAt(t, startSem);
-		const cap = (unitCaps[sem] != null ? unitCaps[sem]! : DEFAULT_UNIT_CAPS[sem]) - (reserved[t] || 0);
+		const base = opts.termCaps?.[t] ?? (unitCaps[sem] != null ? unitCaps[sem]! : DEFAULT_UNIT_CAPS[sem]);
+		const cap = base - (reserved[t] || 0);
 		const done = (c: string) => passed.has(c) || (assignedTerm[c] !== undefined && assignedTerm[c] < t);
 
 		let candidates = Array.from(remaining).filter((code) => {
@@ -601,16 +611,20 @@ export function scheduleEarliest(opts: ScheduleOptions): ScheduleResult {
 			candidates = next;
 		}
 
+		const otherSem: Sem = sem === '1' ? '2' : '1';
+		const later = (code: string) => (offeredIn(byCode.get(code)!, otherSem) ? 1 : 0);
 		candidates.sort((a, b) => {
 			const diff = chainLength(b, new Set()) - chainLength(a, new Set());
 			if (diff !== 0) return diff;
-			return unitsOf(b) - unitsOf(a);
+			return later(a) - later(b) || slotOf(a) - slotOf(b) || unitsOf(b) - unitsOf(a);
 		});
 
 		const placed: string[] = [];
 		let units = 0;
 		candidates.forEach((code) => {
 			if (assignedTerm[code] !== undefined) return;
+			const kind = extraKind(code);
+			if (kind && placed.some((c) => extraKind(c) === kind)) return;
 			// Place a course together with its unplaced coreqs, or not at all.
 			const bundle = [
 				code,

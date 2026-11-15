@@ -3,6 +3,14 @@
 	import Seo from '#lib/components/Seo.svelte';
 	import Icon from '#lib/components/Icon.svelte';
 	import PageHead from '#lib/components/PageHead.svelte';
+	import { BOOKMARKLET } from '#lib/bookmarklet.ts';
+
+	let copied = $state(false);
+
+	async function copyBookmarklet() {
+		await navigator.clipboard.writeText(BOOKMARKLET);
+		copied = true;
+	}
 
 	const stores = [
 		{
@@ -65,9 +73,21 @@
 			<li>Open your grades. The extension saves them in your browser.</li>
 			<li>Come back to <a href={resolve('/')}>Elbi GradeSim</a> and choose Import from the GradeSim extension.</li>
 		</ol>
+	</section>
+
+	<section class="prose steps">
+		<h2>On a phone</h2>
 		<p>
-			No extension, or on a phone? You can still use the web app. Import a JSON backup or type your grades in by hand.
+			Firefox for Android can install the extension from <a href={stores[1].href} rel="noopener" target="_blank">Firefox Add-ons</a>.
+			Chrome and Safari on phones can't install extensions, so use a bookmark that saves your grades as a file.
 		</p>
+		<ol>
+			<li><button class="btn" type="button" onclick={copyBookmarklet}>{copied ? 'Copied' : 'Copy the bookmark'}</button></li>
+			<li>Bookmark any page, edit the bookmark, name it gradesim and paste what you copied as its address.</li>
+			<li>Log in to <a href="https://amis.uplb.edu.ph" rel="noopener" target="_blank">AMIS</a>, type gradesim in the address bar and tap the bookmark.</li>
+			<li>Open <a href={resolve('/')}>Elbi GradeSim</a>, choose Import a file and pick gradesim-amis.json.</li>
+		</ol>
+		<p>You can also type your grades in by hand.</p>
 	</section>
 </div>
 
