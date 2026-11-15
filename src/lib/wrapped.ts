@@ -159,14 +159,12 @@ function semesterPanel(d: Data): Panel {
 		return { emoji: '📅', title: 'Sem stats', value: '--', subtitle: 'No sem has grades yet', message: 'Check back once grades are in.' };
 	}
 	const b = d.bestSem;
-	const bestWord = b.gwa <= 1.25 ? 'Your peak' : b.gwa <= 1.5 ? 'Nice run' : b.gwa <= 1.75 ? 'Solid sem' : b.gwa <= 2 ? 'Good one' : 'Best so far';
-	const highlights: Highlight[] = [{ label: '🏆 Best sem', name: b.name, detail: `GWA ${b.gwa.toFixed(4)}. ${bestWord}` }];
+	const highlights: Highlight[] = [{ label: '🏆 Best sem', name: b.name, detail: `GWA ${b.gwa.toFixed(4)}` }];
 	const t = d.worstSem;
 	const up = d.comeback;
 	if (up && up.sem.name !== b.name) highlights.push({ label: '📈 Comeback sem', name: up.sem.name, detail: `GWA ${up.sem.gwa.toFixed(4)}. Up ${up.up.toFixed(2)} from the sem before` });
 	else if (t && t.name !== b.name) {
-		const word = t.gwa >= 3 ? 'Rough one' : t.gwa >= 2.5 ? 'Challenging' : t.gwa >= 2 ? 'Tough load' : 'Room to grow';
-		highlights.push({ label: '📈 Toughest sem', name: t.name, detail: `GWA ${t.gwa.toFixed(4)}. ${word}` });
+		highlights.push({ label: '📈 Toughest sem', name: t.name, detail: `GWA ${t.gwa.toFixed(4)}` });
 	}
 	const n = d.semCount;
 	const message =
@@ -191,15 +189,15 @@ function collectorPanel(d: Data): Panel {
 		.sort()
 		.map((text) => ({ text, special: NON_NUMERIC_GRADES.includes(text) }));
 	const f = d.fails;
-	const extra = f === 0 ? 'Zero 5.00s. Clean record.' : f === 1 ? 'One 5.00, and still here.' : `${f} 5.00s, and still standing.`;
+	const extra = f === 0 ? 'Zero 5.00s' : f === 1 ? 'One 5.00' : `${f} 5.00s`;
 	return { emoji, title, value: String(total), subtitle: total === 1 ? 'kind of grade' : 'kinds of grades', message, badges, extra, frame: total ? 'note' : undefined };
 }
 
 function highlightsPanel(d: Data): Panel {
 	const highlights: Highlight[] = [];
-	if (d.best) highlights.push({ label: '🏆 Best performance', name: d.best.code, detail: `Grade ${d.best.grade.toFixed(2)}` });
-	if (d.worst) highlights.push({ label: '📈 Room to grow', name: d.worst.code, detail: `Grade ${d.worst.grade.toFixed(2)}` });
-	if (d.mostRetaken) highlights.push({ label: '🔄 Persistence award', name: d.mostRetaken.code, detail: `Taken ${d.mostRetaken.count} times. You didn't give up` });
+	if (d.best) highlights.push({ label: '🏆 Best grade', name: d.best.code, detail: `Grade ${d.best.grade.toFixed(2)}` });
+	if (d.worst) highlights.push({ label: '📈 Lowest grade', name: d.worst.code, detail: `Grade ${d.worst.grade.toFixed(2)}` });
+	if (d.mostRetaken) highlights.push({ label: '🔄 Most retaken', name: d.mostRetaken.code, detail: `Taken ${d.mostRetaken.count} times` });
 	return {
 		emoji: '🫴',
 		title: 'Your highlights',
@@ -659,7 +657,7 @@ async function drawFrame(ctx: CanvasRenderingContext2D, p: Panel, font: string, 
 				text(detail, 700, 34, RED, 60, 300);
 			});
 		corner(838, 805, low, ['', '', '']);
-		corner(860, 1185, kept, ['So far', p.extra ?? '', 'and counting']);
+		corner(860, 1185, kept, ['So far', p.extra ?? '', '']);
 		tag(url, 36, 540, 1478, -0.05);
 		return;
 	}
