@@ -1,3 +1,10 @@
+# [0.12.0](https://github.com/uplbtools/gradesim-website/compare/v0.11.0...v0.12.0) (2026-11-15)
+
+
+### Features
+
+* **phone:** the AMIS bookmark opens GradeSim with the grades, and a link carries them to another device ([#161](https://github.com/uplbtools/gradesim-website/issues/161)) ([aadc4ba](https://github.com/uplbtools/gradesim-website/commit/aadc4bab06166a90753ed93320e159b532b32e34))
+
 # [0.11.0](https://github.com/uplbtools/gradesim-website/compare/v0.10.0...v0.11.0) (2026-11-15)
 
 
