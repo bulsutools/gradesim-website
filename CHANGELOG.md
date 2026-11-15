@@ -1,3 +1,11 @@
+# [0.11.0](https://github.com/uplbtools/gradesim-website/compare/v0.10.0...v0.11.0) (2026-11-15)
+
+
+### Features
+
+* **sync:** a visit from the extension's popup imports the grades and opens the planner ([#158](https://github.com/uplbtools/gradesim-website/issues/158)) ([705699a](https://github.com/uplbtools/gradesim-website/commit/705699a8acd9a91afebbad5dc3ce53a168068f06))
+* **sync:** newer grades from the extension load on open, and a backup carries the plan ([#156](https://github.com/uplbtools/gradesim-website/issues/156)) ([0052e3a](https://github.com/uplbtools/gradesim-website/commit/0052e3ad528784fbd21308465dfed86cf14852ea))
+
 # [0.10.0](https://github.com/uplbtools/gradesim-website/compare/v0.9.0...v0.10.0) (2026-11-15)
 
 
