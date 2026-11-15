@@ -1,3 +1,10 @@
+# [0.20.0](https://github.com/uplbtools/gradesim-website/compare/v0.19.0...v0.20.0) (2026-11-15)
+
+
+### Features
+
+* **site:** link to GitHub Discussions Q&A ([#214](https://github.com/uplbtools/gradesim-website/issues/214)) ([cdb7df7](https://github.com/uplbtools/gradesim-website/commit/cdb7df7792ec72a85e7a13d0583ed6910d51d957))
+
 # [0.19.0](https://github.com/uplbtools/gradesim-website/compare/v0.18.1...v0.19.0) (2026-11-15)
 
 
