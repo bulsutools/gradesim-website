@@ -30,9 +30,11 @@ test('unknown URLs get the branded 404', async ({ page }) => {
 	await expect(page.getByRole('link', { name: 'Open Elbi GradeSim' })).toHaveAttribute('href', '/');
 });
 
-test('curricula lists planner programs that have no checklist image', async ({ page }) => {
+test('curricula opens a checklist with a link to plan it', async ({ page }) => {
 	await page.goto('/curricula/');
-	await expect(page.getByRole('link', { name: /BS Computer Science.*Planner only/ })).toHaveAttribute('href', '/?program=BSCS#planner');
+	await page.getByRole('button', { name: 'BS Computer Science' }).click();
+	await expect(page.getByAltText('BS Computer Science checklist, page 1')).toBeVisible();
+	await expect(page.getByRole('link', { name: 'Plan BS Computer Science in GradeSim' })).toHaveAttribute('href', '/?program=BSCS#planner');
 });
 
 test('manual entry: add courses by hand and the GWA shows', async ({ page }) => {
@@ -72,12 +74,26 @@ test('planner renders and a failed course shows a retake', async ({ page }) => {
 	await importFixture(page);
 	await page.getByRole('tab', { name: 'Planner' }).click();
 	await expect(page.getByTestId('grad-term')).toContainText('Graduate');
-	const grid = page.getByTestId('planner-grid');
-	await expect(grid.locator('.pl-card.st-retake[data-code="MATH 27"]')).toBeVisible();
-	await expect(grid.locator('.pl-card.st-failed[data-code="MATH 27"]')).toBeVisible();
-	await grid.locator('.pl-card.st-retake[data-code="MATH 27"]').click();
+	const sheet = page.getByTestId('planner-sheet');
+	await expect(sheet.locator('.pl-row.st-retake[data-code="MATH 27"]')).toBeVisible();
+	await expect(sheet.locator('.pl-row.st-failed[data-code="MATH 27"]')).toBeVisible();
+	await sheet.locator('.pl-row.st-retake[data-code="MATH 27"]').click();
 	await expect(page.getByRole('complementary', { name: 'Details for MATH 27' })).toContainText('Analytic Geometry');
 	await expect(page).toHaveURL(/#planner$/);
+});
+
+test('a checklist fix changes the plan and is listed for sending', async ({ page }) => {
+	await importFixture(page);
+	await page.getByRole('tab', { name: 'Planner' }).click();
+	const sheet = page.getByTestId('planner-sheet');
+	await sheet.locator('.pl-row[data-code="CMSC 123"]').click();
+	await page.getByRole('button', { name: 'Fix this course' }).click();
+	await page.getByRole('spinbutton', { name: 'Units' }).fill('5');
+	await page.getByRole('button', { name: 'Save fix' }).click();
+	await expect(page.getByRole('region', { name: 'Your fixes to this checklist' })).toContainText('CMSC 123 has 5 units');
+	await expect(sheet.locator('.pl-row[data-code="CMSC 123"] .pl-row-units')).toHaveText('5');
+	await page.getByRole('button', { name: 'Undo' }).click();
+	await expect(sheet.locator('.pl-row[data-code="CMSC 123"] .pl-row-units')).toHaveText('3');
 });
 
 test('What if and the planner count the same units left', async ({ page }) => {
@@ -87,13 +103,6 @@ test('What if and the planner count the same units left', async ({ page }) => {
 	const units = (await page.getByTestId('units-left').textContent())!.trim();
 	await page.getByRole('link', { name: 'See them in the planner' }).click();
 	await expect(page.getByText(`You have ${units} units left to pass`)).toBeVisible();
-});
-
-test('programs without a checklist show as coming soon', async ({ page }) => {
-	await importFixture(page);
-	const option = page.getByRole('combobox', { name: 'Your degree program' }).locator('option[value="BSMST"]');
-	await expect(option).toHaveAttribute('disabled');
-	await expect(option).toContainText('coming soon');
 });
 
 test('theme toggle cycles and persists', async ({ page }) => {
@@ -108,6 +117,19 @@ test('theme toggle cycles and persists', async ({ page }) => {
 	await expect(html).toHaveAttribute('data-theme', 'dark');
 	await page.getByRole('button', { name: /theme/i }).click();
 	await expect(html).not.toHaveAttribute('data-theme');
+});
+
+test('curricula deep link opens the planner without grades', async ({ page }) => {
+	await open(page, '/?program=BSCS#planner');
+	await expect(page.getByTestId('planner-sheet')).toBeVisible();
+	await page.getByRole('combobox', { name: 'Your degree program' }).selectOption('BSBIO');
+	await expect(page.getByText('BS Biology checklist')).toBeVisible();
+	await page.reload();
+	await expect(page.getByText('BS Biology checklist')).toBeVisible();
+	await page.getByRole('button', { name: 'Add your grades' }).click();
+	await expect(page.getByRole('link', { name: 'Install the extension' }).first()).toBeVisible();
+	await page.reload();
+	await expect(page.getByTestId('planner-sheet')).toHaveCount(0);
 });
 
 test('curricula deep link picks the program in the planner', async ({ page }) => {
@@ -132,12 +154,12 @@ test('@phone mobile layout stacks the planner terms', async ({ page }) => {
 	const noSideScroll = () => page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth);
 	expect(await noSideScroll()).toBe(true);
 	await page.getByRole('tab', { name: 'Planner' }).click();
-	const grid = page.getByTestId('planner-grid');
-	await expect(grid).toHaveCSS('flex-direction', 'column');
+	const sheet = page.getByTestId('planner-sheet');
+	await expect(sheet).toHaveCSS('flex-direction', 'column');
 	expect(await noSideScroll()).toBe(true);
-	await grid.locator('.pl-card.st-retake[data-code="MATH 27"]').click();
+	await sheet.locator('.pl-row.st-retake[data-code="MATH 27"]').click();
 	// On phones the details open inline, inside the term list.
-	await expect(grid.getByRole('complementary', { name: 'Details for MATH 27' })).toBeVisible();
+	await expect(sheet.getByRole('complementary', { name: 'Details for MATH 27' })).toBeVisible();
 });
 
 test('imports from the extension through the window bridge', async ({ page }) => {
@@ -154,4 +176,30 @@ test('imports from the extension through the window bridge', async ({ page }) =>
 	await page.getByRole('button', { name: 'Import from the GradeSim extension' }).click();
 	await expect(page.getByTestId('gwa')).toHaveText('1.9773');
 	await expect(page.getByRole('status').first()).toContainText('from the GradeSim extension');
+});
+
+test('the phone bookmark saves AMIS grades as a file the app imports', async ({ page }) => {
+	const { BOOKMARKLET } = await import('../src/lib/bookmarklet.ts');
+	const amis = JSON.parse(backup.toString()).gradesData;
+	await page.route('https://amis.uplb.edu.ph/**', (r) => r.fulfill({ contentType: 'text/html', body: '<p>AMIS</p>' }));
+	const cors = {
+		'access-control-allow-origin': 'https://amis.uplb.edu.ph',
+		'access-control-allow-credentials': 'true',
+		'access-control-allow-headers': 'authorization,x-session-id'
+	};
+	await page.route('https://api-amis.uplb.edu.ph/**', (r) =>
+		r.request().method() === 'OPTIONS' ? r.fulfill({ status: 204, headers: cors }) : r.fulfill({ json: amis, headers: cors })
+	);
+	await page.goto('https://amis.uplb.edu.ph/');
+	await page.evaluate(() => localStorage.setItem('auth._token.local', 'Bearer test'));
+	page.once('dialog', (d) => d.dismiss());
+	const [download] = await Promise.all([
+		page.waitForEvent('download'),
+		page.evaluate(decodeURIComponent(BOOKMARKLET.slice('javascript:'.length)))
+	]);
+	expect(download.suggestedFilename()).toBe('gradesim-amis.json');
+	const file = fs.readFileSync(await download.path());
+	await open(page);
+	await page.getByTestId('file-input').first().setInputFiles({ name: 'gradesim-amis.json', mimeType: 'application/json', buffer: file });
+	await expect(page.getByTestId('gwa')).toHaveText('1.9773');
 });

@@ -3,10 +3,10 @@
 // outlook math matches the extension.
 import { expect, test } from 'vitest';
 import { UPLB_CATALOG } from './catalog.ts';
-import { getPlannerCourses, UPLB_PROGRAMS } from './curriculum.ts';
+import { getPlannerCourses, isNonGwaCourseCode, UPLB_PROGRAMS } from './curriculum.ts';
 import type { GradesData } from './grades.ts';
 import { compute, DEFAULT_PLANNER_OPTIONS, modelFor } from './planner.ts';
-import { amisCourses, gradeResult, gwaOutlook, plannerCourseList, remainingRequirements } from './requirements.ts';
+import { amisCourses, applyRemovals, gradeResult, gwaOutlook, plannerCourseList, remainingRequirements, removalKey, surplusElectives } from './requirements.ts';
 import { enrichCourses, scheduleEarliest, semAt } from './scheduler.ts';
 
 test('grade results', () => {
@@ -53,7 +53,7 @@ test('GE by code, HK and NSTP complete, PEd and ECON 11 fill free electives', ()
 	expect(leftCodes.has('CMSC 21')).toBe(false);
 	['CMSC 123', 'MATH 27', 'CMSC 100', 'CMSC 127'].forEach((c) => expect(leftCodes.has(c), c).toBe(true));
 	// HK and NSTP units are left to take but do not count in the GWA.
-	expect(left.units - left.gwaUnits).toBe(2 + 3);
+	expect(left.units - left.gwaUnits).toBe(3 * 2 + 3);
 });
 
 test('What if units left equal what the scheduler places', () => {
@@ -89,6 +89,16 @@ test('no made up free electives, and planner marks count', () => {
 	expect(remainingRequirements(plannerCourseList(UPLB_PROGRAMS.BSFST, null, UPLB_CATALOG), []).electives.totalUnits).toBe(6);
 	const marked = remainingRequirements(courses, passedRows, { overrides: { 'CMSC 123': 'passed', 'CMSC 12': 'failed' } });
 	expect(marked.units).toBe(left.units);
+});
+
+test('honors count only the required electives, the earliest first', () => {
+	const list = plannerCourseList(BSCS, 'sp', UPLB_CATALOG);
+	const feSlots = list.filter((c) => /^FE\b/.test(c.code)).length;
+	const extra = Array.from({ length: feSlots + 2 }, (_, i) => ({ code: `SOC ${100 + i}`, title: 'Elective', units: 3, grade: '1.00', result: 'passed', termId: String(1231 + i) }));
+	const named = { code: 'CMSC 12', title: 'Foundations of Computer Science', units: 3, grade: '1.00', result: 'passed', termId: '1231' };
+	expect(surplusElectives(list, [named, ...extra]).map((r) => r.code)).toEqual(extra.slice(-2).map((r) => r.code));
+	expect(surplusElectives(list, [named, ...extra.slice(0, feSlots)])).toEqual([]);
+	expect(surplusElectives(list.filter((c) => c.genericRequirement !== 'elective'), extra)).toEqual([]);
 });
 
 test('GWA outlook', () => {
@@ -138,4 +148,57 @@ test('HIST 1 fills KAS 1 and is not counted again as an elective', () => {
 	expect(r.electives.doneUnits).toBe(0);
 	const both = remainingRequirements(econ, [hist, { code: 'KAS 1', title: 'Kasaysayan ng Pilipinas', units: 3 }]);
 	expect(both.fill.get('KAS 1')?.code).toBe('KAS 1');
+});
+
+test('BSCS special problem twice, midyear practicum and senior year electives', () => {
+	const sp = plannerCourseList(BSCS, 'sp', UPLB_CATALOG);
+	const gwaUnits = sp.filter((c) => !isNonGwaCourseCode(c.code)).reduce((s, c) => s + c.units, 0);
+	expect(gwaUnits).toBe(BSCS.totalUnitsRequired);
+	const thesis = plannerCourseList(BSCS, 'thesis', UPLB_CATALOG);
+	expect(thesis.filter((c) => /^CMSC 200/.test(c.code)).map((c) => c.units)).toEqual([3, 3]);
+	expect(thesis.filter((c) => !isNonGwaCourseCode(c.code)).reduce((s, c) => s + c.units, 0)).toBe(130);
+
+	const fresh = scheduleEarliest({ courses: sp, passed: new Set(), useMidyear: false, totalUnits: 130 });
+	expect(fresh.plan.find((t) => t.courses.includes('CMSC 198'))!.sem).toBe('midyear');
+	const firstFE = Math.min(...sp.filter((c) => /^FE/.test(c.code)).map((c) => fresh.assignedTerm[c.code]));
+	expect(firstFE).toBeGreaterThanOrEqual(9);
+
+	// CMSC 56 failed with CMSC 57 passed, the practicum, and a second CMSC 190 being taken now.
+	const taken: GradesData = {
+		student_grades: {
+			1231: { values: [v('CMSC 56', 'Discrete I', 3, '5.00'), v('CMSC 12', 'Foundations', 3, '1.50')] },
+			1232: { values: [v('CMSC 57', 'Discrete II', 3, '2.00')] },
+			1253: { values: [v('CMSC 198', 'Practicum', 3, 'S')] },
+			1261: { values: [v('CMSC 190', 'Special Problem', 1, '1.50')] },
+			1262: { values: [v('CMSC 190', 'Special Problem', 2, null)] }
+		}
+	};
+	const view = compute(
+		modelFor('BSCS', 'sp')!,
+		{ gradesData: taken, substitutions: {}, customCourseStatus: {}, plannerPins: {}, plannerPetitions: {}, plannerOptions: DEFAULT_PLANNER_OPTIONS, whatif: null },
+		new Date(2027, 1, 1)
+	);
+	expect(view.info['CMSC 190'].status).toBe('passed');
+	expect(view.info['CMSC 190 (2)'].status).toBe('inprogress');
+	expect(view.info['CMSC 198'].status).toBe('passed');
+	expect(view.info['FE 1'].status).toBe('todo');
+	expect(view.conflicts).toEqual([{ code: 'CMSC 57', pre: 'CMSC 56' }]);
+});
+
+test('a 4.00 removal exam: a pass gives 3.00, a fail gives 5.00, other grades stay', () => {
+	const fours: GradesData = {
+		student_grades: { '1251': { values: [v('MATH 27', '', 3, '4.00'), v('CHEM 18', '', 3, '4.00'), v('STS 1', '', 3, '2.00')] } }
+	};
+	const removed = applyRemovals(fours, {
+		[removalKey('1251', 'math 27')]: 'pass',
+		[removalKey('1251', 'CHEM 18')]: 'fail',
+		[removalKey('1251', 'STS 1')]: 'fail'
+	});
+	expect(amisCourses(removed).map((r) => [r.code, r.grade, r.result])).toEqual([
+		['MATH 27', '3.00', 'passed'],
+		['CHEM 18', '5.00', 'failed'],
+		['STS 1', '2.00', 'passed']
+	]);
+	expect(fours.student_grades['1251'].values[0].grade).toBe('4.00');
+	expect(applyRemovals(fours, {})).toBe(fours);
 });

@@ -27,11 +27,11 @@
 		},
 		{
 			q: 'My program is missing or a course looks wrong.',
-			a: 'Curriculum data comes from the official checklists and is checked by volunteers. Open an issue on GitHub with the course and what the checklist says, and we will fix it.'
+			a: 'Curriculum data comes from the official checklists and is checked by volunteers. In the planner, select the course and choose Fix this course. Your plan uses the fix right away, and you can send it to UPLB Tools so the checklist is fixed for everyone. For a missing program, open an issue on GitHub.'
 		},
 		{
 			q: 'Can I use it on my phone?',
-			a: 'Yes. Install it from your browser menu (Add to Home Screen) and it works offline after the first visit. The extension itself needs a desktop browser, so on a phone import a backup file or enter your grades by hand.'
+			a: 'Yes. Install it from your browser menu (Add to Home Screen) and it works offline after the first visit. Firefox for Android can install the extension, and in Chrome or Safari the bookmark on the Install page saves your AMIS grades as a file to import.'
 		}
 	];
 </script>
@@ -51,7 +51,7 @@
 	<figure class="shot">
 		<ThemedShot
 			name="planner"
-			alt="The planner showing past terms with passed courses, a failed course with its retake, and the remaining terms up to graduation"
+			alt="The planner showing the graduation term, the what-if controls and a first year with a failed MATH 27"
 			width={1440}
 			height={900}
 		/>

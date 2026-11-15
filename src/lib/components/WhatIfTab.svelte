@@ -5,16 +5,15 @@
 	import { HONORS } from '#lib/grades.ts';
 	import { modelFor, planTrack } from '#lib/planner.ts';
 	import { amisCourses, gwaOutlook, remainingRequirements } from '#lib/requirements.ts';
-	import Icon from './Icon.svelte';
 	import Notice from './Notice.svelte';
 
 	// Counts come from requirements.ts, the same code the planner uses, so both show the same units left.
-	const rows = $derived(amisCourses(app.s.gradesData));
+	const rows = $derived(amisCourses(app.grades));
 	const detected = $derived(detectTrack(app.program, rows));
-	const track = $derived(planTrack(app.program, app.s.gradesData, app.s.track));
+	const track = $derived(planTrack(app.program, app.grades, app.s.track));
 	const quality = $derived(getProgramDataQuality(app.program.code));
 	const left = $derived.by(() => {
-		const model = app.program.available ? modelFor(app.program.code, track, app.specialization) : null;
+		const model = app.program.available ? modelFor(app.program.code, track, app.specialization, app.fixes) : null;
 		if (!model) return null;
 		return remainingRequirements(
 			model.courses,
@@ -25,6 +24,12 @@
 	const tracks = $derived(app.program.tracks ? Object.entries(app.program.tracks) : []);
 	const specs = $derived(app.program.specializations ? Object.entries(app.program.specializations) : []);
 	const spec = $derived(app.specialization ? app.program.specializations![app.specialization] : null);
+	// Courses a specialization adds outright (BS MST) show as one take-all list.
+	const specRows = $derived(new Map((spec?.courses ?? []).map((c) => [c.code, c])));
+	const pools = $derived([
+		...(spec?.pools ?? []),
+		...(specRows.size ? [{ name: 'Courses for this specialization', slots: [...specRows.keys()], courses: [...specRows.keys()] }] : [])
+	]);
 	const passedCodes = $derived(new Set(rows.filter((r) => r.result === 'passed').map((r) => r.code)));
 	const g = $derived(app.gwa);
 
@@ -164,11 +169,11 @@
 					<div><dt>Free elective units done</dt><dd>{left.electives.doneUnits} of {left.electives.totalUnits}</dd></div>
 				{/if}
 			</dl>
-			<a class="btn btn-secondary" href="#planner"><Icon name="planned" />See them in the planner</a>
+			<a class="btn btn-secondary" href="#planner">See them in the planner</a>
 
 			{#if tracks.length}
 				<details class="track">
-					<summary>Track</summary>
+					<summary>{app.program.tracks![(detected ?? track)!].name}{detected ? '' : ' (assumed)'}</summary>
 					{#if detected}
 						<Notice tone="ok">Your grades show the {app.program.tracks![detected].name} ({app.program.tracks![detected].code}).</Notice>
 					{:else}
@@ -198,16 +203,17 @@
 						</select>
 					</label>
 					{#if spec}
-						{#each spec.pools as pool (pool.name)}
+						{#each pools as pool (pool.name)}
 							<h3 class="pool">{pool.name}</h3>
 							<p class="muted small">
 								{pool.courses.length > pool.slots.length ? `Take ${pool.slots.length} of these ${pool.courses.length}.` : `Take all ${pool.courses.length}.`}
 							</p>
 							<dl>
 								{#each pool.courses as code (code)}
+									{@const entry = UPLB_CATALOG[code] ?? specRows.get(code)}
 									<div>
-										<dt>{code} <span class="muted">{UPLB_CATALOG[code]?.title.replace(/\.$/, '') ?? ''}</span></dt>
-										<dd>{passedCodes.has(code) ? 'Passed' : `${UPLB_CATALOG[code]?.units ?? 3} units`}</dd>
+										<dt>{code} <span class="muted">{entry?.title?.replace(/\.$/, '') ?? ''}</span></dt>
+										<dd>{passedCodes.has(code) ? 'Passed' : `${entry?.units ?? 3} units`}</dd>
 									</div>
 								{/each}
 							</dl>
@@ -226,7 +232,14 @@
 <style>
 	.whatif {
 		display: grid;
-		gap: 16px;
+		gap: 28px;
+	}
+
+	.whatif > .card {
+		padding: 0;
+		border: 0;
+		background: none;
+		box-shadow: none;
 	}
 
 	.h {
@@ -342,9 +355,9 @@
 
 	.track summary {
 		cursor: pointer;
+		padding: 8px 0;
 		font-weight: 650;
 		color: var(--ink);
-		margin-bottom: 8px;
 	}
 
 	.pool {
@@ -358,8 +371,42 @@
 		margin-top: 8px;
 	}
 
+	@media (max-width: 719px) {
+		.targets {
+			grid-template-columns: minmax(0, 1fr);
+		}
+
+		.tname {
+			font-size: 0.92rem;
+		}
+
+		.target {
+			flex-direction: row;
+			align-items: center;
+			justify-content: space-between;
+			gap: 8px;
+			min-height: 48px;
+			padding: 6px 12px;
+		}
+
+		.tname,
+		.tmax {
+			white-space: nowrap;
+		}
+
+		.tmax {
+			font-size: 0.75rem;
+		}
+
+		.custom {
+			width: 6.5em;
+			margin-top: 0;
+		}
+	}
+
 	@media (min-width: 900px) {
 		.whatif {
+			column-gap: 48px;
 			grid-template-columns: 1fr 1fr;
 			align-items: start;
 		}

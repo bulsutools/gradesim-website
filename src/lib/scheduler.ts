@@ -40,6 +40,7 @@ export interface ChecklistCourse {
 	gradeType?: string;
 	/** A specialization slot: only these courses fill it. */
 	options?: string[];
+	standing?: Standing | null;
 }
 
 /** A course the scheduler can place. */
@@ -54,6 +55,8 @@ export interface PlanCourse extends ChecklistCourse {
 	offered?: Offered | null;
 	inCatalog?: boolean;
 	petition?: boolean;
+	/** Changed by the student's own checklist fix. */
+	fixed?: boolean;
 }
 
 export const SEM_CYCLE: Sem[] = ['1', '2', 'midyear'];
@@ -375,7 +378,8 @@ export function preGroups(course: Pick<PlanCourse, 'pre' | 'prereqs'> | undefine
 
 /* ---------- Curriculum + catalog merge ---------- */
 
-const CLEAN_CODE_RE = /^[A-Z]{2,6} \d{1,3}(\.\d{1,2})?[A-Z]?$/;
+// A second enrollment of one course is written "CMSC 190 (2)".
+const CLEAN_CODE_RE = /^[A-Z]{2,6} \d{1,3}(\.\d{1,2})?[A-Z]?( \(\d\))?$/;
 
 /**
  * Turn checklist rows (some garbled by PDF parsing, e.g. code "3 CHEM 18.
@@ -384,7 +388,7 @@ const CLEAN_CODE_RE = /^[A-Z]{2,6} \d{1,3}(\.\d{1,2})?[A-Z]?$/;
  * requisites. Catalog requisites and units win over the checklist when present,
  * since PDF parsing garbled some checklist units (CHEM 18 at 51).
  */
-// ponytail: SP and thesis courses (190, 200, 200A) keep checklist units. AMIS
+// SP and thesis courses (190, 200, 200A) keep checklist units. AMIS
 // lists them as variable 1-unit enrollments, so the catalog number undercounts.
 const VARIABLE_UNIT_RE = / (190|200)[A-Z]?$/;
 function unitsFor(course: ChecklistCourse, c: CatalogEntry | null): number {
@@ -418,7 +422,7 @@ export function enrichCourses(
 			units: unitsFor(course, c),
 			pre: hasReq && c ? c.pre || [] : (course.prereqs || []).map((p) => [extractCode(p) || normCode(p)]),
 			co: hasReq && c ? c.co || [] : [],
-			standing: hasReq && c ? c.standing || null : null,
+			standing: hasReq && c ? c.standing || null : course.standing || null,
 			coi: !!(c && c.coi),
 			note: (c && c.note) || null,
 			offered: c ? c.offered : null,
@@ -471,6 +475,8 @@ export interface ScheduleOptions {
 	/** {termIndex: units} taken by failed attempts. */
 	reserved?: Record<number, number>;
 	unitCaps?: Partial<Record<Sem, number>>;
+	/** {termIndex: units} in place of unitCaps. */
+	termCaps?: Record<number, number>;
 	/** Sem of termIndex 0. */
 	startSem?: Sem;
 	/** Program total, for standing. */
@@ -502,9 +508,16 @@ export function scheduleEarliest(opts: ScheduleOptions): ScheduleResult {
 
 	const byCode = new Map<string, PlanCourse>();
 	courses.forEach((c) => byCode.set(normCode(c.code), c));
+	const extraKind = (code: string) =>
+		/^NSTP\b/.test(code) ? 'NSTP' : /^(HK|PE)\b/.test(code) ? 'HK' : null;
 	const unitsOf = (code: string) => {
+		if (extraKind(code)) return 0;
 		const c = byCode.get(code);
 		return c && c.units != null ? Number(c.units) : 3;
+	};
+	const slotOf = (code: string) => {
+		const c = byCode.get(code)!;
+		return (c.year || 9) * 3 + (SEM_DIGIT[c.sem as Sem] || 0);
 	};
 	const totalUnits =
 		opts.totalUnits || Array.from(byCode.keys()).reduce((s, c) => s + unitsOf(c), 0);
@@ -567,7 +580,8 @@ export function scheduleEarliest(opts: ScheduleOptions): ScheduleResult {
 
 	for (let t = 0; t < maxTerms && remaining.size > 0; t++) {
 		const sem = semAt(t, startSem);
-		const cap = (unitCaps[sem] != null ? unitCaps[sem]! : DEFAULT_UNIT_CAPS[sem]) - (reserved[t] || 0);
+		const base = opts.termCaps?.[t] ?? (unitCaps[sem] != null ? unitCaps[sem]! : DEFAULT_UNIT_CAPS[sem]);
+		const cap = base - (reserved[t] || 0);
 		const done = (c: string) => passed.has(c) || (assignedTerm[c] !== undefined && assignedTerm[c] < t);
 
 		let candidates = Array.from(remaining).filter((code) => {
@@ -597,16 +611,20 @@ export function scheduleEarliest(opts: ScheduleOptions): ScheduleResult {
 			candidates = next;
 		}
 
+		const otherSem: Sem = sem === '1' ? '2' : '1';
+		const later = (code: string) => (offeredIn(byCode.get(code)!, otherSem) ? 1 : 0);
 		candidates.sort((a, b) => {
 			const diff = chainLength(b, new Set()) - chainLength(a, new Set());
 			if (diff !== 0) return diff;
-			return unitsOf(b) - unitsOf(a);
+			return later(a) - later(b) || slotOf(a) - slotOf(b) || unitsOf(b) - unitsOf(a);
 		});
 
 		const placed: string[] = [];
 		let units = 0;
 		candidates.forEach((code) => {
 			if (assignedTerm[code] !== undefined) return;
+			const kind = extraKind(code);
+			if (kind && placed.some((c) => extraKind(c) === kind)) return;
 			// Place a course together with its unplaced coreqs, or not at all.
 			const bundle = [
 				code,
@@ -749,4 +767,17 @@ export function computeSlips(opts: ScheduleOptions, base?: ScheduleResult): Reco
 				: r.gradTermIndex - result.gradTermIndex;
 	});
 	return slip;
+}
+
+/** Passed courses with a failed prerequisite and no passed alternative. */
+export function prereqConflicts(courses: PlanCourse[], status: (code: string) => string | false | undefined): { code: string; pre: string }[] {
+	const out: { code: string; pre: string }[] = [];
+	courses.forEach((c) => {
+		if (status(c.code) !== 'passed') return;
+		preGroups(c).forEach((g) => {
+			const failed = g.find((p) => status(p) === 'failed');
+			if (failed && !g.some((p) => status(p) === 'passed')) out.push({ code: c.code, pre: failed });
+		});
+	});
+	return out;
 }

@@ -8,6 +8,7 @@
 	// Checklist images in static/curricula/<college>/<slug>-<page>.png
 	const CHECKLISTS: Record<string, [name: string, slug: string, pages: number][]> = {
 		CAS: [
+			['Associate in Arts (Sports Studies)', 'AA-Sports-Studies', 1],
 			['BA Communication Arts', 'BA-Communication-Arts', 2],
 			['BA Philosophy', 'BA-Philosophy', 2],
 			['BA Sociology', 'BA-Sociology', 2],
@@ -16,28 +17,40 @@
 			['BS Applied Physics', 'BS-Applied-Physics', 2],
 			['BS Biology', 'BS-Biology', 2],
 			['BS Chemistry', 'BS-Chemistry', 2],
+			['BS Computer Science', 'BS-Computer-Science', 1],
 			['BS Mathematics', 'BS-Mathematics', 2],
+			['BS Mathematics and Science Teaching', 'BS-Mathematics-and-Science-Teaching', 4],
 			['BS Statistics', 'BS-Statistics', 2]
 		],
 		CAFS: [
 			['BS Agricultural Biotechnology', 'BS-Agricultural-Biotechnology', 2],
-			['BS Agriculture', 'BS-Agriculture', 2],
+			['BS Agriculture', 'BS-Agriculture', 1],
 			['BS Food Science and Technology', 'BS-Food-Science-and-Technology', 2]
 		],
-		CDC: [['BS Development Communication', 'BS-Development-Communication', 2]],
+		CDC: [
+			['Associate of Science in Development Communication', 'AS-Development-Communication', 1],
+			['BS Development Communication', 'BS-Development-Communication', 2]
+		],
 		CEM: [
+			['Associate in Arts in Entrepreneurship', 'AA-Entrepreneurship', 1],
+			['BS Accountancy', 'BS-Accountancy', 1],
 			['BS Agribusiness Management and Entrepreneurship', 'BS-Agribusiness-Management-Entrepreneurship', 2],
 			['BS Agricultural and Applied Economics', 'BS-Agricultural-and-Applied-Economics', 2],
 			['BS Economics', 'BS-Economics', 2]
 		],
 		CEAT: [
+			['BS Agricultural and Biosystems Engineering', 'BS-Agricultural-and-Biosystems-Engineering', 1],
 			['BS Chemical Engineering', 'BS-Chemical-Engineering', 2],
 			['BS Civil Engineering', 'BS-Civil-Engineering', 2],
 			['BS Electrical Engineering', 'BS-Electrical-Engineering', 1],
 			['BS Industrial Engineering', 'BS-Industrial-Engineering', 1],
+			['BS Materials Engineering', 'BS-Materials-Engineering', 1],
 			['BS Mechanical Engineering', 'BS-Mechanical-Engineering', 1]
 		],
-		CFNR: [['BS Forestry', 'BS-Forestry', 1]],
+		CFNR: [
+			['Associate of Science in Forestry', 'Associate-in-Forestry', 1],
+			['BS Forestry', 'BS-Forestry', 1]
+		],
 		CHE: [
 			['BS Human Ecology', 'BS-Human-Ecology', 2],
 			['BS Nutrition', 'BS-Nutrition', 1]
@@ -80,17 +93,14 @@
 			<ul>
 				{#each programs as [name, slug, pages] (slug)}
 					<li>
-						<button class="program card" type="button" onclick={() => show(college, name, slug, pages)}>
-							<span>{name}</span>
-							<span class="muted">{pages} {pages === 1 ? 'page' : 'pages'}</span>
-						</button>
+						<button class="program" type="button" onclick={() => show(college, name, slug, pages)}>{name}</button>
 					</li>
 				{/each}
 				{#each plannerOnly(college) as p (p.code)}
 					<li>
-						<a class="program card planner-only" href="{resolve('/')}?program={p.code}#planner">
+						<a class="program" href="{resolve('/')}?program={p.code}#planner">
 							<span>{p.name}</span>
-							<span class="muted">Planner only for now</span>
+							<span class="muted">planner only</span>
 						</a>
 					</li>
 				{/each}
@@ -132,41 +142,41 @@
 	.college ul {
 		list-style: none;
 		padding: 0;
-		display: grid;
-		gap: 8px;
-		grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+		columns: 280px;
+		column-gap: 32px;
+	}
+
+	.college li {
+		break-inside: avoid;
+		border-top: 1px solid var(--border);
 	}
 
 	.program {
 		width: 100%;
-		min-height: 56px;
+		min-height: 44px;
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
 		gap: 12px;
-		padding: 12px 16px;
+		padding: 8px 4px;
+		border: 0;
+		background: none;
+		font: inherit;
+		font-weight: 500;
 		text-align: left;
-		font-weight: 600;
 		color: var(--ink);
 		text-decoration: none;
 		cursor: pointer;
 	}
 
 	.program:hover {
-		border-color: var(--brand);
-	}
-
-	.planner-only {
-		flex-direction: column;
-		align-items: flex-start;
-		justify-content: center;
-		gap: 2px;
+		color: var(--brand);
 	}
 
 	.program .muted {
 		font-weight: 400;
-		font-size: 0.85rem;
-		flex: 0 0 auto;
+		font-size: 0.8rem;
+		flex: none;
 	}
 
 	dialog {

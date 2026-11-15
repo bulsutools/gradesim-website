@@ -4,7 +4,7 @@
 
 import { UPLB_CATALOG } from './catalog.ts';
 import programsJson from './data/programs.json';
-import type { CatalogEntry, ChecklistCourse } from './scheduler.ts';
+import type { CatalogEntry, ChecklistCourse, Standing } from './scheduler.ts';
 
 export interface Track {
 	name: string;
@@ -25,7 +25,9 @@ export interface Specialization {
 	name: string;
 	source: string;
 	note?: string;
-	pools: SpecializationPool[];
+	pools?: SpecializationPool[];
+	/** Full checklist rows the specialization adds. A row with a slot replaces that MAJ slot. */
+	courses?: (ChecklistCourse & { slot?: string })[];
 }
 
 export interface Program {
@@ -40,6 +42,7 @@ export interface Program {
 	nstpCoursesRequired?: number;
 	tracks?: Record<string, Track> | null;
 	defaultTrack?: string;
+	freeElectiveStanding?: Standing;
 	specializations?: Record<string, Specialization>;
 	majorCourses: ChecklistCourse[];
 	requiredCodes?: string[];
@@ -172,7 +175,7 @@ export function genericRequirementCourses(program: Partial<Slim> | null | undefi
 	return courses;
 }
 
-type WithTracks = Partial<Slim> & Pick<Program, 'tracks' | 'defaultTrack'>;
+type WithTracks = Partial<Slim> & Pick<Program, 'tracks' | 'defaultTrack' | 'freeElectiveStanding'>;
 
 /** A known track key, else the program's default, else its first track. */
 export function resolveTrack(program: WithTracks | null | undefined, track?: string | null): string | null {
@@ -210,6 +213,7 @@ export function freeElectiveCourses(program: WithTracks | null | undefined, trac
 			units: Math.min(3, left),
 			...defaultSlot(4 + (i % 4)),
 			prereqs: [],
+			standing: program.freeElectiveStanding,
 			genericRequirement: 'elective'
 		});
 	}
@@ -225,6 +229,7 @@ export function resolveSpecialization(program: Pick<Program, 'specializations'> 
  * A specialization fills the program's MAJ slots from its pools. A pool with
  * one course per slot puts those courses in the slots. A pool with more
  * courses than slots keeps the slots and lists the courses as options.
+ * Its courses are full rows it adds, or puts in a slot when the row names one.
  */
 export function applySpecialization(
 	rows: ChecklistCourse[],
@@ -234,17 +239,26 @@ export function applySpecialization(
 	const spec = key ? program?.specializations?.[key] : undefined;
 	if (!spec) return rows;
 	const bySlot = new Map<string, { pool: SpecializationPool; i: number }>();
-	spec.pools.forEach((pool) => pool.slots.forEach((slot, i) => bySlot.set(slot, { pool, i })));
-	return rows.map((row) => {
-		const hit = bySlot.get(row.code);
-		if (!hit) return row;
-		const { pool, i } = hit;
-		// Title, prerequisites and offerings come from the catalog.
-		if (pool.courses.length === pool.slots.length) {
-			return { code: pool.courses[i], title: '', units: row.units, year: row.year, sem: row.sem, prereqs: [] };
-		}
-		return { ...row, title: `${pool.name}, ${spec.name}`, options: pool.courses };
-	});
+	(spec.pools || []).forEach((pool) => pool.slots.forEach((slot, i) => bySlot.set(slot, { pool, i })));
+	const toRow = (c: ChecklistCourse & { slot?: string }): ChecklistCourse => {
+		const course = { prereqs: [], ...c };
+		delete course.slot;
+		return course;
+	};
+	const fixed = new Map((spec.courses || []).filter((c) => c.slot).map((c) => [c.slot!, toRow(c)]));
+	return rows
+		.map((row) => {
+			if (fixed.has(row.code)) return fixed.get(row.code)!;
+			const hit = bySlot.get(row.code);
+			if (!hit) return row;
+			const { pool, i } = hit;
+			// Title, prerequisites and offerings come from the catalog.
+			if (pool.courses.length === pool.slots.length) {
+				return { code: pool.courses[i], title: '', units: row.units, year: row.year, sem: row.sem, prereqs: [] };
+			}
+			return { ...row, title: `${pool.name}, ${spec.name}`, options: pool.courses };
+		})
+		.concat((spec.courses || []).filter((c) => !c.slot).map(toRow));
 }
 
 export function getPlannerCourses(
@@ -363,6 +377,7 @@ export const CHECKLIST_PROGRAM: Record<string, string> = {
 	'BS-Applied-Mathematics': 'BSAPMATH',
 	'BS-Applied-Physics': 'BSAPPHY',
 	'BS-Mathematics': 'BSMATH',
+	'BS-Mathematics-and-Science-Teaching': 'BSMST',
 	'BS-Statistics': 'BSSTAT',
 	'BA-Communication-Arts': 'BACOMM',
 	'BA-Philosophy': 'BAPHILO',
@@ -383,5 +398,13 @@ export const CHECKLIST_PROGRAM: Record<string, string> = {
 	'BS-Nutrition': 'BSNUTRI',
 	'Doctor-of-Veterinary-Medicine': 'DVM',
 	'BS-Development-Communication': 'BSDC',
-	'BS-Agricultural-Chemistry': 'BSACHEM'
+	'BS-Agricultural-Chemistry': 'BSACHEM',
+	'BS-Computer-Science': 'BSCS',
+	'BS-Accountancy': 'BSACCT',
+	'BS-Agricultural-and-Biosystems-Engineering': 'BSABE',
+	'BS-Materials-Engineering': 'BSMATE',
+	'AA-Sports-Studies': 'AASS',
+	'AA-Entrepreneurship': 'AAENTREP',
+	'Associate-in-Forestry': 'AAFOR',
+	'AS-Development-Communication': 'ASDC'
 };

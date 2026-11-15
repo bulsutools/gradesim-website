@@ -24,6 +24,29 @@ export function gradeResult(raw: unknown): Result {
 	return 'other';
 }
 
+export const removalKey = (termId: string, code: unknown) => `${termId}:${normalizeCourseCode(code)}`;
+
+/**
+ * A 4.00 is cleared by one removal exam. A pass makes it 3.00 and a fail makes
+ * it 5.00. removals maps removalKey(termId, code) to pass or fail. Returns a
+ * copy of the grades with those replaced, and the stored grades stay as they are.
+ */
+export function applyRemovals<G extends GradesData | null | undefined>(gradesData: G, removals: Record<string, string> | null | undefined): G {
+	if (!gradesData?.student_grades || !removals || !Object.keys(removals).length) return gradesData;
+	const student_grades = Object.fromEntries(
+		Object.entries(gradesData.student_grades).map(([termId, t]) => {
+			if (!t?.values) return [termId, t];
+			const values = t.values.map((v) => {
+				const result = removals[removalKey(termId, v.course?.course_code)];
+				if (parseFloat(String(v.grade)) !== 4 || (result !== 'pass' && result !== 'fail')) return v;
+				return { ...v, grade: result === 'pass' ? '3.00' : '5.00', removalFrom: String(v.grade) };
+			});
+			return [termId, { ...t, values }];
+		})
+	);
+	return { ...gradesData, student_grades };
+}
+
 export interface Row {
 	code: string;
 	title: string;
@@ -55,7 +78,7 @@ export function amisCourses(gradesData: GradesData | null | undefined): Row[] {
  * their placeholder slots, a course a specialization pool lists fills that
  * pool's slot, and any other course with units fills an elective slot, one
  * course per slot. Returns a map of slot code to row.
- * ponytail: one course per 3-unit elective slot, so a 6-unit elective fills one.
+ * One course per 3-unit elective slot, so a 6-unit elective fills one.
  */
 // UPLB accepts these in place of the checklist course without a petition.
 const BUILT_IN_EQUIVALENTS: [string, string][] = [['KAS 1', 'HIST 1']];
@@ -68,8 +91,11 @@ export function fillRequirementSlots<R extends Row>(
 	const norm = (r: Row) => normalizeCourseCode(r.code);
 	const named = new Set(courses.filter((c) => !c.genericRequirement).map((c) => normalizeCourseCode(c.code)));
 	const fill = new Map<string, R>();
+	// A repeat enrollment fills the next "CODE (n)" row.
 	rows.forEach((r) => {
-		if (named.has(norm(r)) && !fill.has(norm(r))) fill.set(norm(r), r);
+		let code = norm(r);
+		for (let n = 2; fill.has(code) && named.has(`${norm(r)} (${n})`); n++) code = `${norm(r)} (${n})`;
+		if (named.has(code) && !fill.has(code)) fill.set(code, r);
 	});
 	const used = new Set<string>();
 	// The student's own substitutions come first and win.
@@ -115,6 +141,19 @@ export function fillRequirementSlots<R extends Row>(
 			});
 	});
 	return fill;
+}
+
+/**
+ * Latin honors count only as many electives as the program requires, the
+ * earliest first. Returns the passed rows that fill no slot, which the honors
+ * GWA leaves out. A program with no elective slots returns none, since its
+ * data cannot tell extra from missing.
+ */
+export function surplusElectives<R extends Row>(courses: PlanCourse[], passedRows: R[], substitutions: Record<string, string> = {}): R[] {
+	if (!courses.some((c) => c.genericRequirement === 'elective')) return [];
+	const used = new Set(fillRequirementSlots(courses, passedRows, substitutions).values());
+	const named = new Set(courses.filter((c) => !c.genericRequirement).map((c) => normalizeCourseCode(c.code)));
+	return passedRows.filter((r) => !used.has(r) && !named.has(normalizeCourseCode(r.code)) && !isNonGwaCourseCode(r.code) && r.units > 0);
 }
 
 /** The planner's course list: checklist rows for the track and specialization plus GE, HK, NSTP and free elective slots, with catalog data. */
