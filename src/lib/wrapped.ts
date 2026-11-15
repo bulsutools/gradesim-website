@@ -400,6 +400,7 @@ export async function drawCard(canvas: HTMLCanvasElement, p: Panel, id: IdCard):
 }
 
 
+const CREDIT = 'Design by Reann Vargas and Danica Manadong';
 /** Reann Vargas's pages. Each tin, tray and note is tilted, so text is drawn turned with it. */
 const FRAMES = { sem: 'tin-note', id: 'tin-id', tin: 'tin', note: 'tin', tray: 'tray', open: 'tin-red' };
 const INK = '#1c1917';
@@ -499,6 +500,15 @@ async function drawFrame(ctx: CanvasRenderingContext2D, p: Panel, font: string, 
 		ctx.fillText(label, 132, 308);
 		ctx.textAlign = 'center';
 	}
+
+	ctx.font = `600 28px ${font}`;
+	const cw = ctx.measureText(CREDIT).width + 48;
+	ctx.fillStyle = 'rgba(28,25,23,0.82)';
+	ctx.beginPath();
+	ctx.roundRect(540 - cw / 2, 1526, cw, 50, 25);
+	ctx.fill();
+	ctx.fillStyle = '#ffffff';
+	ctx.fillText(CREDIT, 540, 1561);
 
 	if (id.photo && (p.frame === 'tin' || p.frame === 'note')) polaroid(722, 455, 220, 0.12);
 	if (id.photo && (p.frame === 'tray' || p.frame === 'open')) polaroid(842, 420, 230, 0.1);
@@ -644,7 +654,7 @@ async function drawFrame(ctx: CanvasRenderingContext2D, p: Panel, font: string, 
 			});
 		corner(838, 805, low, ['', '', '']);
 		corner(860, 1185, kept, ['So far', p.extra ?? '', 'and counting']);
-		tag(url, 36, 540, 1560, -0.05);
+		tag(url, 36, 540, 1478, -0.05);
 		return;
 	}
 
