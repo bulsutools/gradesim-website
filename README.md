@@ -2,7 +2,7 @@
 
 The web app at [gradesim.uplb.tools](https://gradesim.uplb.tools): a UPLB GWA calculator, Latin honors simulator and course planner that runs entirely in the browser. It is the companion to the [GradeSim browser extension](https://github.com/uplbtools/gradesim), which reads grades from AMIS.
 
-Built with SvelteKit (Svelte 5, TypeScript) and prerendered to static files. Grades are kept in the browser's local storage under the `gradesim:v1` key and never sent anywhere.
+Built with SvelteKit (Svelte 5, TypeScript) and prerendered to static files, plus one Vercel Function for checklist fixes. Grades are kept in the browser's local storage under the `gradesim:v1` key and never sent anywhere.
 
 ## Getting started
 
@@ -28,6 +28,7 @@ npm run test:e2e   # Playwright against the built site
 - `src/lib/data/*.json` is generated from the extension's `curriculum.js` and `catalog.js` by `node scripts/sync-extension-data.mjs <path to extension/src>`. Fix curriculum data in the extension repo, then run it.
 - `src/lib/bridge.ts` asks an installed extension for its grades (externally_connectable on Chromium browsers, a window message answered by a content script on Firefox).
 - `src/service-worker/` precaches the build so the app works offline.
+- `api/fix.ts` is the one server function. It files a student's checklist fix as an issue on `uplbtools/gradesim`, and it answers 503 until `GRADESIM_FIX_TOKEN` is set on Vercel, so the app opens a prefilled GitHub issue instead.
 
 ## Deployment
 
