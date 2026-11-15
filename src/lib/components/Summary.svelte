@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { app } from '#lib/app.svelte.ts';
 	import { normalizeCourseCode } from '#lib/curriculum.ts';
-	import { calculateGWA, honorFor } from '#lib/grades.ts';
+	import { calculateGWA, honorFor, lightSems } from '#lib/grades.ts';
 	import { modelFor, planTrack } from '#lib/planner.ts';
 	import { amisCourses, surplusElectives } from '#lib/requirements.ts';
 	import Icon from './Icon.svelte';
@@ -22,6 +22,7 @@
 		);
 	});
 	const honor = $derived(honorFor(honors.gwa, honors.totalUnits));
+	const light = $derived(honor ? lightSems(app.courses) : []);
 </script>
 
 <section class="summary" aria-label="Your GWA">
@@ -32,6 +33,11 @@
 	<p class="sub">
 		{g.passedUnits} units passed{#if g.excludedCount}, {g.excludedUnits} left out{/if}.
 	</p>
+	{#if light.length}
+		<p class="sub" data-testid="light-sems">
+			{light.map((s) => `${s.label} had ${s.units} units`).join(', and ')}. Latin honors need at least 15 units each sem, or the checklist's load when it's lower, unless your college accepted a reason such as health.
+		</p>
+	{/if}
 	{#if surplus.length}
 		<p class="sub">
 			Your GWA for Latin honors is <strong data-testid="honors-gwa">{honors.gwa.toFixed(4)}</strong>. It counts only the electives your program requires and leaves out {surplus.map((r) => r.code).join(', ')}.

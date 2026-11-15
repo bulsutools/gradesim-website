@@ -255,6 +255,19 @@ export function honorFor(gwa: number, totalUnits: number) {
 	return HONORS.find((h) => gwa <= h.max) ?? null;
 }
 
+/** Sems before the latest with under 15 academic units, midyears left out. Latin honors need 15 a sem unless the college accepts the reason. */
+export function lightSems(courses: Course[]) {
+	const sems = new Map<string, { label: string; abs: number; units: number }>();
+	courses.forEach((c) => {
+		const abs = termKeyToAbs(c.termKey);
+		if (abs == null || abs % 3 === 2 || isPrefixExcluded(c.code) || ['DRP', 'W'].includes(gradeText(c.grade))) return;
+		const sem = sems.get(c.termKey) ?? { label: c.termLabel, abs, units: 0 };
+		sem.units += c.units || 0;
+		sems.set(c.termKey, sem);
+	});
+	return [...sems.values()].sort((a, b) => a.abs - b.abs).slice(0, -1).filter((s) => s.units < 15);
+}
+
 /** University or College Scholar for one term. Needs at least 15 academic units and no 5.00, 4.00 or INC. */
 export function scholarFor(group: ReturnType<typeof groupGWA>): string | null {
 	if (!(group.gwa > 0) || group.totalUnits < 15 || group.hasFailOrInc) return null;

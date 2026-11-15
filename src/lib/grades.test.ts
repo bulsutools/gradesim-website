@@ -7,6 +7,7 @@ import {
 	groupCourses,
 	groupGWA,
 	honorFor,
+	lightSems,
 	parseAMISData,
 	scholarFor,
 	scholarHolds,
@@ -133,4 +134,15 @@ test('a 4.00 is not a passing grade', () => {
 
 test('a GWA can be posted the way students mask it', () => {
 	expect(['none', 'xx', 'bx', 'xc', 'bc', 'full'].map((k) => shownGwa('1.8750', k as never))).toEqual(['', '1.xx', '1.8x', '1.x7', '1.87', '1.8750']);
+});
+
+test('a sem under 15 academic units shows up for Latin honors, but not a midyear or the latest sem', () => {
+	const c = (termKey: string, code: string, units: number, grade = '1.00'): Course => ({ id: `${termKey}${code}`, termKey, termLabel: termName(termKey), ay: '', code, title: '', units, grade });
+	const courses = [
+		...['A 1', 'A 2', 'A 3', 'A 4', 'A 5'].map((k) => c('1241', k, 3)),
+		c('1242', 'B 1', 3), c('1242', 'B 2', 3), c('1242', 'B 3', 3), c('1242', 'B 4', 3), c('1242', 'HK 12', 2), c('1242', 'B 5', 3, 'DRP'),
+		c('1243', 'M 1', 3),
+		c('1251', 'C 1', 3)
+	];
+	expect(lightSems(courses)).toEqual([{ label: '2nd sem AY 2024-25', abs: termKeyToAbs('1242'), units: 12 }]);
 });
