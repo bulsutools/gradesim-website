@@ -105,31 +105,31 @@ function gwaPanel(d: Data): Panel {
 
 function semesterPanel(d: Data): Panel {
 	if (!d.semCount || !d.bestSem) {
-		return { emoji: '📅', title: 'Semester stats', value: '--', subtitle: 'No semester data yet', message: 'Check back once grades are in.' };
+		return { emoji: '📅', title: 'Sem stats', value: '--', subtitle: 'No sem has grades yet', message: 'Check back once grades are in.' };
 	}
 	const b = d.bestSem;
 	const bestWord = b.gwa <= 1.25 ? 'Your peak' : b.gwa <= 1.5 ? 'Nice run' : b.gwa <= 1.75 ? 'Solid sem' : b.gwa <= 2 ? 'Good one' : 'Best so far';
-	const highlights: Highlight[] = [{ label: '🏆 Best semester', name: b.name, detail: `GWA ${b.gwa.toFixed(4)}. ${bestWord}` }];
+	const highlights: Highlight[] = [{ label: '🏆 Best sem', name: b.name, detail: `GWA ${b.gwa.toFixed(4)}. ${bestWord}` }];
 	const t = d.worstSem;
 	if (t && t.name !== b.name) {
 		const word = t.gwa >= 3 ? 'Rough one' : t.gwa >= 2.5 ? 'Challenging' : t.gwa >= 2 ? 'Tough load' : 'Room to grow';
-		highlights.push({ label: '📈 Toughest semester', name: t.name, detail: `GWA ${t.gwa.toFixed(4)}. ${word}` });
+		highlights.push({ label: '📈 Toughest sem', name: t.name, detail: `GWA ${t.gwa.toFixed(4)}. ${word}` });
 	}
 	const n = d.semCount;
 	const message =
-		n >= 8 ? `${n} semesters completed. Almost there.`
+		n >= 8 ? `${n} sems done. Almost there.`
 		: n >= 6 ? `${n} sems done. The end is in sight.`
 		: n >= 4 ? `${n} sems in. You're halfway through.`
-		: n >= 2 ? `${n} semesters down, many more to go.`
+		: n >= 2 ? `${n} sems down, many more to go.`
 		: 'Just getting started. Enjoy the ride.';
-	return { emoji: '📅', title: 'Semester stats', value: String(n), subtitle: n === 1 ? 'semester with grades' : 'semesters with grades', message, highlights, caption: 'My lowest and highest semester', frame: 'tin' };
+	return { emoji: '📅', title: 'Sem stats', value: String(n), subtitle: n === 1 ? 'sem with grades' : 'sems with grades', message, highlights, caption: 'My best and toughest sem', frame: 'tin' };
 }
 
 function collectorPanel(d: Data): Panel {
 	const total = d.distinct.size;
 	const [emoji, title, message] =
-		total >= 10 ? ['🎰', 'Full collection', "You've seen it all, from 1.0 to 5.0, plus S, U, INC, DRP. Your transcript tells a story."]
-		: total >= 7 ? ['🃏', 'Variety pack', "A bit of everything. Shows you've taken different kinds of subjects with different outcomes."]
+		total >= 10 ? ['🎰', 'Full collection', "You've seen it all, from 1.00 to 5.00, plus S, U, INC, DRP. Your transcript tells a story."]
+		: total >= 7 ? ['🃏', 'Variety pack', "A bit of everything. Shows you've taken different kinds of courses with different outcomes."]
 		: total >= 4 ? ['🎲', 'Mixed bag', 'Some ups, some downs. Pretty normal for most students tbh.']
 		: d.numericKinds === 1 && d.gwa <= 1.5 ? ['🎯', 'One-track mind', "Same high grade over and over? That's rare consistency. How."]
 		: ['📊', 'Steady grades', "You stick to a range. Predictable in a good way. You know what you're doing."];
@@ -143,12 +143,12 @@ function collectorPanel(d: Data): Panel {
 function perseverancePanel(d: Data): Panel {
 	const f = d.fails;
 	const [emoji, title, message] =
-		f === 0 ? ['🏅', 'Clean record', "Zero 5.0s? That's actually impressive. Not everyone can say that."]
-		: f === 1 ? ['💫', 'One setback', "One 5.0 isn't the end of the world. It happens to plenty of us. Bounce back season."]
-		: f <= 3 ? ['🔥', 'Still standing', `${f} failed subjects but you're still here. Every retake is a chance to do better.`]
+		f === 0 ? ['🏅', 'Clean record', "Zero 5.00s? That's actually impressive. Not everyone can say that."]
+		: f === 1 ? ['💫', 'One setback', "One 5.00 isn't the end of the world. It happens to plenty of us. Bounce back season."]
+		: f <= 3 ? ['🔥', 'Still standing', `${f} failed courses but you're still here. Every retake is a chance to do better.`]
 		: f <= 5 ? ['🦅', 'Fighting spirit', `${f} times down but not out. The fact that you're still going says a lot.`]
-		: ['💎', 'Survivor', `${f} 5.0s and still pushing through? That takes real grit. Respect.`];
-	return { emoji, title, value: String(f), subtitle: f === 1 ? 'subject to retake' : 'subjects to retake', message };
+		: ['💎', 'Survivor', `${f} 5.00s and still pushing through? That takes real grit. Respect.`];
+	return { emoji, title, value: String(f), subtitle: f === 1 ? 'course to retake' : 'courses to retake', message };
 }
 
 function highlightsPanel(d: Data): Panel {
@@ -160,8 +160,8 @@ function highlightsPanel(d: Data): Panel {
 		emoji: '🫴',
 		title: 'Your highlights',
 		value: '',
-		subtitle: highlights.length ? undefined : 'Complete some subjects to see your highlights.',
-		message: 'Every subject counts toward the diploma.',
+		subtitle: highlights.length ? undefined : 'Pass a course to see your highlights.',
+		message: 'Every course counts toward the diploma.',
 		highlights,
 		caption: 'My lowest and highest grade'
 	};
