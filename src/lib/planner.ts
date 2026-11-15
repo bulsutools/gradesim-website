@@ -279,7 +279,8 @@ export interface CourseInfo {
 export function compute(model: Model, input: PlannerInput, now = new Date()) {
 	const opts = input.plannerOptions;
 	const hist = readHistory(model, input, now);
-	const startAbs = Math.max(hist.latestAbs != null ? hist.latestAbs + 1 : 0, calendarAbs(now), input.startAbs ?? 0);
+	const nowAbs = calendarAbs(now);
+	const startAbs = Math.max(hist.latestAbs != null ? hist.latestAbs + 1 : 0, nowAbs, input.startAbs ?? 0);
 
 	// Per course: what the grades say, then any manual override.
 	const info: Record<string, CourseInfo> = {};
@@ -347,13 +348,20 @@ export function compute(model: Model, input: PlannerInput, now = new Date()) {
 	});
 
 	// Run with a subset of failures in effect.
+	const takingNow = startAbs === nowAbs ? model.courses.filter((c) => !info[c.code].tries.length && info[c.code].status === 'inprogress') : [];
+	const taking = takingNow.filter((c) => !isNonGwaCourseCode(c.code)).reduce((s, c) => s + (Number(c.units) || 0), 0);
+	const takingCodes = new Set(takingNow.map((c) => c.code));
+	model.courses.forEach((c) => {
+		if (preGroups(c).some((g) => g.some((x) => takingCodes.has(x)))) pinNotBefore[c.code] = Math.max(pinNotBefore[c.code] || 0, 1);
+	});
 	function run(active: Failure[], applyDelay = true): Run {
 		const p = new Set(passed);
 		failures.forEach((f) => {
 			if (f.past && !active.includes(f)) p.add(f.code);
 		});
 		const notBefore = { ...pinNotBefore };
-		const reserved: Record<number, number> = {};
+		// Courses marked as taken now with no AMIS row fill the sem that has started.
+		const reserved: Record<number, number> = { 0: taking };
 		const attemptAt: Record<string, number> = {};
 		const future = failures.filter((f) => !f.past && active.includes(f));
 		if (future.length) {
@@ -394,7 +402,7 @@ export function compute(model: Model, input: PlannerInput, now = new Date()) {
 	const statusOf = (code: string) => (info[code] ? info[code].status : passed.has(code) && 'passed');
 	const conflicts = prereqConflicts(model.courses, statusOf);
 
-	const v = { model, input, hist, info, startAbs, passed: nowRun.passed, failures, costs, now: nowRun, ideal, noWhatif, slips, unitCaps, capAt, byChecklist, left, conflicts, statusOf };
+	const v = { model, input, hist, info, startAbs, nowAbs, passed: nowRun.passed, failures, costs, now: nowRun, ideal, noWhatif, slips, unitCaps, capAt, byChecklist, left, conflicts, statusOf };
 	v.costs.forEach((c) => {
 		c.cost = termsLate(v, c.costT[0], c.costT[1]);
 	});
@@ -536,6 +544,11 @@ export function buildColumns(v: View): { list: Column[]; primary: Record<string,
 			col(a.abs).cards.push(card);
 			if (isLast && st !== 'failed') primary[c.code] = card;
 		});
+		if (!i.tries.length && i.status === 'inprogress') {
+			const card: Card = { code: c.code, status: 'inprogress' };
+			col(v.nowAbs).cards.push(card);
+			primary[c.code] = card;
+		}
 		// Marked passed with no record: credited column.
 		if (!i.tries.length && i.status === 'passed') {
 			const card: Card = { code: c.code, status: 'passed', credited: true };
@@ -656,7 +669,7 @@ export function columnFacts(column: Column, v: View) {
 	const future = !isPast && Number.isFinite(column.abs) && column.abs >= 0;
 	const off = future && !!v.input.plannerOptions.skip?.includes(column.abs);
 	const nowTerm = column.cards.some((c) => c.status === 'inprogress');
-	const tag = column.abs === v.startAbs ? 'Next' : nowTerm ? 'Now' : isPast && column.abs >= 0 ? 'Taken' : '';
+	const tag = nowTerm || (column.abs === v.nowAbs && !isPast) ? 'Now' : column.abs === v.startAbs ? 'Next' : isPast && column.abs >= 0 ? 'Taken' : '';
 	let warn = '';
 	if (future && !off) {
 		if (isMid && units > 6) warn = "Over 6 units in midyear needs the Dean's approval (max 9).";

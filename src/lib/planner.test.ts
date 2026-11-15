@@ -162,3 +162,18 @@ test('a sem off stays empty and moves graduation later', () => {
 	expect(v.now.result.gradTermIndex).toBeGreaterThan(base.now.result.gradTermIndex);
 	expect(buildColumns(v).list.find((c) => c.abs === off)?.cards).toEqual([]);
 });
+
+test('the sem that has started is Now, and a course marked as taken now sits in it', () => {
+	const later = new Date(2025, 9, 1);
+	const base = compute(model, input(), later);
+	expect(base.startAbs).toBe(2025 * 3);
+	const cols = buildColumns(base).list;
+	expect(columnFacts(cols.find((c) => c.abs === base.startAbs)!, base).tag).toBe('Now');
+	const r = base.now.result;
+	const code = Object.keys(r.assignedTerm).find((c) => r.assignedTerm[c] === 0 && model.graph.edges.some((e) => e.from === c))!;
+	const deps = model.graph.edges.filter((e) => e.from === code).map((e) => e.to);
+	const v = compute(model, input({ customCourseStatus: { [code]: 'inprogress' } }), later);
+	const col = buildColumns(v).list.find((c) => c.abs === v.startAbs)!;
+	expect(col.cards.find((c) => c.code === code)?.status).toBe('inprogress');
+	deps.forEach((d) => expect(v.now.result.assignedTerm[d]).not.toBe(0));
+});
