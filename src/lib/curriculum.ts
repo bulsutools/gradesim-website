@@ -377,6 +377,7 @@ export const CHECKLIST_PROGRAM: Record<string, string> = {
 	'BS-Applied-Mathematics': 'BSAPMATH',
 	'BS-Applied-Physics': 'BSAPPHY',
 	'BS-Mathematics': 'BSMATH',
+	'BS-Mathematics-and-Science-Teaching': 'BSMST',
 	'BS-Statistics': 'BSSTAT',
 	'BA-Communication-Arts': 'BACOMM',
 	'BA-Philosophy': 'BAPHILO',
