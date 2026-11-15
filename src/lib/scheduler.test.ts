@@ -256,4 +256,30 @@ const C = (code: string, units: number, sem?: string, prereqs: string[] = []): P
 
 	// Default cap matches the catalog load rule: 18 a regular sem, 6 midyear.
 	deq(DEFAULT_UNIT_CAPS, { '1': 18, '2': 18, midyear: 6 });
+
+	// With no prerequisites, a course only offered now goes first, then the checklist order.
+	const one = { '1': 3, '2': 3, midyear: 0 };
+	const Y = (code: string, year: number, catalogSem: string) => ({
+		code,
+		title: code,
+		units: 3,
+		year,
+		sem: '1',
+		catalogSem,
+		prereqs: []
+	});
+	const order = scheduleEarliest({
+		courses: [Y('THESIS', 4, '1s,2s'), Y('INTRO', 1, '1s,2s')],
+		passed: new Set(),
+		unitCaps: one,
+		startSem: '1'
+	});
+	eq(order.assignedTerm.INTRO, 0);
+	const scarce = scheduleEarliest({
+		courses: [Y('GE', 1, '1s,2s'), Y('LAB', 4, '1s')],
+		passed: new Set(),
+		unitCaps: one,
+		startSem: '1'
+	});
+	eq(scarce.assignedTerm.LAB, 0);
 });
