@@ -220,3 +220,12 @@ test('the GWA card in Wrapped is drawn in the tin frame', async ({ page }) => {
 	await page.getByRole('button', { name: 'Next' }).click();
 	await expect(page.getByRole('img', { name: /drawn in a tin/ })).toHaveCount(0);
 });
+
+test('a name turns the Wrapped GWA card into the ID card', async ({ page }) => {
+	await importFixture(page);
+	await page.getByRole('tab', { name: 'Wrapped' }).click();
+	const card = page.getByRole('img', { name: /drawn in a tin/ });
+	const plain = await card.getAttribute('src');
+	await page.getByRole('textbox', { name: 'Your name on the card' }).fill('Iska');
+	await expect(card).not.toHaveAttribute('src', plain!);
+});

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { app, download } from '#lib/app.svelte.ts';
 	import { drawCard, wrappedPanels } from '#lib/wrapped.ts';
+	import FileButton from './FileButton.svelte';
 	import Icon from './Icon.svelte';
 
 	const panels = $derived(wrappedPanels(app.courses, app.program.totalUnitsRequired || 155));
@@ -9,24 +10,38 @@
 	const p = $derived(panels[Math.min(i, panels.length - 1)]);
 
 	let preview = $state('');
+	let name = $state('');
+	let photo = $state<ImageBitmap>();
+	const ordinal = ['1st', '2nd', '3rd'];
+	const id = $derived.by(() => {
+		if (!name.trim() && !photo) return;
+		const years = new Set(app.courses.map((c) => c.ay)).size;
+		return { name: name.trim(), year: `${ordinal[years - 1] ?? `${years}th`} year`, course: app.program.code, photo };
+	});
+
+	async function pick(file: File) {
+		photo = await createImageBitmap(file).catch(() => photo);
+	}
 
 	async function card() {
 		const canvas = document.createElement('canvas');
-		await drawCard(canvas, p);
+		await drawCard(canvas, p, id);
 		return new Promise<Blob | null>((r) => canvas.toBlob(r, 'image/png'));
 	}
 
 	$effect(() => {
-		if (!p.frame) return;
-		let url = '';
+		if (!p.frame) {
+			preview = '';
+			return;
+		}
 		let gone = false;
 		card().then((blob) => {
-			if (blob && !gone) preview = url = URL.createObjectURL(blob);
+			if (!blob || gone) return;
+			URL.revokeObjectURL(preview);
+			preview = URL.createObjectURL(blob);
 		});
 		return () => {
 			gone = true;
-			URL.revokeObjectURL(url);
-			preview = '';
 		};
 	});
 
@@ -71,6 +86,14 @@
 		</article>
 	{/if}
 
+	{#if p.frame}
+		<div class="id">
+			<label class="field">Your name on the card<input class="input" bind:value={name} maxlength="40" autocomplete="name" /></label>
+			<FileButton label={photo ? 'Change the photo' : 'Add your photo'} accept="image/*" onFile={pick} />
+			<p class="muted">Your name and photo stay in this browser.</p>
+		</div>
+	{/if}
+
 	<div class="nav">
 		<button class="btn btn-secondary" type="button" onclick={() => i--} disabled={i === 0}><Icon name="left" />Previous</button>
 		<span class="count" aria-hidden="true">{i + 1} of {panels.length}</span>
@@ -107,6 +130,12 @@
 		aspect-ratio: 9 / 16;
 		border-radius: 24px;
 		box-shadow: var(--shadow-md);
+	}
+
+	.id {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
 	}
 
 	.emoji {
