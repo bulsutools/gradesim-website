@@ -8,7 +8,7 @@
 	// Checklist images in static/curricula/<college>/<slug>-<page>.png
 	const CHECKLISTS: Record<string, [name: string, slug: string, pages: number][]> = {
 		CAS: [
-			['Associate in Arts in Sports Studies', 'AA-Sports-Studies', 1],
+			['Associate in Arts (Sports Studies)', 'AA-Sports-Studies', 1],
 			['BA Communication Arts', 'BA-Communication-Arts', 2],
 			['BA Philosophy', 'BA-Philosophy', 2],
 			['BA Sociology', 'BA-Sociology', 2],
