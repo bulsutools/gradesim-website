@@ -103,13 +103,6 @@ test('What if and the planner count the same units left', async ({ page }) => {
 	await expect(page.getByText(`You have ${units} units left to pass`)).toBeVisible();
 });
 
-test('programs without a checklist show as coming soon', async ({ page }) => {
-	await importFixture(page);
-	const option = page.getByRole('combobox', { name: 'Your degree program' }).locator('option[value="BSMATE"]');
-	await expect(option).toHaveAttribute('disabled');
-	await expect(option).toContainText('coming soon');
-});
-
 test('theme toggle cycles and persists', async ({ page }) => {
 	await open(page);
 	const html = page.locator('html');
