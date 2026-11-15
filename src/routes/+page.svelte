@@ -37,12 +37,17 @@
 		history.replaceState(history.state, '', `#${id}`);
 	}
 
+	function pickTab(id: Tab) {
+		message = null;
+		setTab(id);
+	}
+
 	function onTabKey(e: KeyboardEvent, i: number) {
 		const n = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
 		if (!n && e.key !== 'Home' && e.key !== 'End') return;
 		e.preventDefault();
 		const next = e.key === 'Home' ? 0 : e.key === 'End' ? TABS.length - 1 : (i + n + TABS.length) % TABS.length;
-		setTab(TABS[next].id);
+		pickTab(TABS[next].id);
 		tick().then(() => document.getElementById(`tab-${TABS[next].id}`)?.focus());
 	}
 
@@ -163,7 +168,7 @@
 						aria-selected={tab === t.id}
 						aria-controls="panel-{t.id}"
 						tabindex={tab === t.id ? 0 : -1}
-						onclick={() => setTab(t.id)}
+						onclick={() => pickTab(t.id)}
 						onkeydown={(e) => onTabKey(e, i)}
 					>
 						{t.label}

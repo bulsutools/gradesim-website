@@ -62,6 +62,18 @@ test('JSON import from the extension backup', async ({ page }) => {
 	// 1.9773 is on no Latin honor track, and Honor Roll is not one.
 	await expect(page.getByText(/Honor Roll|Cum Laude track/)).toHaveCount(0);
 	await expect(page.getByRole('region', { name: '1st sem AY 2023-24' })).toContainText('MATH 27');
+	await page.getByRole('tab', { name: 'What if' }).click();
+	await expect(page.getByText('Imported 15 courses')).toHaveCount(0);
+});
+
+test('Leave out sits in edit mode and a left-out course stays marked', async ({ page }) => {
+	await importFixture(page);
+	await expect(page.locator('.excl')).toHaveCount(0);
+	await page.getByRole('button', { name: 'Add or edit grades' }).click();
+	await page.locator('.excl').first().click();
+	await page.getByRole('button', { name: 'Done editing' }).click();
+	await expect(page.locator('.excl')).toHaveText(['Left out']);
+	await expect(page.getByTestId('gwa')).toHaveText('2.0000');
 });
 
 test('a junk file is refused with a reason', async ({ page }) => {
