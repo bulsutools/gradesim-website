@@ -27,7 +27,7 @@
 			<h1>Your GWA, Latin honors and graduation plan</h1>
 			<p class="lede">GradeSim computes your GWA the way UPLB does and plans the sems you have left.</p>
 
-			<div class="start">
+			<div class="start" class:waiting={extension === 'checking'}>
 				{#if extension === 'found'}
 					<button class="btn btn-primary btn-lg" type="button" onclick={onExtension}>
 						<Icon name="plug" />Import from the extension
@@ -164,6 +164,10 @@
 		flex-direction: column;
 		align-items: flex-start;
 		gap: 8px;
+	}
+
+	.waiting {
+		visibility: hidden;
 	}
 
 	.btn-lg {
