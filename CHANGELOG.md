@@ -1,3 +1,10 @@
+## [0.25.1](https://github.com/uplbtools/gradesim-website/compare/v0.25.0...v0.25.1) (2026-11-15)
+
+
+### Bug Fixes
+
+* **planner:** the headline's subline isn't indented ([#260](https://github.com/uplbtools/gradesim-website/issues/260)) ([3af47ea](https://github.com/uplbtools/gradesim-website/commit/3af47ea910cb68ab5ca5eef4c2ad6c34cce50811))
+
 # [0.25.0](https://github.com/uplbtools/gradesim-website/compare/v0.24.4...v0.25.0) (2026-11-15)
 
 
