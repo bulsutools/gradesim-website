@@ -15,6 +15,7 @@
 	import { today } from '#lib/planner.ts';
 	import { removalKey } from '#lib/requirements.ts';
 	import Icon from './Icon.svelte';
+	import Summary from './Summary.svelte';
 	import FileButton from './FileButton.svelte';
 	import GradeEditor from './GradeEditor.svelte';
 
@@ -65,6 +66,7 @@
 </script>
 
 <div class="grades">
+	<Summary />
 	<div class="toolbar">
 		<div class="seg" role="group" aria-label="Group courses">
 			<button type="button" aria-pressed={view === 'term'} onclick={() => (view = 'term')}>By term</button>
