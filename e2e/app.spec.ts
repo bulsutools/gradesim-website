@@ -356,3 +356,17 @@ test('courses from Room TBA land in the plan, and the next sem links back', asyn
 	const link = page.getByRole('link', { name: 'Plan sections in Room TBA' }).first();
 	await expect(link).toHaveAttribute('href', /^https:\/\/room-tba\.uplb\.tools\/planner\?plan=/);
 });
+
+test('a sem off leaves that sem empty and can be undone', async ({ page }) => {
+	await importFixture(page);
+	await page.getByRole('tab', { name: 'Planner' }).click();
+	await page.getByText('Plan settings').click();
+	const pick = page.getByLabel('Take a sem off');
+	const first = await pick.locator('option').nth(1).textContent();
+	await pick.selectOption({ index: 1 });
+	const sheet = page.getByTestId('planner-sheet');
+	await expect(sheet.getByText("You're taking this sem off.")).toBeVisible();
+	await sheet.getByRole('button', { name: 'Take it after all' }).click();
+	await expect(sheet.getByText("You're taking this sem off.")).toHaveCount(0);
+	expect(first).toMatch(/sem \d{4}/);
+});

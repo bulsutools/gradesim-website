@@ -153,3 +153,12 @@ test('Room TBA link marks courses in progress in a sem that started and moves th
 	expect(takeCourses(['CMSC 21'], 2026 * 3 + 1, s, now).plannerPins).toEqual({ 'MATH 27': 2026 * 3, 'CMSC 21': 2026 * 3 + 1 });
 	expect(s.plannerPins).toEqual({ 'MATH 27': 2026 * 3 });
 });
+
+test('a sem off stays empty and moves graduation later', () => {
+	const base = compute(model, input(), now);
+	const off = base.startAbs;
+	const v = compute(model, input({ plannerOptions: { ...DEFAULT_PLANNER_OPTIONS, skip: [off] } }), now);
+	expect(v.now.result.plan.some((p) => p.termIndex === 0)).toBe(false);
+	expect(v.now.result.gradTermIndex).toBeGreaterThan(base.now.result.gradTermIndex);
+	expect(buildColumns(v).list.find((c) => c.abs === off)?.cards).toEqual([]);
+});

@@ -175,6 +175,14 @@
 			midyear9: optionEffect(v, { midyear9: !options.midyear9 })
 		};
 	});
+	const skipped = $derived(options.skip ?? []);
+	const offChoices = $derived.by(() => {
+		if (!view) return [];
+		const out: number[] = [];
+		for (let abs = view.startAbs; out.length < 8; abs++) if (abs % 3 !== 2 && !skipped.includes(abs)) out.push(abs);
+		return out;
+	});
+	const setSkip = (next: number[]) => setOptions({ skip: next.length ? next.sort((a, b) => a - b) : undefined });
 	const petitions = $derived(Object.keys(app.s.plannerPetitions));
 	const subOptions = $derived(substituteOptions(app.program, app.gwa.completedCourses, app.s.substitutions));
 
@@ -457,7 +465,7 @@
 									{#if term.failed}<span class="bad">{term.failed} failed</span>{/if}
 									{#if term.gwa}<span>GWA {term.gwa.toFixed(4)}</span>{/if}
 									{#if f.future && !f.isMid && f.units > 18}<span class="warn">heavy</span>{/if}
-									<span class:warn={f.loud}>{#if f.loud}<Icon name="alert" size={13} />{/if}{f.cap ? `${f.units} of ${f.cap} units` : unitsText(f.units)}</span>
+									<span class:warn={f.loud}>{#if f.loud}<Icon name="alert" size={13} />{/if}{f.off ? 'Off' : f.cap ? `${f.units} of ${f.cap} units` : unitsText(f.units)}</span>
 								</span>
 							</summary>
 							{#if f.warn}<p class="pl-term-warn">{f.warn}</p>{/if}
@@ -493,9 +501,10 @@
 										{#if isPrimary && selected === card.code}{@render detail(card.code)}{/if}
 									</li>
 								{:else}
-									<li class="pl-empty">Nothing offered that fits</li>
+									{#if !f.off}<li class="pl-empty">Nothing offered that fits</li>{/if}
 								{/each}
 							</ul>
+							{#if f.off}<p class="pl-off">You're taking this sem off. <button type="button" class="textbtn" onclick={() => setSkip(skipped.filter((a) => a !== term.column.abs))}>Take it after all</button></p>{/if}
 							{#if f.tag === 'Next' || f.tag === 'Now'}
 								{@const codes = term.cards.filter((c) => !model.byCode.get(c.code)?.genericRequirement && c.status !== 'passed' && c.status !== 'failed').map((c) => c.code)}
 								{#if codes.length}<a class="textbtn pl-roomtba" href={roomTbaLink(term.column.abs, codes)} target="_blank" rel="noopener">Plan sections in Room TBA <Icon name="external" size={14} /></a>{/if}
@@ -586,6 +595,14 @@
 							<option value="18">18 units</option>
 						</select>
 						<small>GradeSim marks a sem under this, for a scholarship that needs a full load.</small>
+					</label>
+					<label class="pl-menu-item">
+						Take a sem off
+						<select class="select" value="" onchange={(e) => { const abs = Number(e.currentTarget.value); e.currentTarget.value = ''; if (abs) setSkip([...skipped, abs]); }}>
+							<option value="">Pick a sem</option>
+							{#each offChoices as abs (abs)}<option value={abs}>{absLabel(abs)}</option>{/each}
+						</select>
+						<small>For an LOA or MRR. The plan leaves that sem empty and moves the rest later.</small>
 					</label>
 					{#if app.program.specializations}
 						<label class="pl-menu-item">
