@@ -212,3 +212,20 @@ test('the phone bookmark saves AMIS grades as a file the app imports', async ({ 
 	await page.getByTestId('file-input').first().setInputFiles({ name: 'gradesim-amis.json', mimeType: 'application/json', buffer: file });
 	await expect(page.getByTestId('gwa')).toHaveText('1.9773');
 });
+
+test('the GWA card in Wrapped is drawn in the tin frame', async ({ page }) => {
+	await importFixture(page);
+	await page.getByRole('tab', { name: 'Wrapped' }).click();
+	await expect(page.getByRole('img', { name: /GWA 1\.9773, drawn in a tin/ })).toBeVisible();
+	await page.getByRole('button', { name: 'Next' }).click();
+	await expect(page.getByRole('img', { name: /drawn in a tin/ })).toHaveCount(0);
+});
+
+test('a name turns the Wrapped GWA card into the ID card', async ({ page }) => {
+	await importFixture(page);
+	await page.getByRole('tab', { name: 'Wrapped' }).click();
+	const card = page.getByRole('img', { name: /drawn in a tin/ });
+	const plain = await card.getAttribute('src');
+	await page.getByRole('textbox', { name: 'Your name on the card' }).fill('Iska');
+	await expect(card).not.toHaveAttribute('src', plain!);
+});
