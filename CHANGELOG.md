@@ -1,3 +1,10 @@
+# [0.15.0](https://github.com/uplbtools/gradesim-website/compare/v0.14.0...v0.15.0) (2026-11-15)
+
+
+### Features
+
+* **planner:** Plan settings with a minimum load and each setting's effect ([#182](https://github.com/uplbtools/gradesim-website/issues/182)) ([be10cdb](https://github.com/uplbtools/gradesim-website/commit/be10cdb6ce7ab33c3ef2c9be0b37d4aaa46d5a28))
+
 # [0.14.0](https://github.com/uplbtools/gradesim-website/compare/v0.13.0...v0.14.0) (2026-11-15)
 
 
