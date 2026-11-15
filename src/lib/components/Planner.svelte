@@ -14,6 +14,7 @@
 		DEFAULT_PLANNER_OPTIONS,
 		exportModel,
 		makePlanFile,
+		markConflict,
 		modelFor,
 		offeringLabel,
 		planTrack,
@@ -297,6 +298,8 @@
 		{@const past = i.tries.length > 0}
 		{@const fix = app.fixes.find((f) => f.code === code)}
 		{@const off = c.offered as Record<number, number> | null | undefined}
+		{@const passBlock = i.status !== 'passed' && markConflict(view, code, 'passed')}
+		{@const failBlock = i.status !== 'failed' && markConflict(view, code, 'failed')}
 		<aside class="pl-detail" aria-label="Details for {code}">
 			<div class="pl-detail-head">
 				<div>
@@ -350,12 +353,14 @@
 				<p class="pl-deps">{#each deps as d (d)}{@render group([d])}{/each}</p>
 			{/if}
 			<div class="pl-actions">
-				{#if i.status !== 'passed'}<button type="button" class="btn btn-secondary" onclick={() => act('passed', code)}><Icon name="check" />Mark passed</button>{/if}
-				{#if i.status !== 'failed'}<button type="button" class="btn btn-secondary" onclick={() => act('failed', code)}><Icon name="x" />{past || i.status === 'inprogress' ? 'Mark failed' : 'Mark failed (what-if)'}</button>{/if}
+				{#if i.status !== 'passed' && !passBlock}<button type="button" class="btn btn-secondary" onclick={() => act('passed', code)}><Icon name="check" />Mark passed</button>{/if}
+				{#if i.status !== 'failed' && !failBlock}<button type="button" class="btn btn-secondary" onclick={() => act('failed', code)}><Icon name="x" />{past || i.status === 'inprogress' ? 'Mark failed' : 'Mark failed (what-if)'}</button>{/if}
 				{#if i.override}<button type="button" class="textbtn" onclick={() => act('clear', code)}>Use {past ? 'my grades' : 'the plan'} again</button>{/if}
 				{#if t !== undefined}<button type="button" class="textbtn" onclick={() => act('later', code)}>Take a term later</button>{/if}
 				{#if app.s.plannerPins[code] != null}<button type="button" class="textbtn" onclick={() => act('unpin', code)}>Back to earliest</button>{/if}
 			</div>
+			{#if failBlock}<p class="pl-muted">{failBlock.code} is passed, so {code} can't be marked failed.</p>{/if}
+			{#if passBlock}<p class="pl-muted">{passBlock.pre} is failed, so {code} can't be marked passed.</p>{/if}
 			{#if acted === code && sum}<p><strong>{sum.headline}.{sum.deltaText ? ` ${sum.deltaText}.` : ''}</strong></p>{/if}
 			{#if restricted(c) && i.status !== 'passed'}
 				<label class="pl-petition">
