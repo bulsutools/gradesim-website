@@ -1,3 +1,10 @@
+## [0.6.2](https://github.com/uplbtools/gradesim-website/compare/v0.6.1...v0.6.2) (2026-11-15)
+
+
+### Bug Fixes
+
+* **welcome:** say which file Import a file takes ([#94](https://github.com/uplbtools/gradesim-website/issues/94)) ([8db1745](https://github.com/uplbtools/gradesim-website/commit/8db174526605f0d2ca5aff922bb96135d5282b97))
+
 ## [0.6.1](https://github.com/uplbtools/gradesim-website/compare/v0.6.0...v0.6.1) (2026-11-15)
 
 
