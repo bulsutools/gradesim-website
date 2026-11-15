@@ -1,3 +1,10 @@
+## [0.12.2](https://github.com/uplbtools/gradesim-website/compare/v0.12.1...v0.12.2) (2026-11-15)
+
+
+### Bug Fixes
+
+* **copy:** sem and course in Wrapped, and a test for retired names ([#167](https://github.com/uplbtools/gradesim-website/issues/167)) ([ddee418](https://github.com/uplbtools/gradesim-website/commit/ddee41841002bdf5553739671bbc9b2d2be254ab))
+
 ## [0.12.1](https://github.com/uplbtools/gradesim-website/compare/v0.12.0...v0.12.1) (2026-11-15)
 
 
