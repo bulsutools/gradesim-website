@@ -770,7 +770,7 @@ export function exportModel(v: View, columns: Column[], primary: Record<string, 
 	const s = summary(v);
 	return {
 		title: `${s.headline}${s.deltaText ? ` (${s.deltaText})` : ''}`,
-		subtitle: `${v.model.program.name || v.model.code}. ${s.sub} Exported ${today()} from Elbi GradeSim.`,
+		subtitle: `${v.model.program.name || v.model.code}. ${s.sub} Exported ${today()} from GradeSim.`,
 		columns: cols,
 		courses
 	};

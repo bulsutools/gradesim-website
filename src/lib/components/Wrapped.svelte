@@ -95,7 +95,7 @@
 		<span class="count" aria-hidden="true">{i + 1} of {panels.length}</span>
 		<button class="btn btn-secondary" type="button" onclick={() => i++} disabled={i >= panels.length - 1}>Next<Icon name="right" /></button>
 	</div>
-	<button class="btn btn-primary save" type="button" onclick={save} disabled={busy}><Icon name="download" />{busy ? 'Making your image' : 'Save this card as an image'}</button>
+	<button class="btn btn-primary save" type="button" onclick={save} disabled={busy}><Icon name="download" />{busy ? 'Making your image' : 'Save this card'}</button>
 </div>
 
 <style>

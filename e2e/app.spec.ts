@@ -288,7 +288,7 @@ test('the GWA and semester cards in Wrapped are drawn in the tin frame', async (
 	await page.getByRole('textbox', { name: 'Your name on the card' }).fill('Iska');
 	await expect(card).not.toHaveAttribute('src', blank!);
 	await page.getByRole('button', { name: 'Next' }).click();
-	await expect(card).toHaveAccessibleName(/Semester stats, Best semester/);
+	await expect(card).toHaveAccessibleName(/Sem stats, Best sem/);
 	await page.getByRole('button', { name: 'Next' }).click();
 	await expect(card).toHaveCount(0);
 });
