@@ -319,7 +319,7 @@
 						{#if slip > 0}
 							<li class="bad"><strong>Critical.</strong> Taking it a term later delays graduation by {slip === Infinity ? 'more than the plan can show' : termsText(termsLate(view, view.now.result.gradTermIndex, view.now.result.gradTermIndex + slip))}.</li>
 						{:else}
-							<li>Has slack. Taking it a term later does not move graduation.</li>
+							<li>Has slack. Taking it a term later doesn't move graduation.</li>
 						{/if}
 					{/if}
 				</ul>
@@ -365,7 +365,7 @@
 			{#if restricted(c) && i.status !== 'passed'}
 				<label class="pl-petition">
 					<input type="checkbox" checked={!!app.s.plannerPetitions[code]} onchange={(e) => togglePetition(code, e.currentTarget.checked)} />
-					<span>Plan on a petitioned class when it is not offered. It needs about 10 students and department, college and OVCAA approval, so treat it as conditional.</span>
+					<span>Plan on a petitioned class when it isn't offered. It needs about 10 students and department, college and OVCAA approval, so treat it as conditional.</span>
 				</label>
 			{/if}
 			{#if fixing === code}
@@ -397,7 +397,7 @@
 {/snippet}
 
 {#if !view || !layout || !sum || !model}
-	<Notice>The planner does not have a checklist for this program yet.</Notice>
+	<Notice>The planner doesn't have a checklist for this program yet.</Notice>
 {:else}
 	<div class="planner">
 		{#if notice}
@@ -425,7 +425,7 @@
 					{#each view.conflicts as c (c.code + c.pre)}
 						<li class="bad">
 							<Icon name="alert" size={16} />
-							<span><strong>{c.code}</strong> is passed, so its prerequisite {c.pre} cannot be failed. Check the mark on {c.pre}.</span>
+							<span><strong>{c.code}</strong> is passed, so its prerequisite {c.pre} can't be failed. Check the mark on {c.pre}.</span>
 						</li>
 					{/each}
 				</ul>
@@ -453,7 +453,7 @@
 					<p>Each block is a term. Past terms come from your grades. Future terms are the earliest plan that respects prerequisites, the sems each course is actually offered, and your unit cap.</p>
 					<p>Select a course to see what it requires, what it unlocks and how many courses a failure would block. Mark a course failed to see the retake and the delay.</p>
 					<p>A course marked Critical delays graduation if it slips by one term.</p>
-					<p>Offerings come from AMIS class listings for 2023 to 2026. Free electives are not included.</p>
+					<p>Offerings come from AMIS class listings for 2023 to 2026. Free electives aren't included.</p>
 				</div>
 			</details>
 			<details class="pl-menu" bind:this={menu}>

@@ -43,7 +43,7 @@
 <div class="wrap">
 	<PageHead title="Install the extension">
 		The extension reads your grades when you open AMIS, then shows them in its popup and hands them to this web app when you
-		ask. It is free, open source, and keeps everything on your device.
+		ask. It's free, open source, and keeps everything on your device.
 	</PageHead>
 
 	<ul class="stores">

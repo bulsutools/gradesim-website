@@ -73,7 +73,7 @@
 				value: '3.00',
 				note: 'any passing grade',
 				tone: 'ok',
-				text: g.gwa > 0 && g.gwa <= target ? `You are at ${name} now. Pass every course left and you keep it.` : `Pass every course left and you reach ${name}.`,
+				text: g.gwa > 0 && g.gwa <= target ? `You're at ${name} now. Pass every course left and you keep it.` : `Pass every course left and you reach ${name}.`,
 				failure: null
 			} as const;
 		}
@@ -131,7 +131,7 @@
 	<section class="card result" aria-live="polite" aria-labelledby="result-title">
 		<h2 id="result-title" class="h">What you need</h2>
 		{#if !left}
-			<Notice tone="info">GradeSim does not have the {app.program.name} checklist yet, so it cannot count your remaining units. Your GWA above still works.</Notice>
+			<Notice tone="info">GradeSim doesn't have the {app.program.name} checklist yet, so it can't count your remaining units. Your GWA above still works.</Notice>
 		{:else if !validTarget}
 			<p class="muted">Enter a target GWA from 1.00 to 5.00.</p>
 		{:else if answer}

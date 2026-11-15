@@ -32,7 +32,7 @@ function viaRuntime(id: string, type: Request, timeout: number): Promise<unknown
 		try {
 			rt.sendMessage(id, { type }, (reply) => {
 				clearTimeout(timer);
-				void rt.lastError; // read it so Chrome does not log "unchecked lastError"
+				void rt.lastError; // read it so Chrome doesn't log "unchecked lastError"
 				resolve(reply ?? null);
 			});
 		} catch {
@@ -69,7 +69,7 @@ async function ask(type: Request, timeout: number): Promise<unknown> {
 	return replies.find((r) => r != null) ?? null;
 }
 
-/** 'found' when the extension has grades, 'empty' when it is installed without any, null when nothing answered. */
+/** 'found' when the extension has grades, 'empty' when it's installed without any, null when nothing answered. */
 export async function probeExtension(timeout = 800): Promise<'found' | 'empty' | null> {
 	const r = (await ask('GRADESIM_PING', timeout)) as { hasGrades?: boolean } | null;
 	if (!r) return null;

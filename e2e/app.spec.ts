@@ -26,7 +26,7 @@ test('first visit leads with the extension and offers two other ways in', async 
 test('unknown URLs get the branded 404', async ({ page }) => {
 	const res = await page.goto('/does-not-exist/');
 	expect(res?.status()).toBe(404);
-	await expect(page.getByRole('heading', { level: 1 })).toHaveText('This page is not here');
+	await expect(page.getByRole('heading', { level: 1 })).toHaveText("This page isn't here");
 	await expect(page.getByRole('link', { name: 'Open Elbi GradeSim' })).toHaveAttribute('href', '/');
 });
 
@@ -67,7 +67,7 @@ test('JSON import from the extension backup', async ({ page }) => {
 test('a junk file is refused with a reason', async ({ page }) => {
 	await open(page);
 	await page.getByTestId('file-input').first().setInputFiles({ name: 'x.json', mimeType: 'application/json', buffer: Buffer.from('{"a":1}') });
-	await expect(page.getByRole('status').first()).toContainText('not a GradeSim backup');
+	await expect(page.getByRole('status').first()).toContainText("isn't a GradeSim backup");
 });
 
 test('planner renders and a failed course shows a retake', async ({ page }) => {
