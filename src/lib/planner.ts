@@ -363,9 +363,10 @@ export function compute(model: Model, input: PlannerInput, now = new Date()) {
 		{ substitutions: input.substitutions, overrides: input.customCourseStatus }
 	);
 
-	const conflicts = prereqConflicts(model.courses, (code) => (info[code] ? info[code].status : passed.has(code) && 'passed'));
+	const statusOf = (code: string) => (info[code] ? info[code].status : passed.has(code) && 'passed');
+	const conflicts = prereqConflicts(model.courses, statusOf);
 
-	const v = { model, input, hist, info, startAbs, passed: nowRun.passed, failures, costs, now: nowRun, ideal, noWhatif, slips, unitCaps, capAt, byChecklist, left, conflicts };
+	const v = { model, input, hist, info, startAbs, passed: nowRun.passed, failures, costs, now: nowRun, ideal, noWhatif, slips, unitCaps, capAt, byChecklist, left, conflicts, statusOf };
 	v.costs.forEach((c) => {
 		c.cost = termsLate(v, c.costT[0], c.costT[1]);
 	});
@@ -577,6 +578,12 @@ function orderColumns(model: Model, list: Column[], primary: Record<string, Card
 }
 
 /** On the critical path. Free elective cards stand for any course, so they never are. */
+/** The new conflict a mark would create, such as a failed prerequisite of a passed course. */
+export function markConflict(v: View, code: string, mark: 'passed' | 'failed') {
+	const known = new Set(v.conflicts.map((c) => c.code + '>' + c.pre));
+	return prereqConflicts(v.model.courses, (c) => (c === code ? mark : v.statusOf(c))).find((c) => !known.has(c.code + '>' + c.pre));
+}
+
 export const isCritical = (code: string, v: View) =>
 	v.slips[code] > 0 && v.model.byCode.get(code)?.genericRequirement !== 'elective';
 
