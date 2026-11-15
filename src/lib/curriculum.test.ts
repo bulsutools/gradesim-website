@@ -59,12 +59,12 @@ test('generic requirement slots fill from completed courses', () => {
 	expect(Array.from(listedOnly)).toEqual([]);
 });
 
-test('all 35 programs ship with a checklist, five of them coming soon', () => {
+test('all 35 programs ship with a checklist, one of them coming soon', () => {
 	const programs = Object.values(UPLB_PROGRAMS);
 	expect(programs).toHaveLength(35);
 	programs.forEach((p) => expect(p.majorCourses.length).toBeGreaterThan(0));
 	expect(programs.filter((p) => !p.available).map((p) => p.code).sort()).toEqual(
-		['AAENTREP', 'AAFOR', 'AASS', 'ASDC', 'BSMST']
+		['BSMST']
 	);
 });
 
@@ -102,6 +102,8 @@ test('data quality for the rough guide notice', () => {
 	expect(thin.confident).toBe(false);
 	expect(thin.prereqShare).toBeLessThan(0.3);
 	expect(thin.reasons).toHaveLength(1);
-	expect(getProgramDataQuality('ASDC').confident).toBe(false);
+	UPLB_PROGRAMS.SOON = { ...UPLB_PROGRAMS.BSCS, available: false };
+	expect(getProgramDataQuality('SOON', UPLB_CATALOG).confident).toBe(false);
+	delete UPLB_PROGRAMS.SOON;
 	expect(getProgramDataQuality('NOPE').confident).toBe(false);
 });
