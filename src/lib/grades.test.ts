@@ -110,7 +110,8 @@ test('substitute options leave out required, GE and already used courses', () =>
 		{ code: 'CMSC 12', title: '', units: 3, grade: 1 },
 		{ code: 'ARTS 1', title: '', units: 3, grade: 1 },
 		{ code: 'PED 101', title: '', units: 3, grade: 2 },
-		{ code: 'ECON 11', title: '', units: 3, grade: 2 }
+		{ code: 'ECON 11', title: '', units: 3, grade: 2 },
+		{ code: 'CMSC 198', title: '', units: 3, grade: 1 }
 	];
 	expect(substituteOptions(UPLB_PROGRAMS.BSCS, done, {}).map((c) => c.code)).toEqual(['ECON 11', 'PED 101']);
 	expect(substituteOptions(UPLB_PROGRAMS.BSCS, done, { 'MATH 27': 'PED 101' }).map((c) => c.code)).toEqual(['ECON 11']);
