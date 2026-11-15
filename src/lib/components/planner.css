@@ -74,21 +74,8 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 10px 16px;
-  padding: 10px 12px;
-  background: var(--bg-elevated);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
 }
 
-.pl-whatif {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px;
-  flex: 1 1 auto;
-}
-
-.pl-whatif .select,
 .pl-menu .select {
   min-height: 40px;
   padding: 6px 10px;
@@ -178,47 +165,6 @@
   border-radius: 0 0 var(--radius-sm) var(--radius-sm);
 }
 
-.pl-tips {
-  position: relative;
-  margin-left: auto;
-}
-
-.pl-tips > summary {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  min-height: 32px;
-  padding: 0 8px;
-  color: var(--brand);
-  font-weight: 600;
-  font-size: 0.85rem;
-  cursor: pointer;
-  list-style: none;
-}
-
-.pl-tips > summary::-webkit-details-marker {
-  display: none;
-}
-
-.pl-tips-pop {
-  position: absolute;
-  right: 0;
-  top: 100%;
-  z-index: 20;
-  width: min(360px, 90vw);
-  padding: 12px 14px;
-  background: var(--bg-elevated);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-lg);
-  color: var(--body);
-  font-size: 0.85rem;
-}
-
-.pl-tips-pop p + p {
-  margin-top: 8px;
-}
-
 .pl-result {
   max-width: 70ch;
   text-wrap: balance;
@@ -230,6 +176,27 @@
 
 .pl-result:empty {
   margin-top: 0;
+}
+
+.pl-term-warn {
+  margin: 2px 0 8px 30px;
+  color: var(--warn);
+  font-size: 0.875rem;
+}
+
+.pl-past {
+  margin-top: 28px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
+
+.pl-past > summary {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.pl-how {
+  margin: 16px 0 0;
 }
 
 /* Checklist fixes */
@@ -443,10 +410,6 @@
   font-weight: 700;
   color: var(--ink);
   white-space: nowrap;
-}
-
-.pl-pin {
-  color: var(--brand);
 }
 
 .pl-title {
@@ -702,20 +665,10 @@ button.pl-link:hover {
 
 /* Phone: the title and the note drop under the code. */
 @media (min-width: 720px) and (max-width: 959px) {
-  .pl-whatif {
-    flex-basis: 100%;
-  }
 
-  .pl-tips {
-    margin-left: 0;
-  }
 }
 
 @media screen and (max-width: 719px) {
-  .pl-whatif .select {
-    flex: 1 1 40%;
-    min-width: 0;
-  }
 
   .pl-controls {
     position: relative;
@@ -730,27 +683,6 @@ button.pl-link:hover {
     left: 0;
     right: 0;
     width: auto;
-  }
-
-  .pl-tips {
-    margin-left: 0;
-  }
-
-  .pl-tips[open] {
-    flex-basis: 100%;
-  }
-
-  .pl-tips > summary {
-    padding: 0;
-  }
-
-  .pl-tips-pop {
-    position: static;
-    width: auto;
-    padding: 4px 8px 0;
-    border: 0;
-    background: none;
-    box-shadow: none;
   }
 
   .pl-rows {
@@ -810,11 +742,6 @@ button.pl-link:hover {
   display: flex;
   flex-direction: column;
   padding-bottom: 24px;
-}
-
-.pl-whatif-lead {
-  font-weight: 600;
-  color: var(--ink);
 }
 
 .pl-detail .textbtn {

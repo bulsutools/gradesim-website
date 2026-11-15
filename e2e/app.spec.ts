@@ -88,6 +88,7 @@ test('planner renders and a failed course shows a retake', async ({ page }) => {
 	await expect(page.getByTestId('grad-term')).toContainText('Graduate');
 	const sheet = page.getByTestId('planner-sheet');
 	await expect(sheet.locator('.pl-row.st-retake[data-code="MATH 27"]')).toBeVisible();
+	await sheet.getByText(/sems done, \d+ units passed/).click();
 	await expect(sheet.locator('.pl-row.st-failed[data-code="MATH 27"]')).toBeVisible();
 	await sheet.locator('.pl-row.st-retake[data-code="MATH 27"]').click();
 	await expect(page.getByRole('complementary', { name: 'Details for MATH 27' })).toContainText('Analytic Geometry');
@@ -111,7 +112,7 @@ test('a checklist fix changes the plan and is listed for sending', async ({ page
 test('the planner says what is left', async ({ page }) => {
 	await importFixture(page);
 	await page.getByRole('tab', { name: 'Planner' }).click();
-	await expect(page.getByText(/^\d+ terms and \d+ units left\.$/)).toBeVisible();
+	await expect(page.getByText(/^\d+ sems(, \d+ midyears?)? and \d+ units left\.$/)).toBeVisible();
 });
 
 test('theme toggle cycles and persists', async ({ page }) => {
