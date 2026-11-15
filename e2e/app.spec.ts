@@ -104,6 +104,24 @@ test('planner renders and a failed course shows a retake', async ({ page }) => {
 	await expect(sheet.getByText('Under your 18-unit minimum.').first()).toBeVisible();
 });
 
+test('an old course is credited to a checklist row from the planner', async ({ page }) => {
+	const data = JSON.parse(backup.toString());
+	data.gradesData.student_grades['1231'].values.push({ id: 99, grade: '2.00', unit_taken: '3', course: { course_code: 'MATH 37', title: 'Mathematical Analysis II' } });
+	await open(page);
+	await page.getByTestId('file-input').first().setInputFiles({ name: 'backup.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(data)) });
+	await page.getByRole('tab', { name: 'Planner' }).click();
+	const sheet = page.getByTestId('planner-sheet');
+	const retake = sheet.locator('.pl-row.st-retake[data-code="MATH 27"]');
+	await retake.click();
+	const credit = page.getByLabel('Credit a course you passed');
+	await expect(credit.locator('option')).toHaveText(['None', 'MATH 37, 3 units, 2.00']);
+	await credit.selectOption('MATH 37');
+	await expect(retake).toHaveCount(0);
+	await expect(page.getByRole('complementary', { name: 'Details for MATH 27' })).toContainText('It counts as MATH 27');
+	await credit.selectOption('');
+	await expect(retake).toBeVisible();
+});
+
 test('a checklist fix changes the plan and is listed for sending', async ({ page }) => {
 	await importFixture(page);
 	await page.getByRole('tab', { name: 'Planner' }).click();
