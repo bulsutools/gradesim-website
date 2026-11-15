@@ -213,19 +213,16 @@ test('the phone bookmark saves AMIS grades as a file the app imports', async ({ 
 	await expect(page.getByTestId('gwa')).toHaveText('1.9773');
 });
 
-test('the GWA card in Wrapped is drawn in the tin frame', async ({ page }) => {
-	await importFixture(page);
-	await page.getByRole('tab', { name: 'Wrapped' }).click();
-	await expect(page.getByRole('img', { name: /GWA 1\.9773, drawn in a tin/ })).toBeVisible();
-	await page.getByRole('button', { name: 'Next' }).click();
-	await expect(page.getByRole('img', { name: /drawn in a tin/ })).toHaveCount(0);
-});
-
-test('a name turns the Wrapped GWA card into the ID card', async ({ page }) => {
+test('the GWA and semester cards in Wrapped are drawn in the tin frame', async ({ page }) => {
 	await importFixture(page);
 	await page.getByRole('tab', { name: 'Wrapped' }).click();
 	const card = page.getByRole('img', { name: /drawn in a tin/ });
-	const plain = await card.getAttribute('src');
+	await expect(card).toHaveAccessibleName(/GWA 1\.9773/);
+	const blank = await card.getAttribute('src');
 	await page.getByRole('textbox', { name: 'Your name on the card' }).fill('Iska');
-	await expect(card).not.toHaveAttribute('src', plain!);
+	await expect(card).not.toHaveAttribute('src', blank!);
+	await page.getByRole('button', { name: 'Next' }).click();
+	await expect(card).toHaveAccessibleName(/Semester stats, Best semester/);
+	await page.getByRole('button', { name: 'Next' }).click();
+	await expect(card).toHaveCount(0);
 });

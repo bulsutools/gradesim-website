@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Icon from './Icon.svelte';
 
-	let { label, onFile, quiet = false, accept = '.json,application/json' }: { label: string; onFile: (f: File) => void; quiet?: boolean; accept?: string } = $props();
+	let { label, onFile, quiet = false }: { label: string; onFile: (f: File) => void; quiet?: boolean } = $props();
 	let input: HTMLInputElement | undefined = $state();
 </script>
 
@@ -11,7 +11,7 @@
 <input
 	bind:this={input}
 	type="file"
-	{accept}
+	accept=".json,application/json"
 	hidden
 	data-testid="file-input"
 	onchange={(e) => {

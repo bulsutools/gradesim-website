@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { app, download } from '#lib/app.svelte.ts';
-	import { drawCard, wrappedPanels } from '#lib/wrapped.ts';
-	import FileButton from './FileButton.svelte';
+	import { bare, drawCard, wrappedPanels } from '#lib/wrapped.ts';
 	import Icon from './Icon.svelte';
 
 	const panels = $derived(wrappedPanels(app.courses, app.program.totalUnitsRequired || 155));
@@ -11,17 +10,16 @@
 
 	let preview = $state('');
 	let name = $state('');
-	let photo = $state<ImageBitmap>();
 	const ordinal = ['1st', '2nd', '3rd'];
 	const id = $derived.by(() => {
-		if (!name.trim() && !photo) return;
 		const years = new Set(app.courses.map((c) => c.ay)).size;
-		return { name: name.trim(), year: `${ordinal[years - 1] ?? `${years}th`} year`, course: app.program.code, photo };
+		return { name: name.trim(), year: `${ordinal[years - 1] ?? `${years}th`} year`, course: app.program.code };
 	});
-
-	async function pick(file: File) {
-		photo = await createImageBitmap(file).catch(() => photo);
-	}
+	const alt = $derived(
+		[p.title, p.frame === 'id' ? `GWA ${p.value}` : '', ...(p.highlights ?? []).map((h) => `${bare(h.label)} ${h.name}, ${h.detail}`), 'drawn in a tin on a picnic blanket']
+			.filter(Boolean)
+			.join(', ')
+	);
 
 	async function card() {
 		const canvas = document.createElement('canvas');
@@ -63,7 +61,8 @@
 <div class="wrapped">
 
 	{#if p.frame && preview}
-		<img class="frame" src={preview} alt="{p.title}, GWA {p.value}, drawn in a tin on a picnic blanket" />
+		<img class="frame" src={preview} {alt} />
+		<p class="muted">{p.message}</p>
 	{:else}
 		<article class="panel" aria-roledescription="slide" aria-label="Card {i + 1} of {panels.length}" aria-live="polite">
 			<span class="emoji" aria-hidden="true">{p.emoji}</span>
@@ -86,12 +85,9 @@
 		</article>
 	{/if}
 
-	{#if p.frame}
-		<div class="id">
-			<label class="field">Your name on the card<input class="input" bind:value={name} maxlength="40" autocomplete="name" /></label>
-			<FileButton label={photo ? 'Change the photo' : 'Add your photo'} accept="image/*" onFile={pick} />
-			<p class="muted">Your name and photo stay in this browser.</p>
-		</div>
+	{#if p.frame === 'id'}
+		<label class="field">Your name on the card<input class="input" bind:value={name} maxlength="40" autocomplete="name" /></label>
+		<p class="muted">Add your photo over the picture in Instagram or Facebook.</p>
 	{/if}
 
 	<div class="nav">
@@ -130,12 +126,6 @@
 		aspect-ratio: 9 / 16;
 		border-radius: 24px;
 		box-shadow: var(--shadow-md);
-	}
-
-	.id {
-		display: flex;
-		flex-direction: column;
-		gap: 8px;
 	}
 
 	.emoji {
