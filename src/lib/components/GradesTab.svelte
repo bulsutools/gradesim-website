@@ -34,6 +34,7 @@
 	let subTaken = $state('');
 
 	const groups = $derived(groupCourses(app.courses, view));
+	const subCount = $derived(Object.keys(app.s.substitutions).length);
 	const holds = $derived(scholarHolds(app.courses));
 	const subOptions = $derived(substituteOptions(app.program, app.gwa.completedCourses, app.s.substitutions));
 	const required = $derived([...app.program.majorCourses].sort((a, b) => a.code.localeCompare(b.code)));
@@ -82,16 +83,69 @@
 		</section>
 	{/if}
 
-	{#each groups as g (g.key)}
+	<div class="card folds">
+		<details class="fold">
+			<summary><Icon name="chevron" size={16} />{`Course substitutions${subCount ? ` (${subCount})` : ''}`}</summary>
+			{#if subCount}
+				<ul class="subs">
+					{#each Object.entries(app.s.substitutions) as [req, taken] (req)}
+						<li>
+							<span><strong>{req}</strong> is covered by <strong>{taken}</strong></span>
+							<button class="iconbtn" type="button" aria-label="Remove the substitution for {req}" onclick={() => removeSub(req)}><Icon name="x" /></button>
+						</li>
+					{/each}
+				</ul>
+			{/if}
+			<p class="muted small">Match a course you passed to the required course it stands in for. The planner and the what-if count it as done.</p>
+			<div class="subform">
+				<label class="field">
+					Required course
+					<select class="select" bind:value={subReq}>
+						<option value="">Choose a required course</option>
+						{#each required as r (r.code)}<option value={r.code.toUpperCase().trim()}>{r.code} ({r.units}u)</option>{/each}
+					</select>
+				</label>
+				<label class="field">
+					Covered by
+					<select class="select" bind:value={subTaken}>
+						<option value="">Choose a course you passed</option>
+						{#each subOptions as c (c.code)}<option value={c.code.toUpperCase().trim()}>{c.code} ({c.units}u, {c.grade})</option>{/each}
+					</select>
+				</label>
+				<button class="btn btn-secondary" type="button" disabled={!subReq || !subTaken} onclick={addSub}>Apply substitution</button>
+			</div>
+		</details>
+
+		<details class="fold">
+			<summary><Icon name="chevron" size={16} />Import, export or clear your data</summary>
+			<p class="small">
+				{#if app.s.source}These grades came from {SOURCE[app.s.source]}.{/if}
+				It's saved in this browser only. A backup moves it to another device or the extension.
+			</p>
+			<div class="actions">
+				{#if extension === 'found'}
+					<button class="btn btn-secondary" type="button" onclick={onExtension}><Icon name="plug" />Import from the GradeSim extension</button>
+				{:else}
+					<a class="btn btn-secondary" href={resolve('install/')}><Icon name="plug" />Get the extension</a>
+				{/if}
+				<FileButton label="Import a file" {onFile} />
+				<button class="btn btn-secondary" type="button" onclick={exportBackup}><Icon name="download" />Export backup</button>
+				<button class="btn btn-danger" type="button" onclick={clearAll}><Icon name="trash" />Clear my data</button>
+			</div>
+		</details>
+	</div>
+
+	{#each groups as g, i (g.key)}
 		{@const group = groupGWA(g.courses, app.excluded)}
 		{@const gwa = group.gwa}
 		{@const scholar = g.courses.some((c) => holds.has(c.termKey)) ? null : scholarFor(group)}
-		<section class="group" aria-label={g.label}>
-			<header>
+		<details class="group" open={editing || i === 0} aria-label={g.label} role="region">
+			<summary>
+				<Icon name="chevron" size={16} />
 				<h2>{g.label}</h2>
-				<span class="ggwa">GWA {gwa > 0 ? gwa.toFixed(4) : 'not yet'}</span>
 				{#if scholar}<span class="badge">{scholar}</span>{/if}
-			</header>
+				<span class="ggwa">GWA {gwa > 0 ? gwa.toFixed(4) : 'not yet'}</span>
+			</summary>
 			<ul>
 				{#each g.courses as c (c.id)}
 					{@const tone = gradeTone(c.grade)}
@@ -147,61 +201,9 @@
 					</li>
 				{/each}
 			</ul>
-		</section>
+		</details>
 	{/each}
 
-	<section class="card" aria-labelledby="sub-title">
-		<h2 id="sub-title" class="h">Course substitutions</h2>
-		{#if Object.keys(app.s.substitutions).length}
-			<ul class="subs">
-				{#each Object.entries(app.s.substitutions) as [req, taken] (req)}
-					<li>
-						<span><strong>{req}</strong> is covered by <strong>{taken}</strong></span>
-						<button class="iconbtn" type="button" aria-label="Remove the substitution for {req}" onclick={() => removeSub(req)}><Icon name="x" /></button>
-					</li>
-				{/each}
-			</ul>
-		{/if}
-		<details class="subadd">
-			<summary>Add a substitution</summary>
-			<p class="muted small">If a course you took stands in for a required one (a shiftee credit or an approved substitute), match them here. The planner and the what-if count the required course as done.</p>
-			<div class="subform">
-				<label class="field">
-					Required course
-					<select class="select" bind:value={subReq}>
-						<option value="">Choose a required course</option>
-						{#each required as r (r.code)}<option value={r.code.toUpperCase().trim()}>{r.code} ({r.units}u)</option>{/each}
-					</select>
-				</label>
-				<label class="field">
-					Covered by
-					<select class="select" bind:value={subTaken}>
-						<option value="">Choose a course you passed</option>
-						{#each subOptions as c (c.code)}<option value={c.code.toUpperCase().trim()}>{c.code} ({c.units}u, {c.grade})</option>{/each}
-					</select>
-				</label>
-				<button class="btn btn-secondary" type="button" disabled={!subReq || !subTaken} onclick={addSub}>Apply substitution</button>
-			</div>
-		</details>
-	</section>
-
-	<section class="card" aria-labelledby="data-title">
-		<h2 id="data-title" class="h">Your data</h2>
-		<p class="small">
-			{#if app.s.source}These grades came from {SOURCE[app.s.source]}.{/if}
-			Everything is saved in this browser only. Export a backup to move it to another device. The file also loads in the extension.
-		</p>
-		<div class="actions">
-			{#if extension === 'found'}
-				<button class="btn btn-secondary" type="button" onclick={onExtension}><Icon name="plug" />Import from the GradeSim extension</button>
-			{:else}
-				<a class="btn btn-secondary" href={resolve('install/')}><Icon name="plug" />Get the extension</a>
-			{/if}
-			<FileButton label="Import a file" {onFile} />
-			<button class="btn btn-secondary" type="button" onclick={exportBackup}><Icon name="download" />Export backup</button>
-			<button class="btn btn-danger" type="button" onclick={clearAll}><Icon name="trash" />Clear my data</button>
-		</div>
-	</section>
 </div>
 
 <style>
@@ -251,12 +253,44 @@
 		font-size: 0.88rem;
 	}
 
-	.group header {
+	.group {
+		border: 1px solid var(--border);
+		border-radius: var(--radius-md);
+		background: var(--bg-elevated);
+		overflow: hidden;
+	}
+
+	.group > summary,
+	.fold > summary {
 		display: flex;
 		flex-wrap: wrap;
-		align-items: baseline;
-		gap: 4px 12px;
-		padding: 0 4px 8px;
+		align-items: center;
+		gap: 4px 10px;
+		min-height: 48px;
+		padding: 8px 12px;
+		cursor: pointer;
+		list-style: none;
+	}
+
+	.group > summary::-webkit-details-marker,
+	.fold > summary::-webkit-details-marker {
+		display: none;
+	}
+
+	.group > summary > :global(.icon),
+	.fold > summary > :global(.icon) {
+		color: var(--muted);
+		transform: rotate(-90deg);
+		transition: transform var(--transition-fast);
+	}
+
+	.group[open] > summary > :global(.icon),
+	.fold[open] > summary > :global(.icon) {
+		transform: none;
+	}
+
+	.group[open] > summary {
+		border-bottom: 1px solid var(--border);
 	}
 
 	.group h2 {
@@ -264,6 +298,7 @@
 	}
 
 	.ggwa {
+		margin-left: auto;
 		font-size: 0.88rem;
 		font-weight: 600;
 		color: var(--body);
@@ -282,10 +317,6 @@
 	.group ul {
 		list-style: none;
 		padding: 0;
-		border: 1px solid var(--border);
-		border-radius: var(--radius-md);
-		background: var(--bg-elevated);
-		overflow: hidden;
 	}
 
 	.group li {
@@ -422,15 +453,26 @@
 		margin-top: 10px;
 	}
 
-	.subadd summary {
-		cursor: pointer;
-		padding: 8px 0 0;
-		font-weight: 650;
-		color: var(--brand);
+	.folds {
+		padding-block: 0;
 	}
 
-	.subadd p {
-		margin-top: 8px;
+	.fold + .fold {
+		border-top: 1px solid var(--border);
+	}
+
+	.fold > summary {
+		padding-inline: 0;
+		font-weight: 650;
+		color: var(--ink);
+	}
+
+	.fold[open] {
+		padding-bottom: 16px;
+	}
+
+	.fold p {
+		margin: 0;
 	}
 
 	.subs {
@@ -452,6 +494,13 @@
 		flex-wrap: wrap;
 		gap: 8px;
 		margin-top: 12px;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.group > summary > :global(.icon),
+		.fold > summary > :global(.icon) {
+			transition: none;
+		}
 	}
 
 	@media (max-width: 719px) {
