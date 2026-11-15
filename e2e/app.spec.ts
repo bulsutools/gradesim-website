@@ -113,6 +113,7 @@ test('an old course is credited to a checklist row from the planner', async ({ p
 	const sheet = page.getByTestId('planner-sheet');
 	const retake = sheet.locator('.pl-row.st-retake[data-code="MATH 27"]');
 	await retake.click();
+	await page.getByText('Credit or fix this course').click();
 	const credit = page.getByLabel('Credit a course you passed');
 	await expect(credit.locator('option')).toHaveText(['None', 'MATH 37, 3 units, 2.00']);
 	await credit.selectOption('MATH 37');

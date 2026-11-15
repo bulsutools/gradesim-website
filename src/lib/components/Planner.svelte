@@ -34,7 +34,7 @@
 		type PlannerInput,
 	} from '#lib/planner.ts';
 	import { fixIssue, fixText, type ChecklistFix } from '#lib/fix.ts';
-	import { preGroups } from '#lib/scheduler.ts';
+	import { preGroups, type PlanCourse } from '#lib/scheduler.ts';
 	import { buildPlannerSheets, writeXlsx } from '#lib/xlsx.ts';
 	import FixForm from './FixForm.svelte';
 	import Icon, { type IconName } from './Icon.svelte';
@@ -323,12 +323,11 @@
 		{@const card = layout?.primary[code]}
 		{@const t = view.now.result.assignedTerm[code]}
 		{@const slip = c.genericRequirement === 'elective' && view.slips[code] > 0 ? undefined : view.slips[code]}
-		{@const blocking = model.graph.blocking[code] || 0}
-		{@const delay = model.graph.delay[code] || 1}
 		{@const deps = model.graph.edges.filter((e) => e.from === code).map((e) => e.to)}
 		{@const past = i.tries.length > 0}
 		{@const fix = app.fixes.find((f) => f.code === code)}
-		{@const off = c.offered as Record<number, number> | null | undefined}
+		{@const offer = offeringLabel(c)}
+		{@const canCredit = !c.genericRequirement && (app.s.substitutions[code] || (i.status !== 'passed' && subOptions.length))}
 		{@const passBlock = i.status !== 'passed' && markConflict(view, code, 'passed')}
 		{@const failBlock = i.status !== 'failed' && markConflict(view, code, 'failed')}
 		<aside class="pl-detail" aria-label="Details for {code}">
@@ -339,20 +338,17 @@
 				</div>
 				<button type="button" class="pl-close" aria-label="Close details" onclick={() => select(code)}><Icon name="x" /></button>
 			</div>
-			<p class="pl-muted">
-				{`${unitsText(c.units)}, offered ${offeringLabel(c).toLowerCase()}${off && !c.fixed ? ` (${off[1] ?? 0} of 4 first sems, ${off[2] ?? 0} of 3 second sems, ${off[3] ?? 0} of 2 midyears seen)` : ''}.${t !== undefined ? ` Planned for ${absLabel(view.startAbs + t)}.` : ''}`}
-			</p>
-			{#if i.status !== 'passed' && (blocking || delay > 1 || slip !== undefined)}
-				<ul class="pl-metrics">
-					{#if blocking}<li><strong>{blocking}</strong> {blocking === 1 ? 'course needs' : 'courses need'} this first.</li>{/if}
-					{#if slip !== undefined}
-						{#if slip > 0}
-							<li class="bad"><strong>Take this on time.</strong> A sem later moves your graduation by {slip === Infinity ? 'more than the plan can show' : termsText(termsLate(view, view.now.result.gradTermIndex, view.now.result.gradTermIndex + slip))}.</li>
-						{:else}
-							<li>You can take this a sem later and still graduate on time.</li>
-						{/if}
+			{#if restricted(c) && i.status !== 'passed'}
+				<p class="pl-muted">{offer === 'Not offered lately' ? "AMIS hasn't offered this lately." : `Offered ${offer.toLowerCase().replace('only', 'sem only')}.`}</p>
+			{/if}
+			{#if i.status !== 'passed' && slip !== undefined}
+				<p class="pl-fact" class:bad={slip > 0}>
+					{#if slip > 0}
+						<strong>Take this on time.</strong> A sem later moves your graduation by {slip === Infinity ? 'more than the plan can show' : termsText(termsLate(view, view.now.result.gradTermIndex, view.now.result.gradTermIndex + slip))}.
+					{:else}
+						You can take this a sem later and still graduate on time.
 					{/if}
-				</ul>
+				</p>
 			{/if}
 			{#if c.options}
 				<h4>Take one of these</h4>
@@ -362,8 +358,8 @@
 					{/each}
 				</ul>
 			{/if}
-			<h4>Requires</h4>
 			{#if preGroups(c).length || c.co?.length || c.standing || c.coi || c.note}
+				<h4>Requires</h4>
 				<ul class="pl-reqs">
 					{#each preGroups(c) as g, gi (gi)}
 						<li>{@render group(g)}</li>
@@ -375,8 +371,6 @@
 					{#if c.coi}<li>Consent of instructor (COI) also works</li>{/if}
 					{#if c.note}<li class="pl-muted">AMIS says {c.note}</li>{/if}
 				</ul>
-			{:else}
-				<p class="pl-muted">No prerequisites.</p>
 			{/if}
 			{#if deps.length}
 				<h4>Unlocks</h4>
@@ -398,29 +392,38 @@
 					<span>Plan on a petition<small>A petition needs about 10 students and approval from the department, the college and OVCAA.</small></span>
 				</label>
 			{/if}
-			{#if !c.genericRequirement && (app.s.substitutions[code] || (i.status !== 'passed' && subOptions.length))}
-				<label class="field pl-credit">
-					Credit a course you passed
-					<select class="select" value={app.s.substitutions[code] ?? ''} onchange={(e) => credit(code, e.currentTarget.value)}>
-						<option value="">None</option>
-						{#if app.s.substitutions[code]}<option value={app.s.substitutions[code]}>{app.s.substitutions[code]}</option>{/if}
-						{#each subOptions as o (o.code)}<option value={o.code.toUpperCase().trim()}>{o.code}, {unitsText(o.units)}, {formatGrade(String(o.grade))}</option>{/each}
-					</select>
-					<small>It counts as {code} in your plan and on the Grades tab.</small>
-				</label>
-			{/if}
-			{#if fixing === code}
-				<FixForm course={c} onsave={saveFix} oncancel={() => (fixing = null)} />
-			{:else if fix}
-				<p class="pl-muted">
-					Your fix is in your plan{fix.sent ? ' and was sent' : ''}.
-					{#if !fix.sent}<button type="button" class="textbtn" onclick={sendFixes}>Send to UPLB Tools</button>{/if}
-					<button type="button" class="textbtn" onclick={() => (fixing = code)}>Change it</button>
-				</p>
+			{#if canCredit}
+				<details class="pl-more" open={fixing === code || !!fix || !!app.s.substitutions[code]}>
+					<summary><Icon name="chevron" size={16} />Credit or fix this course</summary>
+					<label class="field pl-credit">
+						Credit a course you passed
+						<select class="select" value={app.s.substitutions[code] ?? ''} onchange={(e) => credit(code, e.currentTarget.value)}>
+							<option value="">None</option>
+							{#if app.s.substitutions[code]}<option value={app.s.substitutions[code]}>{app.s.substitutions[code]}</option>{/if}
+							{#each subOptions as o (o.code)}<option value={o.code.toUpperCase().trim()}>{o.code}, {unitsText(o.units)}, {formatGrade(String(o.grade))}</option>{/each}
+						</select>
+						<small>It counts as {code} in your plan and on the Grades tab.</small>
+					</label>
+					{@render fixLine(c, fix)}
+				</details>
 			{:else if !c.genericRequirement}
-				<p class="pl-muted">Is something wrong here? <button type="button" class="textbtn" onclick={() => (fixing = code)}>Fix this course</button></p>
+				{@render fixLine(c, fix)}
 			{/if}
 		</aside>
+	{/if}
+{/snippet}
+
+{#snippet fixLine(c: PlanCourse, fix: ChecklistFix | undefined)}
+	{#if fixing === c.code}
+		<FixForm course={c} onsave={saveFix} oncancel={() => (fixing = null)} />
+	{:else if fix}
+		<p class="pl-muted">
+			Your fix is in your plan{fix.sent ? ' and was sent' : ''}.
+			{#if !fix.sent}<button type="button" class="textbtn" onclick={sendFixes}>Send to UPLB Tools</button>{/if}
+			<button type="button" class="textbtn" onclick={() => (fixing = c.code)}>Change it</button>
+		</p>
+	{:else}
+		<p class="pl-fixline"><button type="button" class="textbtn" onclick={() => (fixing = c.code)}>Fix this course</button></p>
 	{/if}
 {/snippet}
 
