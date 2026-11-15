@@ -11,7 +11,7 @@
 		},
 		{
 			q: 'Where do my grades go?',
-			a: 'They stay on your device. The web app keeps your grades in this browser’s local storage, and the extension keeps them in its own storage on your device. There are no accounts, no analytics, and no server that receives grades.'
+			a: 'They stay on your device. The web app keeps your grades in this browser’s local storage, and the extension keeps them in its own storage on your device. There are no accounts, no analytics, and no server that receives grades. You can export a backup or clear everything on the Grades tab.'
 		},
 		{
 			q: 'How is the GWA computed?',
@@ -67,16 +67,12 @@
 			<li>Wrapped makes a set of cards about your grades that you can save as an image.</li>
 		</ul>
 
-		<h2>Your data</h2>
-		<p>
-			Everything runs in your browser. Your grades are saved in local storage on this device and are never uploaded. You can
-			export a backup at any time and clear everything with one button on the Grades tab.
-		</p>
-
 		<h2>Questions</h2>
 		{#each faq as item (item.q)}
-			<h3>{item.q}</h3>
-			<p>{item.a}</p>
+			<details>
+				<summary>{item.q}</summary>
+				<p>{item.a}</p>
+			</details>
 		{/each}
 
 		<h2>Credits</h2>
@@ -99,6 +95,23 @@
 		margin-top: 8px;
 		font-size: 0.88rem;
 		color: var(--muted);
+	}
+
+	details {
+		border-bottom: 1px solid var(--border);
+	}
+
+	summary {
+		margin-left: 18px;
+		list-style-position: outside;
+		cursor: pointer;
+		padding: 12px 0;
+		font-weight: 650;
+		color: var(--ink);
+	}
+
+	details p {
+		margin: 0 0 14px;
 	}
 
 	.prose .btn {
