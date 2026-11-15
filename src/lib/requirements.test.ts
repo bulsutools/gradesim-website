@@ -150,7 +150,7 @@ test('HIST 1 fills KAS 1 and is not counted again as an elective', () => {
 	expect(both.fill.get('KAS 1')?.code).toBe('KAS 1');
 });
 
-test('BSCS special problem twice, midyear practicum and senior year electives', () => {
+test('BSCS special problem twice, midyear practicum and electives with no standing', () => {
 	const sp = plannerCourseList(BSCS, 'sp', UPLB_CATALOG);
 	const gwaUnits = sp.filter((c) => !isNonGwaCourseCode(c.code)).reduce((s, c) => s + c.units, 0);
 	expect(gwaUnits).toBe(BSCS.totalUnitsRequired);
@@ -161,7 +161,7 @@ test('BSCS special problem twice, midyear practicum and senior year electives', 
 	const fresh = scheduleEarliest({ courses: sp, passed: new Set(), useMidyear: false, totalUnits: 130 });
 	expect(fresh.plan.find((t) => t.courses.includes('CMSC 198'))!.sem).toBe('midyear');
 	const firstFE = Math.min(...sp.filter((c) => /^FE/.test(c.code)).map((c) => fresh.assignedTerm[c.code]));
-	expect(firstFE).toBeGreaterThanOrEqual(9);
+	expect(firstFE).toBeLessThan(9);
 
 	// CMSC 56 failed with CMSC 57 passed, the practicum, and a second CMSC 190 being taken now.
 	const taken: GradesData = {
