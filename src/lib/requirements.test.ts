@@ -192,6 +192,17 @@ test('HK 12 taken for three sports fills three HK slots', () => {
 	expect(['HK 1', 'HK 2', 'HK 3', 'HK 4'].every((c) => filled.has(c))).toBe(true);
 });
 
+test('a restricted elective takes only the subjects its title names', () => {
+	const comm = plannerCourseList(UPLB_PROGRAMS.BACOMM, null, UPLB_CATALOG);
+	const slot = (title: string) => comm.find((c) => c.title === title)!.code;
+	const row = (code: string) => ({ code, title: '', units: 3, result: 'passed' as const });
+	const filled = fillRequirementSlots(comm, [row('PHLO 171'), row('FRCH 10'), row('STAT 166')]);
+	expect(filled.get(slot('Elective (Foreign Language)'))?.code).toBe('FRCH 10');
+	expect(filled.get(slot('Elective (SOSC or PHLO)'))?.code).toBe('PHLO 171');
+	expect(filled.get(slot('Elective (STAT)'))?.code).toBe('STAT 166');
+	expect(fillRequirementSlots(comm, [row('PHLO 171')]).has(slot('Elective (Foreign Language)'))).toBe(false);
+});
+
 test('a mark that would fail the prerequisite of a passed course, or pass a course after a failed prerequisite, is refused', () => {
 	const taken: GradesData = {
 		student_grades: {

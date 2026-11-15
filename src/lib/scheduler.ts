@@ -40,6 +40,8 @@ export interface ChecklistCourse {
 	gradeType?: string;
 	/** A specialization slot: only these courses fill it. */
 	options?: string[];
+	/** A restricted elective: only these subjects or codes fill it. */
+	allow?: string[];
 	standing?: Standing | null;
 }
 
