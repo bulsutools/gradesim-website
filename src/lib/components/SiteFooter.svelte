@@ -6,8 +6,8 @@
 	<div class="wrap">
 		<nav aria-label="Footer">
 			<a href={resolve('about/')}>About</a>
-			<a href={resolve('curricula/')}>Curricula</a>
-			<a href={resolve('install/')}>Install</a>
+			<a href={resolve('curricula/')}>Checklists</a>
+			<a href={resolve('install/')}>Get the extension</a>
 			<a href={resolve('privacy/')}>Privacy</a>
 			<a href={resolve('terms/')}>Terms</a>
 			<a href="https://github.com/uplbtools/gradesim" rel="noopener" target="_blank">GitHub</a>

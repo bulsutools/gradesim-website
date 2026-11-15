@@ -71,15 +71,15 @@
 			<label for="ge-ay">Academic year</label>
 			<select id="ge-ay" class="select" bind:value={ay}>
 				{#each years as y (y)}
-					<option value={y}>{y} to {y + 1}</option>
+					<option value={y}>AY {y}-{String(y + 1).slice(2)}</option>
 				{/each}
 			</select>
 		</div>
 		<div class="field">
-			<label for="ge-sem">Semester</label>
+			<label for="ge-sem">Sem</label>
 			<select id="ge-sem" class="select" bind:value={sem}>
-				<option value={1}>1st semester</option>
-				<option value={2}>2nd semester</option>
+				<option value={1}>1st sem</option>
+				<option value={2}>2nd sem</option>
 				<option value={3}>Midyear</option>
 			</select>
 		</div>

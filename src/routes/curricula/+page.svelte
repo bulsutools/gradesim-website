@@ -76,8 +76,8 @@
 />
 
 <div class="wrap">
-	<PageHead title="UPLB curriculum checklists">
-		Official checklists for undergraduate programs, grouped by college. Open one to read it, or plan it term by term in
+	<PageHead title="UPLB program checklists">
+		Official checklists for undergraduate programs, grouped by college. Open one to read it, or plan it sem by sem in
 		GradeSim.
 	</PageHead>
 

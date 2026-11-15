@@ -27,7 +27,7 @@
 <section class="summary" aria-label="Your GWA">
 	<h2 class="gwa">
 		{#if g.gwa > 0}GWA <span data-testid="gwa">{g.gwa.toFixed(4)}</span>{:else}<span data-testid="gwa">No grades yet</span>{/if}
-		{#if honor}<span class="honor {honor.key}"><Icon name="award" />{honor.name} track</span>{/if}
+		{#if honor}<span class="honor {honor.key}"><Icon name="award" />In {honor.name.toLowerCase()} range</span>{/if}
 	</h2>
 	<p class="sub">
 		{g.passedUnits} units passed{#if g.excludedCount}, {g.excludedUnits} left out{/if}.

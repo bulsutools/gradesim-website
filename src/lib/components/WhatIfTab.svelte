@@ -3,7 +3,7 @@
 	import { UPLB_CATALOG } from '#lib/catalog.ts';
 	import { detectTrack, getProgramDataQuality } from '#lib/curriculum.ts';
 	import { HONORS } from '#lib/grades.ts';
-	import { modelFor, planTrack } from '#lib/planner.ts';
+	import { modelFor, planTrack, unitsText } from '#lib/planner.ts';
 	import { amisCourses, gwaOutlook, remainingRequirements } from '#lib/requirements.ts';
 	import Icon from './Icon.svelte';
 	import Notice from './Notice.svelte';
@@ -83,7 +83,7 @@
 		return {
 			label: 'Average you need',
 			value: r.toFixed(2),
-			note: `on your ${left.gwaUnits} GWA units left`,
+			note: `on your ${unitsText(left.gwaUnits)} left`,
 			tone: r <= 1.75 ? 'warn' : 'ok',
 			text: `${targetName} is in reach with ${how}.`,
 			failure: null

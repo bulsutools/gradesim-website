@@ -33,8 +33,8 @@ export interface GradesPatch {
  */
 export function parseBackup(obj: unknown): GradesPatch | string {
 	if (isGradesData(obj)) return { gradesData: obj };
-	if (!isObj(obj) || obj.source !== 'elbi-gradesim') return "That file isn't a GradeSim backup. Use Export JSON in the extension, or a plan saved from the planner.";
-	if (!isGradesData(obj.gradesData)) return 'That backup has no grades in it yet. Open AMIS with the extension installed, then export again.';
+	if (!isObj(obj) || obj.source !== 'elbi-gradesim') return "That file isn't a GradeSim backup, so nothing changed. Pick a file from Save backup, or a plan from Save plan.";
+	if (!isGradesData(obj.gradesData)) return 'That backup has no grades in it yet. Open AMIS with the extension installed, then save a new backup.';
 	const patch: GradesPatch = { gradesData: obj.gradesData };
 	if (typeof obj.selectedProgram === 'string' && UPLB_PROGRAMS[obj.selectedProgram]) patch.selectedProgram = obj.selectedProgram;
 	if (Array.isArray(obj.excludedCourses)) patch.excludedCourses = obj.excludedCourses.map(String);
@@ -70,7 +70,7 @@ export function parseImport(text: string): Imported {
 	try {
 		obj = JSON.parse(text);
 	} catch {
-		return { kind: 'error', message: "That file isn't valid JSON, so nothing was changed." };
+		return { kind: 'error', message: "GradeSim can't read that file, so nothing changed. Pick the backup GradeSim saved." };
 	}
 	if (isObj(obj) && obj.source === 'elbi-gradesim-plan') {
 		const problem = checkPlan(obj);
