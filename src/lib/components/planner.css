@@ -661,6 +661,17 @@ button.pl-link:hover {
   margin-top: 1px;
 }
 
+.pl-credit {
+  max-width: 340px;
+  margin-top: 12px;
+}
+
+.pl-credit small {
+  color: var(--muted);
+  font-size: 0.8125rem;
+  font-weight: 400;
+}
+
 /* Wide: first and second sem sit side by side, like the printed checklist. */
 @media (min-width: 1100px) {
   .pl-year {

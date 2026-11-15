@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { tick } from 'svelte';
 	import { app, download } from '#lib/app.svelte.ts';
-	import { groupGWA, termKeyToAbs } from '#lib/grades.ts';
+	import { formatGrade, groupGWA, substituteOptions, termKeyToAbs } from '#lib/grades.ts';
 	import { parseImport } from '#lib/importers.ts';
 	import { UPLB_CATALOG } from '#lib/catalog.ts';
 	import { getProgramDataQuality, isNonGwaCourseCode, UPLB_PROGRAMS } from '#lib/curriculum.ts';
@@ -172,6 +172,16 @@
 		};
 	});
 	const petitions = $derived(Object.keys(app.s.plannerPetitions));
+	const subOptions = $derived(substituteOptions(app.program, app.gwa.completedCourses, app.s.substitutions));
+
+	function credit(code: string, taken: string) {
+		const next = { ...app.s.substitutions };
+		if (taken) next[code] = taken;
+		else delete next[code];
+		app.s.substitutions = next;
+		acted = code;
+		focusCard(code);
+	}
 
 	function act(name: 'passed' | 'failed' | 'clear' | 'later' | 'unpin', code: string) {
 		if (!view) return;
@@ -363,6 +373,17 @@
 				<label class="pl-petition">
 					<input type="checkbox" checked={!!app.s.plannerPetitions[code]} onchange={(e) => togglePetition(code, e.currentTarget.checked)} />
 					<span>Plan on a petition<small>A petition needs about 10 students and approval from the department, the college and OVCAA.</small></span>
+				</label>
+			{/if}
+			{#if !c.genericRequirement && (app.s.substitutions[code] || (i.status !== 'passed' && subOptions.length))}
+				<label class="field pl-credit">
+					Credit a course you passed
+					<select class="select" value={app.s.substitutions[code] ?? ''} onchange={(e) => credit(code, e.currentTarget.value)}>
+						<option value="">None</option>
+						{#if app.s.substitutions[code]}<option value={app.s.substitutions[code]}>{app.s.substitutions[code]}</option>{/if}
+						{#each subOptions as o (o.code)}<option value={o.code.toUpperCase().trim()}>{o.code}, {unitsText(o.units)}, {formatGrade(String(o.grade))}</option>{/each}
+					</select>
+					<small>It counts as {code} in your plan and on the Grades tab.</small>
 				</label>
 			{/if}
 			{#if fixing === code}
