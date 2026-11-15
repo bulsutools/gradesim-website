@@ -4,7 +4,7 @@
 	import { groupGWA, termKeyToAbs } from '#lib/grades.ts';
 	import { parseImport } from '#lib/importers.ts';
 	import { UPLB_CATALOG } from '#lib/catalog.ts';
-	import { getProgramDataQuality, UPLB_PROGRAMS } from '#lib/curriculum.ts';
+	import { getProgramDataQuality, isNonGwaCourseCode, UPLB_PROGRAMS } from '#lib/curriculum.ts';
 	import {
 		absLabel,
 		buildColumns,
@@ -128,7 +128,7 @@
 		const terms = past.flatMap((y) => y.terms);
 		const dated = terms.filter((t) => t.sem !== undefined);
 		const mids = dated.filter((t) => t.sem === 2).length;
-		const units = terms.reduce((n, t) => n + t.cards.filter((c) => c.status === 'passed').reduce((u, c) => u + (Number(model?.byCode.get(c.code)?.units) || 0), 0), 0);
+		const units = terms.reduce((n, t) => n + t.cards.filter((c) => c.status === 'passed' && !isNonGwaCourseCode(c.code)).reduce((u, c) => u + (Number(model?.byCode.get(c.code)?.units) || 0), 0), 0);
 		return `${termsText(dated.length - mids)}${mids ? ` and ${mids} midyear${mids === 1 ? '' : 's'}` : ''} done, ${unitsText(units)} passed`;
 	});
 
