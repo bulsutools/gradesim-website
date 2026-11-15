@@ -334,18 +334,20 @@ test('@phone the welcome screen leads with the AMIS bookmark', async ({ page }) 
 	await expect(page.locator('#main').getByRole('link', { name: 'Get the extension' })).toBeHidden();
 });
 
-test('the GWA and semester cards in Wrapped are drawn in the tin frame', async ({ page }) => {
+test('every Wrapped card is drawn on the picnic art, and the GWA shows only when asked', async ({ page }) => {
 	await importFixture(page);
 	await page.getByRole('tab', { name: 'Wrapped' }).click();
-	const card = page.getByRole('img', { name: /drawn in a tin/ });
+	const card = page.getByRole('img', { name: /drawn on a picnic blanket/ });
+	await expect(card).toHaveAccessibleName(/^Honor roll, drawn/);
+	await page.getByLabel('Show my GWA, not only its tier').check();
 	await expect(card).toHaveAccessibleName(/GWA 1\.9773/);
 	const blank = await card.getAttribute('src');
 	await page.getByRole('textbox', { name: 'Your name on the card' }).fill('Iska');
 	await expect(card).not.toHaveAttribute('src', blank!);
-	await page.getByRole('button', { name: 'Next' }).click();
-	await expect(card).toHaveAccessibleName(/Sem stats, Best sem/);
-	await page.getByRole('button', { name: 'Next' }).click();
-	await expect(card).toHaveCount(0);
+	for (const name of [/Sem stats, Best sem/, /Your highlights/, /Variety pack/, /Early days/]) {
+		await page.getByRole('button', { name: 'Next' }).click();
+		await expect(card).toHaveAccessibleName(name);
+	}
 });
 
 test('courses from Room TBA land in the plan, and the next sem links back', async ({ page }) => {
