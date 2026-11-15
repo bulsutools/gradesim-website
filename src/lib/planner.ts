@@ -68,6 +68,7 @@ export interface PlannerOptions {
 	cap: number | 'checklist';
 	midyear: boolean;
 	midyear9: boolean;
+	minLoad?: number;
 }
 
 export interface PlannerInput {
@@ -92,7 +93,7 @@ export interface Model {
 	graph: Graph;
 }
 
-/** 18 units a sem unless the student picks 21 in Plan options. */
+/** 18 units a sem unless the student picks 21 in Plan settings. */
 export const DEFAULT_PLANNER_OPTIONS: PlannerOptions = { cap: 18, midyear: false, midyear9: false };
 
 /**
@@ -423,6 +424,15 @@ export function summary(v: View) {
 	return { headline, deltaText, deltaOk, sub, costs: showCosts ? v.costs : [] };
 }
 
+/** What a change of settings does to graduation, as the end of a sentence. */
+export function optionEffect(v: View, patch: Partial<PlannerOptions>, now = new Date()): string {
+	const w = compute(v.model, { ...v.input, plannerOptions: { ...v.input.plannerOptions, ...patch } }, now);
+	const a = v.now.result.gradTermIndex;
+	const b = w.now.result.gradTermIndex;
+	if (a < 0 || b < 0 || a === b) return 'your graduation sem stays the same.';
+	return `you'd graduate ${absLabel(w.startAbs + b)}, which is ${b < a ? 'earlier' : 'later'}.`;
+}
+
 /* ---------- Cards and columns ---------- */
 
 export function offeringLabel(c: PlanCourse): string {
@@ -625,6 +635,7 @@ export function columnFacts(column: Column, v: View) {
 		else if (!isMid && units > v.capAt(column.abs)) warn = `Over your ${v.capAt(column.abs)}-unit cap. This needs an overload approval.`;
 		else if (!isMid && units > 18)
 			warn = v.byChecklist ? 'Over 18 units, which the checklist puts in this sem.' : 'Over 18 units. This is allowed up to 21 when the sem has lab courses.';
+		else if (!isMid && units < (v.input.plannerOptions.minLoad || 0)) warn = `Under your ${v.input.plannerOptions.minLoad}-unit minimum.`;
 	}
 	const loud = !!warn && (isMid || units > v.capAt(column.abs));
 	return { isPast, name, sub, units, isMid, future, tag, warn, loud, cap: future ? (isMid ? v.unitCaps.midyear : v.capAt(column.abs)) : null };
@@ -700,6 +711,7 @@ export function checkPlan(p: unknown): string {
 		all(p.substitutions, (x) => typeof x === 'string') &&
 		isObj(o) &&
 		(o.cap === 'checklist' || [18, 21].includes(Number(o.cap))) &&
+		(o.minLoad == null || [0, 12, 15, 18].includes(Number(o.minLoad))) &&
 		(w == null || (isObj(w) && typeof w.code === 'string' && ['fail', '1', '3'].includes(w.mode as string)));
 	return ok ? '' : 'That plan file is damaged, so nothing changed. Save the plan again and load the new file.';
 }
