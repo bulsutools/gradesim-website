@@ -54,7 +54,7 @@
 		}
 		error = '';
 		const id = `m-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`;
-		app.s.gradesData = addCourse(app.s.gradesData, ay, sem, { code: c, title, units, grade }, id);
+		app.editGrades(addCourse(app.s.gradesData, ay, sem, { code: c, title, units, grade }, id));
 		if (!app.s.source) app.s.source = 'manual';
 		added = `Added ${c}${grade ? ` with ${grade}` : ''}.`;
 		code = '';

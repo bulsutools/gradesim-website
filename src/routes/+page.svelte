@@ -63,7 +63,19 @@
 			url.searchParams.delete('program');
 			history.replaceState(history.state, '', url.pathname + url.search + url.hash);
 		} else if (!app.hasData && tab === 'planner') app.blank = true;
-		probeExtension().then((r) => (extension = r ?? 'missing'));
+		probeExtension().then(async (r) => {
+			extension = r ? (r.hasGrades ? 'found' : 'empty') : 'missing';
+			const s = app.s;
+			if (!r?.hasGrades || !r.fetchedAt || s.source !== 'extension' || !s.fetchedAt || r.fetchedAt === s.fetchedAt) return;
+			if (s.handEdited) {
+				message = { text: 'The extension has newer grades from AMIS. Importing them replaces the grades you edited by hand.', tone: 'ok' };
+				return;
+			}
+			const patch = parseBackup(await getExtensionGrades());
+			if (typeof patch === 'string') return;
+			app.refreshGrades(patch);
+			message = { text: 'GradeSim loaded your newer grades from the extension.', tone: 'ok' };
+		});
 	});
 
 	// Save on every change once the saved state has been read.
