@@ -1,5 +1,6 @@
 import { expect, test } from 'vitest';
 import backup from './fixtures/backup.json';
+import { shownGwa } from './wrapped.ts';
 import {
 	calculateGWA,
 	gradeTone,
@@ -128,4 +129,8 @@ test('a failing or INC grade in HK or NSTP holds the scholar badge for that term
 test('a 4.00 is not a passing grade', () => {
 	expect(gradeTone('4.00')).toBe('other');
 	expect(gradeTone('3.00')).toBe('passing');
+});
+
+test('a GWA can be posted the way students mask it', () => {
+	expect(['none', 'xx', 'bx', 'xc', 'bc', 'full'].map((k) => shownGwa('1.8750', k as never))).toEqual(['', '1.xx', '1.8x', '1.x7', '1.87', '1.8750']);
 });

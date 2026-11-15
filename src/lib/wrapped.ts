@@ -100,9 +100,9 @@ export function wrappedData(courses: Course[]) {
 
 type Data = ReturnType<typeof wrappedData>;
 
-function thisSemPanel(courses: Course[], d: Data): Panel | null {
-	const n = d.semList.length;
-	if (!n) return null;
+function thisSemPanel(courses: Course[], d: Data, pick?: number): Panel | null {
+	if (!d.semList.length) return null;
+	const n = Math.min(pick ?? d.semList.length, d.semList.length - 1) + 1;
 	const sem = d.semList[n - 1];
 	const taken = courses.filter((c) => c.termLabel === sem.name);
 	const scholar = scholarHolds(courses).has(taken[0].termKey) ? null : scholarFor(groupGWA(taken));
@@ -122,7 +122,7 @@ function thisSemPanel(courses: Course[], d: Data): Panel | null {
 	const prev = n > 1 ? d.semList[n - 2].gwa : null;
 	const extra =
 		prev == null ? 'My first sem in Elbi'
-		: d.bestSem === sem ? 'My best sem yet'
+		: d.bestSem === sem ? 'My best sem'
 		: prev - g >= 0.01 ? `Up ${(prev - g).toFixed(2)} from last sem`
 		: `${taken.filter((c) => !isPrefixExcluded(c.code)).reduce((u, c) => u + (c.units || 0), 0)} units done this sem`;
 	const t = top as { code: string; grade: number } | null;
@@ -227,9 +227,10 @@ function progressPanel(d: Data, totalRequired: number): Panel {
 	return { emoji, title, value: `${pct}%`, subtitle: `${done} of ${totalRequired} units passed`, message, progress: pct / 100, extra: left ? `${left} units to go` : 'All units done', frame: done ? 'open' : undefined };
 }
 
-export function wrappedPanels(courses: Course[], totalRequired = 155): Panel[] {
+/** pick is the index of the sem card's sem in wrappedData().semList, the latest by default. */
+export function wrappedPanels(courses: Course[], totalRequired = 155, pick?: number): Panel[] {
 	const d = wrappedData(courses);
-	const sem = thisSemPanel(courses, d);
+	const sem = thisSemPanel(courses, d, pick);
 	return [...(sem ? [sem] : []), gwaPanel(d), semesterPanel(d), highlightsPanel(d), collectorPanel(d), progressPanel(d, totalRequired)];
 }
 
@@ -244,8 +245,25 @@ export interface IdCard {
 	name: string;
 	year: string;
 	course: string;
-	/** Show the GWA itself, not only its tier. */
-	number?: boolean;
+	/** How much of the GWA to show. */
+	show?: GwaShow;
+	/** When the grades were read from AMIS, unedited. Empty when they weren't. */
+	amis?: string;
+	/** Show the sem card's top grade. */
+	top?: boolean;
+	/** The student's own line on the sem card. */
+	line?: string;
+}
+
+export type GwaShow = 'none' | 'xx' | 'bx' | 'xc' | 'bc' | 'full';
+
+/** A GWA written the way students post it, like 1.xx or 1.8x. Two decimals are cut, not rounded. */
+export function shownGwa(value: string, show: GwaShow = 'none'): string {
+	const [a, d = ''] = value.split('.');
+	if (show === 'none' || !d) return '';
+	if (show === 'full') return value;
+	const [b, c] = d;
+	return `${a}.${{ xx: 'xx', bx: `${b}x`, xc: `x${c}`, bc: `${b}${c}` }[show]}`;
 }
 
 /** A highlight label without its leading emoji. */
@@ -413,20 +431,47 @@ async function drawFrame(ctx: CanvasRenderingContext2D, p: Panel, font: string, 
 		ctx.restore();
 	};
 	const url = 'gradesim.uplb.tools';
+	const g = shownGwa(p.value, id.show);
+
+	if (id.amis) {
+		const label = `From AMIS, ${id.amis}`;
+		ctx.font = `700 34px ${font}`;
+		const w = ctx.measureText(label).width + 100;
+		ctx.fillStyle = 'rgba(28,25,23,0.88)';
+		ctx.beginPath();
+		ctx.roundRect(60, 262, w, 68, 34);
+		ctx.fill();
+		ctx.fillStyle = '#2a8f55';
+		ctx.beginPath();
+		ctx.arc(100, 296, 20, 0, Math.PI * 2);
+		ctx.fill();
+		ctx.strokeStyle = '#ffffff';
+		ctx.lineWidth = 6;
+		ctx.lineCap = 'round';
+		ctx.beginPath();
+		ctx.moveTo(90, 297);
+		ctx.lineTo(98, 305);
+		ctx.lineTo(111, 287);
+		ctx.stroke();
+		ctx.fillStyle = '#ffffff';
+		ctx.textAlign = 'left';
+		ctx.fillText(label, 132, 308);
+		ctx.textAlign = 'center';
+	}
 
 	if (p.frame === 'sem') {
-		const top = p.highlights?.[0];
+		const top = id.top === false ? undefined : p.highlights?.[0];
 		ctx.translate(540, 1040);
 		ctx.rotate(-0.08);
 		ctx.translate(-540, -1040);
 		onGrass(`My ${p.subtitle}`, 700, 50, 540, 760);
-		if (id.number) {
-			onGrass(p.value, 800, 220, 540, 990);
+		if (g) {
+			onGrass(g, 800, 220, 540, 990);
 			onGrass(p.title, 800, 76, 540, 1090);
 		} else onGrass(p.title, 800, 112, 540, 960);
-		onGrass(p.extra ?? '', 700, 50, 540, id.number ? 1180 : 1070);
-		if (top) onGrass(`Top grade ${top.name}, ${top.detail}`, 600, 44, 540, id.number ? 1260 : 1150);
-		onGrass(url, 600, 38, 540, id.number ? 1350 : 1250);
+		onGrass(id.line || p.extra || '', 700, 50, 540, g ? 1180 : 1070);
+		if (top) onGrass(`Top grade ${top.name}, ${top.detail}`, 600, 44, 540, g ? 1260 : 1150);
+		onGrass(url, 600, 38, 540, g ? 1350 : 1250);
 		return;
 	}
 
@@ -440,8 +485,8 @@ async function drawFrame(ctx: CanvasRenderingContext2D, p: Panel, font: string, 
 		rows.forEach(([t, x, y, max]) => at(x, y, -0.19, () => text(t, 700, 40, INK, 0, max)));
 		ctx.textAlign = 'center';
 		at(592, 1215, -0.19, () => {
-			if (id.number) {
-				text(p.value, 800, 190, RED, 0);
+			if (g) {
+				text(g, 800, 190, RED, 0);
 				text(p.title, 800, 64, INK, 95);
 			} else {
 				text(p.title, 800, 120, RED, 20, 700);
