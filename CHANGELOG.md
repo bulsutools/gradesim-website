@@ -1,3 +1,10 @@
+# [0.21.0](https://github.com/uplbtools/gradesim-website/compare/v0.20.0...v0.21.0) (2026-11-15)
+
+
+### Features
+
+* **wrapped:** a card for this sem comes first ([#218](https://github.com/uplbtools/gradesim-website/issues/218)) ([b3df722](https://github.com/uplbtools/gradesim-website/commit/b3df7221c46aec35d91ac1ac8794162a78d4f007))
+
 # [0.20.0](https://github.com/uplbtools/gradesim-website/compare/v0.19.0...v0.20.0) (2026-11-15)
 
 
