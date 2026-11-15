@@ -76,6 +76,31 @@
   gap: 10px 16px;
 }
 
+.pl-view {
+  display: inline-flex;
+  padding: 3px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-elevated);
+}
+
+.pl-view button {
+  min-height: 36px;
+  padding: 4px 14px;
+  border: 0;
+  border-radius: calc(var(--radius-sm) - 2px);
+  background: none;
+  color: var(--muted);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.pl-view button[aria-pressed='true'] {
+  background: var(--brand);
+  color: var(--on-brand);
+}
+
 .pl-menu .select {
   min-height: 40px;
   padding: 6px 10px;
