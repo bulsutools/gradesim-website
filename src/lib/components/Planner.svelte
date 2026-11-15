@@ -581,7 +581,6 @@
 			<details class="pl-menu" bind:this={menu} ontoggle={(e) => (menuOpen = e.currentTarget.open)}>
 				<summary class="btn btn-secondary">Plan settings<Icon name="chevron" /></summary>
 				<div class="pl-menu-pop">
-					<button type="button" class="pl-menu-item" onclick={autoPlan}>Auto-plan again<small>Drops courses you pushed later</small></button>
 					<label class="pl-menu-item">
 						Max load per sem
 						<select class="select" value={String(options.cap)} onchange={(e) => setOptions({ cap: Number(e.currentTarget.value) || 'checklist' })}>
@@ -621,15 +620,19 @@
 						</label>
 					{/if}
 					<label class="pl-menu-item pl-check"><input type="checkbox" checked={options.midyear} onchange={(e) => setOptions({ midyear: e.currentTarget.checked })} /> <span>Take classes in midyear{#if effects}<small>With this {options.midyear ? 'off' : 'on'}, {effects.midyear}</small>{/if}</span></label>
-					<label class="pl-menu-item pl-check"><input type="checkbox" checked={options.midyear9} onchange={(e) => setOptions({ midyear9: e.currentTarget.checked })} /> <span>Midyear up to 9 units (Dean's approval){#if effects && options.midyear}<small>With this {options.midyear9 ? 'off' : 'on'}, {effects.midyear9}</small>{/if}</span></label>
+					{#if options.midyear}<label class="pl-menu-item pl-check pl-sub"><input type="checkbox" checked={options.midyear9} onchange={(e) => setOptions({ midyear9: e.currentTarget.checked })} /> <span>Midyear up to 9 units (Dean's approval){#if effects}<small>With this {options.midyear9 ? 'off' : 'on'}, {effects.midyear9}</small>{/if}</span></label>{/if}
+					<hr class="pl-menu-sep" />
+					<button type="button" class="pl-menu-item" onclick={autoPlan}>Auto-plan again<small>Drops courses you pushed later</small></button>
 					{#if petitions.length}
 						<button type="button" class="pl-menu-item" onclick={() => (app.s.plannerPetitions = {})}>Clear petitions<small>{petitions.join(', ')} {petitions.length === 1 ? 'goes' : 'go'} back to the sems AMIS offers {petitions.length === 1 ? 'it' : 'them'}</small></button>
 					{/if}
+					<hr class="pl-menu-sep" />
 					<button type="button" class="pl-menu-item" onclick={savePlan}>Save plan<small>Download your marks, moves and settings as a file</small></button>
 					<button type="button" class="pl-menu-item" onclick={() => planInput?.click()}>Load plan<small>Restore a plan file you saved earlier</small></button>
 					<button type="button" class="pl-menu-item" onclick={copyPlanLink}>Copy a link to this plan<small>It opens your plan for a blockmate or your adviser, with no grades</small></button>
 					<button type="button" class="pl-menu-item" onclick={exportXlsx}>Export to Excel<small>A color-coded sheet with one column per sem</small></button>
 					<button type="button" class="pl-menu-item" onclick={printPlan}>Print<small>Every sem on paper, like the official checklist</small></button>
+					<hr class="pl-menu-sep" />
 					<button type="button" class="pl-menu-item pl-danger" onclick={resetPlan}>Reset plan<small>Clears marks, moves and petitions</small></button>
 				</div>
 			</details>

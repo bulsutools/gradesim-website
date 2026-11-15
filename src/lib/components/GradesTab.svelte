@@ -134,18 +134,14 @@
 				{#if app.s.source}These grades came from {SOURCE[app.s.source]}.{/if}
 				It's saved in this browser only. A backup moves it to another device or the extension.
 			</p>
-			<div class="actions">
-				{#if extension === 'found'}
-					<button class="btn btn-secondary" type="button" onclick={onExtension}><Icon name="plug" />Import from the extension</button>
-				{:else}
-					<a class="btn btn-secondary" href={resolve('install/')}><Icon name="plug" />Get the extension</a>
-				{/if}
+			<div class="actions pair">
 				<FileButton label="Load backup" {onFile} />
 				<button class="btn btn-secondary" type="button" onclick={exportBackup}><Icon name="download" />Save backup</button>
-				<button class="btn btn-secondary" type="button" onclick={copyLink}><Icon name="external" />Copy a link to my grades</button>
-				<button class="btn btn-danger" type="button" onclick={clearAll}><Icon name="trash" />Clear my data</button>
 			</div>
-			<p class="small" aria-live="polite">
+			<div class="actions">
+				<button class="btn btn-secondary" type="button" onclick={copyLink}><Icon name="external" />Copy a link to my grades</button>
+			</div>
+			<p class="small hint" aria-live="polite">
 				{#if link === 'failed'}
 					Your browser blocked the copy. Save a backup instead.
 				{:else}
@@ -153,6 +149,16 @@
 					It holds your grades, so send it only to yourself.
 				{/if}
 			</p>
+			<div class="actions">
+				{#if extension === 'found'}
+					<button class="btn btn-secondary" type="button" onclick={onExtension}><Icon name="plug" />Import from the extension</button>
+				{:else}
+					<a class="btn btn-secondary" href={resolve('install/')}><Icon name="plug" />Get the extension</a>
+				{/if}
+			</div>
+			<div class="actions danger">
+				<button class="btn btn-danger" type="button" onclick={clearAll}><Icon name="trash" />Clear my data</button>
+			</div>
 		</details>
 	</div>
 
@@ -237,7 +243,7 @@
 	.toolbar {
 		display: flex;
 		flex-wrap: wrap;
-		justify-content: space-between;
+		align-items: center;
 		gap: 8px;
 	}
 
@@ -517,8 +523,24 @@
 		margin-top: 12px;
 	}
 
+	.actions.pair {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		max-width: 30rem;
+	}
+
+	.fold .hint {
+		margin-top: 6px;
+	}
+
+	.actions.danger {
+		margin-top: 16px;
+		padding-top: 16px;
+		border-top: 1px solid var(--border);
+	}
+
 	@media (max-width: 999px) {
-		.actions {
+		.actions:not(.pair) {
 			display: grid;
 			grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
 		}
