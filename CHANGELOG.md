@@ -1,3 +1,11 @@
+# [0.8.0](https://github.com/uplbtools/gradesim-website/compare/v0.7.0...v0.8.0) (2026-11-15)
+
+
+### Features
+
+* **dashboard:** the GWA lives on the Grades tab instead of above every tab ([#140](https://github.com/uplbtools/gradesim-website/issues/140)) ([1423eb2](https://github.com/uplbtools/gradesim-website/commit/1423eb2d95167f2eab1d3946c9f18ada22ddda9e))
+* **type:** Figtree for all text, in place of Inter and Raleway ([#142](https://github.com/uplbtools/gradesim-website/issues/142)) ([9f03cd7](https://github.com/uplbtools/gradesim-website/commit/9f03cd75a13713cc6ceee63c335017c557477b3b))
+
 # [0.7.0](https://github.com/uplbtools/gradesim-website/compare/v0.6.13...v0.7.0) (2026-11-15)
 
 
