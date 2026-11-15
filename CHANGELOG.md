@@ -1,3 +1,10 @@
+## [0.25.2](https://github.com/uplbtools/gradesim-website/compare/v0.25.1...v0.25.2) (2026-11-15)
+
+
+### Bug Fixes
+
+* **planner:** the map stays inside the page, and course details open beside it ([#266](https://github.com/uplbtools/gradesim-website/issues/266)) ([92d3026](https://github.com/uplbtools/gradesim-website/commit/92d302688b0f867c6cef05a980604316c2069db3))
+
 ## [0.25.1](https://github.com/uplbtools/gradesim-website/compare/v0.25.0...v0.25.1) (2026-11-15)
 
 
