@@ -704,6 +704,7 @@ button.pl-link:hover {
 .pl-link.st-passed .icon { color: var(--ok); }
 .pl-link.st-failed .icon { color: var(--bad); }
 .pl-link.st-outside { color: var(--muted); font-weight: 500; }
+.pl-outside { font-size: inherit; }
 
 .pl-or {
   color: var(--muted);
