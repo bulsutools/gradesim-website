@@ -146,7 +146,7 @@
 		<Welcome {extension} {manual} onExtension={fromExtension} onFile={fromFile} onManual={() => (manual = true)} />
 	</div>
 {:else if !app.hasData}
-	<div class="dash wide">
+	<div class="dash wrap">
 		<p class="blank">
 			This is the {app.program.name} checklist planned from a blank transcript.
 			<button class="textbtn" type="button" onclick={() => { app.blank = false; setTab('grades'); }}>Add your grades</button> to plan from where you are.
@@ -155,7 +155,7 @@
 	</div>
 {:else}
 	<div class="dash">
-		<div class={tab === 'planner' ? 'wide' : 'wrap'}>
+		<div class="wrap">
 			<h1 class="visually-hidden">Your dashboard</h1>
 			<div class="tabs" role="tablist" aria-label="GradeSim sections">
 				{#each TABS as t, i (t.id)}
@@ -178,7 +178,7 @@
 			id="panel-{tab}"
 			role="tabpanel"
 			aria-labelledby="tab-{tab}"
-			class={tab === 'planner' ? 'wide' : 'wrap'}
+			class="wrap"
 		>
 			{#if tab === 'grades'}
 				<GradesTab {extension} onExtension={fromExtension} onFile={fromFile} />
@@ -256,17 +256,5 @@
 		display: inline;
 		min-height: 0;
 		padding: 0;
-	}
-
-	.wide {
-		max-width: 1600px;
-		margin: 0 auto;
-		padding: 0 16px;
-	}
-
-	@media (min-width: 720px) {
-		.wide {
-			padding: 0 24px;
-		}
 	}
 </style>
