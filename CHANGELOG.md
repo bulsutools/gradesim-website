@@ -1,3 +1,10 @@
+## [0.6.12](https://github.com/uplbtools/gradesim-website/compare/v0.6.11...v0.6.12) (2026-11-15)
+
+
+### Bug Fixes
+
+* **grades:** tools on top, terms that open and close ([#131](https://github.com/uplbtools/gradesim-website/issues/131)) ([aaeb8d6](https://github.com/uplbtools/gradesim-website/commit/aaeb8d60ad2dfcb2c03359788c089a555ab7dc19))
+
 ## [0.6.11](https://github.com/uplbtools/gradesim-website/compare/v0.6.10...v0.6.11) (2026-11-15)
 
 
