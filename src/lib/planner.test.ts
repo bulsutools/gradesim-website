@@ -83,6 +83,18 @@ test('a term of 18 units plus HK and NSTP is not an overload', () => {
 	cols.forEach(({ f }) => expect(f.warn).toBe(''));
 });
 
+test('the checklist load lets a blank BS EE plan take its prescribed heavy sems', () => {
+	const m = modelFor('BSEE')!;
+	const facts = (cap: 18 | 'checklist') => {
+		const v = compute(m, { ...input(), gradesData: null, plannerOptions: { ...DEFAULT_PLANNER_OPTIONS, cap } }, now);
+		return buildColumns(v).list.map((c) => columnFacts(c, v));
+	};
+	expect(Math.max(...facts(18).map((f) => f.units))).toBeLessThanOrEqual(18);
+	const byChecklist = facts('checklist');
+	expect(byChecklist.some((f) => f.units > 18 && f.warn === 'Over 18 units, which the checklist puts in this sem.')).toBe(true);
+	expect(byChecklist.every((f) => !f.loud || f.isMid)).toBe(true);
+});
+
 test('a what-if fail on a course already failed reports what that failure costs', () => {
 	const v = compute(model, input({ whatif: { code: 'MATH 27', mode: 'fail' } }), now);
 	expect(whatIfMessage(v)).toMatch(/^MATH 27 is failed on your record/);

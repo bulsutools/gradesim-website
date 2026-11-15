@@ -89,6 +89,13 @@ const C = (code: string, units: number, sem?: string, prereqs: string[] = []): P
 	});
 	expect(twoHk.assignedTerm['HK 1']).not.toBe(twoHk.assignedTerm['HK 2']);
 	expect(twoHk.assignedTerm['NSTP 1']).not.toBe(twoHk.assignedTerm['NSTP 2']);
+	const perTerm = scheduleEarliest({
+	  courses: [C('X1', 12, '1'), C('X2', 12, '1')],
+	  passed: new Set(),
+	  termCaps: { 0: 24 },
+	  startSem: '1',
+	});
+	eq(perTerm.assignedTerm['X2'], 0);
 	
 	// notBefore delay honored, and offering still respected (t3 is next 1st sem)
 	const delayed = scheduleEarliest({ courses: [C('A', 3, '1')], passed: new Set(), notBefore: { A: 1 }, startSem: '1' });

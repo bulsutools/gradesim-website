@@ -475,6 +475,8 @@ export interface ScheduleOptions {
 	/** {termIndex: units} taken by failed attempts. */
 	reserved?: Record<number, number>;
 	unitCaps?: Partial<Record<Sem, number>>;
+	/** {termIndex: units} in place of unitCaps. */
+	termCaps?: Record<number, number>;
 	/** Sem of termIndex 0. */
 	startSem?: Sem;
 	/** Program total, for standing. */
@@ -578,7 +580,8 @@ export function scheduleEarliest(opts: ScheduleOptions): ScheduleResult {
 
 	for (let t = 0; t < maxTerms && remaining.size > 0; t++) {
 		const sem = semAt(t, startSem);
-		const cap = (unitCaps[sem] != null ? unitCaps[sem]! : DEFAULT_UNIT_CAPS[sem]) - (reserved[t] || 0);
+		const base = opts.termCaps?.[t] ?? (unitCaps[sem] != null ? unitCaps[sem]! : DEFAULT_UNIT_CAPS[sem]);
+		const cap = base - (reserved[t] || 0);
 		const done = (c: string) => passed.has(c) || (assignedTerm[c] !== undefined && assignedTerm[c] < t);
 
 		let candidates = Array.from(remaining).filter((code) => {

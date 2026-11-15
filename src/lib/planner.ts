@@ -65,7 +65,7 @@ export type CourseStatus = 'passed' | 'failed' | 'planned' | 'inprogress';
 export type WhatIfMode = 'fail' | '1' | '3';
 
 export interface PlannerOptions {
-	cap: number;
+	cap: number | 'checklist';
 	midyear: boolean;
 	midyear9: boolean;
 }
@@ -289,11 +289,27 @@ export function compute(model: Model, input: PlannerInput, now = new Date()) {
 		failures.push({ code: wi.code, past: false, source: 'whatif' });
 	}
 
-	const unitCaps = { '1': Number(opts.cap), '2': Number(opts.cap), midyear: opts.midyear9 ? 9 : 6 };
+	const byChecklist = opts.cap === 'checklist';
+	const regularCap = byChecklist ? 18 : Number(opts.cap);
+	const unitCaps = { '1': regularCap, '2': regularCap, midyear: opts.midyear9 ? 9 : 6 };
+	const termCaps: Record<number, number> = {};
+	if (byChecklist) {
+		const load: Record<string, number> = {};
+		model.courses.forEach((c) => {
+			if (!isNonGwaCourseCode(c.code)) load[`${c.year} ${c.sem}`] = (load[`${c.year} ${c.sem}`] || 0) + (Number(c.units) || 0);
+		});
+		const entryAy = Math.floor(Math.min(startAbs, ...hist.attempts.map((a) => a.abs).filter((abs) => Number.isFinite(abs) && abs >= 0)) / 3);
+		for (let t = 0; t < 30; t++) {
+			const abs = startAbs + t;
+			if (abs % 3 !== 2) termCaps[t] = Math.max(18, load[`${Math.floor(abs / 3) - entryAy + 1} ${(abs % 3) + 1}`] || 0);
+		}
+	}
+	const capAt = (abs: number) => termCaps[abs - startAbs] ?? unitCaps['1'];
 	const baseOpts = {
 		courses: model.courses.map((c) => ({ ...c, petition: !!input.plannerPetitions[c.code] })),
 		startSem: semOfAbs(startAbs),
 		unitCaps,
+		termCaps,
 		useMidyear: !!opts.midyear,
 		totalUnits: Number(model.program.totalUnitsRequired) || undefined
 	};
@@ -349,7 +365,7 @@ export function compute(model: Model, input: PlannerInput, now = new Date()) {
 
 	const conflicts = prereqConflicts(model.courses, (code) => (info[code] ? info[code].status : passed.has(code) && 'passed'));
 
-	const v = { model, input, hist, info, startAbs, passed: nowRun.passed, failures, costs, now: nowRun, ideal, noWhatif, slips, unitCaps, left, conflicts };
+	const v = { model, input, hist, info, startAbs, passed: nowRun.passed, failures, costs, now: nowRun, ideal, noWhatif, slips, unitCaps, capAt, byChecklist, left, conflicts };
 	v.costs.forEach((c) => {
 		c.cost = termsLate(v, c.costT[0], c.costT[1]);
 	});
@@ -601,11 +617,12 @@ export function columnFacts(column: Column, v: View) {
 	let warn = '';
 	if (future) {
 		if (isMid && units > 6) warn = "Over 6 units in midyear needs the Dean's approval (max 9).";
-		else if (!isMid && units > v.unitCaps['1']) warn = `Over your ${v.unitCaps['1']}-unit cap. This needs an overload approval.`;
-		else if (!isMid && units > 18) warn = 'Over 18 units. This is allowed up to 21 when the term has lab courses.';
+		else if (!isMid && units > v.capAt(column.abs)) warn = `Over your ${v.capAt(column.abs)}-unit cap. This needs an overload approval.`;
+		else if (!isMid && units > 18)
+			warn = v.byChecklist ? 'Over 18 units, which the checklist puts in this sem.' : 'Over 18 units. This is allowed up to 21 when the term has lab courses.';
 	}
-	const loud = !!warn && (isMid || units > v.unitCaps['1']);
-	return { isPast, name, sub, units, isMid, future, tag, warn, loud, cap: future ? (isMid ? v.unitCaps.midyear : v.unitCaps['1']) : null };
+	const loud = !!warn && (isMid || units > v.capAt(column.abs));
+	return { isPast, name, sub, units, isMid, future, tag, warn, loud, cap: future ? (isMid ? v.unitCaps.midyear : v.capAt(column.abs)) : null };
 }
 
 /**
@@ -677,7 +694,7 @@ export function checkPlan(p: unknown): string {
 		all(p.plannerPetitions, (x) => x === true) &&
 		all(p.substitutions, (x) => typeof x === 'string') &&
 		isObj(o) &&
-		[18, 21].includes(Number(o.cap)) &&
+		(o.cap === 'checklist' || [18, 21].includes(Number(o.cap))) &&
 		(w == null || (isObj(w) && typeof w.code === 'string' && ['fail', '1', '3'].includes(w.mode as string)));
 	return ok ? '' : 'That plan file looks damaged, so nothing was changed.';
 }

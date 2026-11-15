@@ -457,9 +457,10 @@
 					<button type="button" class="pl-menu-item" onclick={autoPlan}>Auto-plan again<small>Drops courses you pushed later</small></button>
 					<label class="pl-menu-item">
 						Max load per sem
-						<select class="select" value={String(options.cap)} onchange={(e) => setOptions({ cap: Number(e.currentTarget.value) })}>
+						<select class="select" value={String(options.cap)} onchange={(e) => setOptions({ cap: Number(e.currentTarget.value) || 'checklist' })}>
 							<option value="18">18 units</option>
 							<option value="21">21 units (with lab courses)</option>
+							<option value="checklist">The checklist's load</option>
 						</select>
 					</label>
 					{#if app.program.specializations}
