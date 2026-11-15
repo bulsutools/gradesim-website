@@ -1,3 +1,10 @@
+## [0.6.6](https://github.com/uplbtools/gradesim-website/compare/v0.6.5...v0.6.6) (2026-11-15)
+
+
+### Bug Fixes
+
+* **app:** the import notice clears when you pick a tab ([#113](https://github.com/uplbtools/gradesim-website/issues/113)) ([23f383f](https://github.com/uplbtools/gradesim-website/commit/23f383f629d568dc47d1a97761dc1b232d326581))
+
 ## [0.6.5](https://github.com/uplbtools/gradesim-website/compare/v0.6.4...v0.6.5) (2026-11-15)
 
 
