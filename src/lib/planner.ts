@@ -3,7 +3,14 @@
 
 import type { ChecklistFix } from './fix.ts';
 import { UPLB_CATALOG } from './catalog.ts';
-import { detectTrack, resolveSpecialization, resolveTrack, UPLB_PROGRAMS, type Program } from './curriculum.ts';
+import {
+	detectTrack,
+	isNonGwaCourseCode,
+	resolveSpecialization,
+	resolveTrack,
+	UPLB_PROGRAMS,
+	type Program
+} from './curriculum.ts';
 import { ayOfAbs, gradeText, termKeyToAbs, type GradesData } from './grades.ts';
 import {
 	amisCourses,
@@ -584,7 +591,9 @@ export function columnFacts(column: Column, v: View) {
 		name = absLabel(column.abs).replace(/ \d+$/, '');
 		sub = ayLabel(column.abs);
 	}
-	const units = column.cards.reduce((s, c) => s + (Number(v.model.byCode.get(c.code)!.units) || 0), 0);
+	const units = column.cards
+		.filter((c) => !isNonGwaCourseCode(c.code))
+		.reduce((s, c) => s + (Number(v.model.byCode.get(c.code)!.units) || 0), 0);
 	const isMid = column.abs % 3 === 2;
 	const future = !isPast && Number.isFinite(column.abs) && column.abs >= 0;
 	const nowTerm = column.cards.some((c) => c.status === 'inprogress');

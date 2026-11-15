@@ -6,6 +6,7 @@ import {
 	buildColumns,
 	calendarAbs,
 	cardFacts,
+	columnFacts,
 	compute,
 	DEFAULT_PLANNER_OPTIONS,
 	modelFor,
@@ -72,6 +73,14 @@ test('every program builds a plan without throwing', () => {
 		const v = compute(m, { ...input(), gradesData: null, plannerOptions: DEFAULT_PLANNER_OPTIONS }, now);
 		expect(buildColumns(v).list.length).toBeGreaterThan(0);
 	}
+});
+
+test('a term of 18 units plus HK and NSTP is not an overload', () => {
+	const m = modelFor('BACOMM')!;
+	const v = compute(m, { ...input(), gradesData: null, plannerOptions: DEFAULT_PLANNER_OPTIONS }, now);
+	const cols = buildColumns(v).list.map((c) => ({ c, f: columnFacts(c, v) }));
+	expect(cols.some(({ c }) => c.cards.some((k) => /^(HK|NSTP)\b/.test(k.code)))).toBe(true);
+	cols.forEach(({ f }) => expect(f.warn).toBe(''));
 });
 
 test('a what-if fail on a course already failed reports what that failure costs', () => {
