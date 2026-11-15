@@ -1,3 +1,10 @@
+# [0.22.0](https://github.com/uplbtools/gradesim-website/compare/v0.21.0...v0.22.0) (2026-11-15)
+
+
+### Features
+
+* **wrapped:** pick the sem, mask the GWA, and mark grades from AMIS ([#222](https://github.com/uplbtools/gradesim-website/issues/222)) ([43df4f7](https://github.com/uplbtools/gradesim-website/commit/43df4f751b587a8685c07018c392ebecf10aabf2))
+
 # [0.21.0](https://github.com/uplbtools/gradesim-website/compare/v0.20.0...v0.21.0) (2026-11-15)
 
 
