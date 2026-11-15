@@ -6,7 +6,7 @@ import { UPLB_CATALOG } from './catalog.ts';
 import { getPlannerCourses, isNonGwaCourseCode, UPLB_PROGRAMS } from './curriculum.ts';
 import type { GradesData } from './grades.ts';
 import { compute, DEFAULT_PLANNER_OPTIONS, markConflict, modelFor } from './planner.ts';
-import { amisCourses, applyRemovals, gradeResult, gwaOutlook, plannerCourseList, remainingRequirements, removalKey, surplusElectives } from './requirements.ts';
+import { amisCourses, applyRemovals, fillRequirementSlots, gradeResult, gwaOutlook, plannerCourseList, remainingRequirements, removalKey, surplusElectives } from './requirements.ts';
 import { enrichCourses, scheduleEarliest, semAt } from './scheduler.ts';
 
 test('grade results', () => {
@@ -183,6 +183,13 @@ test('BSCS special problem twice, midyear practicum and senior year electives', 
 	expect(view.info['CMSC 198'].status).toBe('passed');
 	expect(view.info['FE 1'].status).toBe('todo');
 	expect(view.conflicts).toEqual([{ code: 'CMSC 57', pre: 'CMSC 56' }]);
+});
+
+test('HK 12 taken for three sports fills three HK slots', () => {
+	const sp = plannerCourseList(BSCS, 'sp', UPLB_CATALOG);
+	const row = (code: string) => ({ code, title: '', units: 2, result: 'passed' as const });
+	const filled = fillRequirementSlots(sp, [row('HK 11'), row('HK 12'), row('HK 12'), row('HK 12')]);
+	expect(['HK 1', 'HK 2', 'HK 3', 'HK 4'].every((c) => filled.has(c))).toBe(true);
 });
 
 test('a mark that would fail the prerequisite of a passed course, or pass a course after a failed prerequisite, is refused', () => {
