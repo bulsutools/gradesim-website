@@ -187,6 +187,22 @@ test('imports from the extension through the window bridge', async ({ page }) =>
 	await expect(page.getByRole('status').first()).toContainText('from the GradeSim extension');
 });
 
+test('a visit from the extension popup imports the grades and opens the planner', async ({ page }) => {
+	await page.addInitScript((payload) => {
+		window.addEventListener('message', (e) => {
+			const type = e.data?.type;
+			if (e.source !== window || (type !== 'GRADESIM_PING' && type !== 'GRADESIM_GET_GRADES')) return;
+			const reply = type === 'GRADESIM_PING' ? { hasGrades: true, fetchedAt: 1 } : JSON.parse(payload);
+			window.postMessage({ type: 'GRADESIM_REPLY', request: type, payload: reply }, location.origin);
+		});
+	}, backup.toString());
+	await open(page, '/?from=extension&whatif=MATH%2027#planner');
+	await expect(page.getByRole('status').first()).toContainText('from the GradeSim extension');
+	await expect(page.getByRole('tab', { name: 'Planner' })).toHaveAttribute('aria-selected', 'true');
+	await expect(page.getByText('MATH 27 is failed on your record')).toBeVisible();
+	expect(new URL(page.url()).search).toBe('');
+});
+
 test('newer grades from the extension load on the next visit', async ({ page }) => {
 	// The stand-in reads AMIS again once localStorage says so, and CMSC 12 comes back as 1.00.
 	await page.addInitScript((payload) => {
