@@ -1,3 +1,10 @@
+## [0.6.8](https://github.com/uplbtools/gradesim-website/compare/v0.6.7...v0.6.8) (2026-11-15)
+
+
+### Bug Fixes
+
+* **grades:** the substitution form opens on tap ([#119](https://github.com/uplbtools/gradesim-website/issues/119)) ([354514a](https://github.com/uplbtools/gradesim-website/commit/354514aefba38caa4d1ab43a8cb78ed583f6dd82))
+
 ## [0.6.7](https://github.com/uplbtools/gradesim-website/compare/v0.6.6...v0.6.7) (2026-11-15)
 
 
