@@ -71,6 +71,8 @@
 	title="UPLB curriculum checklists, Elbi GradeSim"
 	description="Official curriculum checklists for UPLB undergraduate programs, grouped by college, with a link to plan each one in Elbi GradeSim."
 	path="/curricula/"
+	image="og-curricula.jpg"
+	imageAlt="UPLB program checklists in Elbi GradeSim"
 />
 
 <div class="wrap">
