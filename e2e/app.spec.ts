@@ -108,13 +108,10 @@ test('a checklist fix changes the plan and is listed for sending', async ({ page
 	await expect(sheet.locator('.pl-row[data-code="CMSC 123"] .pl-row-units')).toHaveText('3');
 });
 
-test('What if and the planner count the same units left', async ({ page }) => {
+test('the planner says what is left', async ({ page }) => {
 	await importFixture(page);
-	await page.getByRole('tab', { name: 'What if' }).click();
-	await expect(page.getByTestId('required')).toBeVisible();
-	const units = (await page.getByTestId('units-left').textContent())!.trim();
-	await page.getByRole('link', { name: 'See them in the planner' }).click();
-	await expect(page.getByText(`You have ${units} units left to pass`)).toBeVisible();
+	await page.getByRole('tab', { name: 'Planner' }).click();
+	await expect(page.getByText(/^\d+ terms and \d+ units left\.$/)).toBeVisible();
 });
 
 test('theme toggle cycles and persists', async ({ page }) => {

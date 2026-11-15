@@ -154,7 +154,7 @@
 
 .pl-menu-item small {
   color: var(--muted);
-  font-size: 0.78rem;
+  font-size: 0.8125rem;
 }
 
 .pl-check {
@@ -358,7 +358,7 @@
   padding: 1px 8px;
   border: 1px solid var(--brand-line);
   border-radius: 999px;
-  font-size: 0.72rem;
+  font-size: 0.8125rem;
   font-weight: 700;
   color: var(--brand);
 }
@@ -456,7 +456,7 @@
 }
 
 .pl-row-note {
-  font-size: 0.76rem;
+  font-size: 0.8125rem;
   font-weight: 600;
   white-space: nowrap;
   color: var(--muted);
@@ -489,7 +489,7 @@
   align-items: center;
   gap: 4px;
   font-family: var(--font-sans);
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
   font-weight: 650;
   color: var(--muted);
 }
@@ -544,7 +544,7 @@
 
 .pl-detail h4 {
   margin: 12px 0 4px;
-  font-size: 0.78rem;
+  font-size: 0.8125rem;
   color: var(--muted);
 }
 
@@ -640,7 +640,7 @@ button.pl-link:hover {
 
 .pl-or {
   color: var(--muted);
-  font-size: 0.78rem;
+  font-size: 0.8125rem;
 }
 
 .pl-deps {

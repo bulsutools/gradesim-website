@@ -42,8 +42,7 @@
 
 <div class="wrap">
 	<PageHead title="Install the extension">
-		The extension reads your grades when you open AMIS, then shows them in its popup and hands them to this web app when you
-		ask. It's free, open source, and keeps everything on your device.
+		It reads your grades when you open AMIS. It's free, open source and keeps everything on your device.
 	</PageHead>
 
 	<ul class="stores">
@@ -69,7 +68,7 @@
 	<section class="prose steps">
 		<h2>After installing</h2>
 		<ol>
-			<li>Log in to <a href="https://amis.uplb.edu.ph" rel="noopener" target="_blank">AMIS</a> as usual. GradeSim never sees your password, because you sign in to AMIS itself.</li>
+			<li>Log in to <a href="https://amis.uplb.edu.ph" rel="noopener" target="_blank">AMIS</a>.</li>
 			<li>Open your grades. The extension saves them in your browser.</li>
 			<li>Come back to <a href={resolve('/')}>Elbi GradeSim</a> and choose Import from the GradeSim extension.</li>
 		</ol>
@@ -87,7 +86,6 @@
 			<li>Log in to <a href="https://amis.uplb.edu.ph" rel="noopener" target="_blank">AMIS</a>, type gradesim in the address bar and tap the bookmark.</li>
 			<li>Open <a href={resolve('/')}>Elbi GradeSim</a>, choose Import a file and pick gradesim-amis.json.</li>
 		</ol>
-		<p>You can also type your grades in by hand.</p>
 	</section>
 </div>
 
