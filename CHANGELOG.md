@@ -1,3 +1,10 @@
+## [0.24.1](https://github.com/uplbtools/gradesim-website/compare/v0.24.0...v0.24.1) (2026-11-15)
+
+
+### Bug Fixes
+
+* **wrapped:** the sem card lines up with Reann's tin, and the cheer lines are gone ([#242](https://github.com/uplbtools/gradesim-website/issues/242)) ([b7f202a](https://github.com/uplbtools/gradesim-website/commit/b7f202a19fe3b9173ab0ca3f8f89ed2ce504f82d))
+
 # [0.24.0](https://github.com/uplbtools/gradesim-website/compare/v0.23.0...v0.24.0) (2026-11-15)
 
 
