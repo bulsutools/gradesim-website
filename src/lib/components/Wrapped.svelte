@@ -60,8 +60,12 @@
 
 <div class="wrapped">
 
-	{#if p.frame && preview}
-		<img class="frame" src={preview} {alt} />
+	{#if p.frame}
+		{#if preview}
+			<img class="frame" src={preview} {alt} />
+		{:else}
+			<div class="frame loading" role="img" aria-label="Drawing your card"></div>
+		{/if}
 		<p class="muted">{p.message}</p>
 	{:else}
 		<article class="panel" aria-roledescription="slide" aria-label="Card {i + 1} of {panels.length}" aria-live="polite">
@@ -126,6 +130,10 @@
 		aspect-ratio: 9 / 16;
 		border-radius: 24px;
 		box-shadow: var(--shadow-md);
+	}
+
+	.loading {
+		background: var(--brand-tint);
 	}
 
 	.emoji {
