@@ -1,3 +1,10 @@
+## [0.12.1](https://github.com/uplbtools/gradesim-website/compare/v0.12.0...v0.12.1) (2026-11-15)
+
+
+### Bug Fixes
+
+* **copy:** one name per thing, and errors that say what to do next ([#164](https://github.com/uplbtools/gradesim-website/issues/164)) ([f24dd91](https://github.com/uplbtools/gradesim-website/commit/f24dd911e82be215ae5d0c9a75c68c8810c02ab6))
+
 # [0.12.0](https://github.com/uplbtools/gradesim-website/compare/v0.11.0...v0.12.0) (2026-11-15)
 
 
