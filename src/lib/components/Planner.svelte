@@ -195,7 +195,7 @@
 		focusCard(code);
 	}
 
-	function act(name: 'passed' | 'failed' | 'clear' | 'later' | 'unpin', code: string) {
+	function act(name: 'passed' | 'failed' | 'undo' | 'later', code: string) {
 		if (!view) return;
 		if (name === 'passed' || name === 'failed') {
 			const next = { ...app.s.customCourseStatus };
@@ -203,17 +203,16 @@
 			else next[code] = name;
 			app.s.customCourseStatus = next;
 			status = `${code} marked ${name}`;
-		} else if (name === 'clear') {
-			const next = { ...app.s.customCourseStatus };
-			delete next[code];
-			app.s.customCourseStatus = next;
 		} else if (name === 'later') {
 			const t = view.now.result.assignedTerm[code];
 			app.s.plannerPins = { ...app.s.plannerPins, [code]: view.startAbs + t + 1 };
 		} else {
-			const next = { ...app.s.plannerPins };
-			delete next[code];
-			app.s.plannerPins = next;
+			const marks = { ...app.s.customCourseStatus };
+			const pins = { ...app.s.plannerPins };
+			delete marks[code];
+			delete pins[code];
+			app.s.customCourseStatus = marks;
+			app.s.plannerPins = pins;
 		}
 		acted = code;
 		focusCard(code);
@@ -385,13 +384,16 @@
 				<h4>Unlocks</h4>
 				<p class="pl-deps">{#each deps as d (d)}{@render group([d])}{/each}</p>
 			{/if}
-			<div class="pl-actions">
+			<div class="pl-actions pl-marks">
 				{#if i.status !== 'passed' && !passBlock}<button type="button" class="btn btn-secondary" onclick={() => act('passed', code)}><Icon name="check" />Mark passed</button>{/if}
-				{#if i.status !== 'failed' && !failBlock}<button type="button" class="btn btn-secondary" onclick={() => act('failed', code)}><Icon name="x" />{past || i.status === 'inprogress' ? 'Mark failed' : 'Mark failed (what-if)'}</button>{/if}
-				{#if i.override}<button type="button" class="textbtn" onclick={() => act('clear', code)}>Use {past ? 'my grades' : 'the plan'} again</button>{/if}
-				{#if t !== undefined}<button type="button" class="textbtn" onclick={() => act('later', code)}>Can't get a slot</button>{/if}
-				{#if app.s.plannerPins[code] != null}<button type="button" class="textbtn" onclick={() => act('unpin', code)}>Back to earliest</button>{/if}
+				{#if i.status !== 'failed' && !failBlock}<button type="button" class="btn btn-secondary" onclick={() => act('failed', code)}><Icon name="x" />{past || i.status === 'inprogress' ? 'Mark failed' : 'If I fail it'}</button>{/if}
 			</div>
+			{#if i.override || app.s.plannerPins[code] != null || t !== undefined}
+				<div class="pl-links">
+					{#if i.override || app.s.plannerPins[code] != null}<button type="button" class="textbtn" onclick={() => act('undo', code)}>Undo my changes</button>{/if}
+					{#if t !== undefined}<button type="button" class="textbtn" onclick={() => act('later', code)}>Can't get a slot</button>{/if}
+				</div>
+			{/if}
 			{#if failBlock}<p class="pl-muted">{failBlock.code} is passed, so {code} can't be marked failed.</p>{/if}
 			{#if passBlock}<p class="pl-muted">{passBlock.pre} is failed, so {code} can't be marked passed.</p>{/if}
 			{#if acted === code && sum}<p><strong>{sum.headline}.{sum.deltaText ? ` ${sum.deltaText}.` : ''}</strong></p>{/if}
