@@ -100,6 +100,12 @@
 			<p class="message">{p.message}</p>
 		</article>
 	{/if}
+	<div class="nav">
+		<button class="btn btn-secondary" type="button" onclick={() => i--} disabled={i === 0}><Icon name="left" />Previous</button>
+		<span class="count" aria-hidden="true">{i + 1} of {panels.length}</span>
+		<button class="btn btn-secondary" type="button" onclick={() => i++} disabled={i >= panels.length - 1}>Next<Icon name="right" /></button>
+	</div>
+	<button class="btn btn-primary save" type="button" onclick={save} disabled={busy}><Icon name="download" />{busy ? 'Making your image' : 'Save this card'}</button>
 
 	{#snippet gwaPick(value: GwaShow, set: (v: GwaShow) => void)}
 		<label class="field">GWA on the card
@@ -108,37 +114,35 @@
 			</select>
 		</label>
 	{/snippet}
-	{#if p.frame === 'sem'}
-		<label class="field">Sem
-			<select class="input" value={pick ?? sems.length - 1} onchange={(e) => (pick = Number(e.currentTarget.value))}>
-				{#each sems as s, k (s.name)}<option value={k}>{s.name}</option>{/each}
-			</select>
-		</label>
-		{@render gwaPick(semShow, (v) => (semShow = v))}
-		<label class="field">Your own line<input class="input" bind:value={line} maxlength="40" placeholder={p.extra} /></label>
-		<label class="check"><input type="checkbox" bind:checked={top} />Show my best course</label>
-	{:else if p.frame === 'id'}
-		<label class="field">Your name on the card<input class="input" bind:value={name} maxlength="40" autocomplete="name" /></label>
-		{@render gwaPick(show, (v) => (show = v))}
-	{/if}
-	{#if p.frame === 'id'}
-		<p class="muted">Add your photo over the picture in Instagram or Facebook.</p>
-	{:else if p.frame}
-		<div>
-			<label class="check"><input type="checkbox" bind:checked={photo} />Leave a spot for my photo</label>
-			{#if photo}<p class="muted photo-hint">Add your photo over the picture in Instagram or Facebook.</p>{/if}
+	{#if p.frame}
+		<div class="opts">
+			{#if p.frame === 'sem'}
+				<label class="field">Sem
+					<select class="input" value={pick ?? sems.length - 1} onchange={(e) => (pick = Number(e.currentTarget.value))}>
+						{#each sems as s, k (s.name)}<option value={k}>{s.name}</option>{/each}
+					</select>
+				</label>
+				{@render gwaPick(semShow, (v) => (semShow = v))}
+				<label class="field">Your own line<input class="input" bind:value={line} maxlength="40" placeholder={p.extra} /></label>
+				<label class="check"><input type="checkbox" bind:checked={top} />Show my best course</label>
+			{:else if p.frame === 'id'}
+				<label class="field">Your name on the card<input class="input" bind:value={name} maxlength="40" autocomplete="name" /></label>
+				{@render gwaPick(show, (v) => (show = v))}
+			{/if}
+			{#if p.frame === 'id'}
+				<p class="muted">Add your photo over the picture in Instagram or Facebook.</p>
+			{:else if p.frame}
+				<div>
+					<label class="check"><input type="checkbox" bind:checked={photo} />Leave a spot for my photo</label>
+					{#if photo}<p class="muted photo-hint">Add your photo over the picture in Instagram or Facebook.</p>{/if}
+				</div>
+			{/if}
+			{#if p.frame && !amis}
+				<p class="muted">Get your grades through the extension to add the From AMIS mark.</p>
+			{/if}
 		</div>
 	{/if}
-	{#if p.frame && !amis}
-		<p class="muted">Get your grades through the extension to add the From AMIS mark.</p>
-	{/if}
 
-	<div class="nav">
-		<button class="btn btn-secondary" type="button" onclick={() => i--} disabled={i === 0}><Icon name="left" />Previous</button>
-		<span class="count" aria-hidden="true">{i + 1} of {panels.length}</span>
-		<button class="btn btn-secondary" type="button" onclick={() => i++} disabled={i >= panels.length - 1}>Next<Icon name="right" /></button>
-	</div>
-	<button class="btn btn-primary save" type="button" onclick={save} disabled={busy}><Icon name="download" />{busy ? 'Making your image' : 'Save this card'}</button>
 </div>
 
 <style>
@@ -249,6 +253,14 @@
 		margin-top: auto;
 		padding-top: 12px;
 		font-size: 0.98rem;
+	}
+
+	.opts {
+		display: flex;
+		flex-direction: column;
+		gap: 14px;
+		padding-top: 14px;
+		border-top: 1px solid var(--border);
 	}
 
 	.nav {

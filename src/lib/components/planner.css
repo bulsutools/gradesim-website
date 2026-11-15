@@ -144,6 +144,16 @@
   font-size: 0.8125rem;
 }
 
+.pl-menu-sep {
+  margin: 6px 4px;
+  border: 0;
+  border-top: 1px solid var(--border);
+}
+
+.pl-sub {
+  padding-left: 36px;
+}
+
 .pl-check {
   flex-direction: row;
   align-items: flex-start;
@@ -254,7 +264,7 @@
 }
 
 .pl-add {
-  margin: 20px 0 0;
+  margin: 6px 0 0;
 }
 
 .pl-fix {

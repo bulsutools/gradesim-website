@@ -141,7 +141,6 @@
 				<span class="label">{answer.label}</span>
 				<span class="value" data-testid="required">{answer.value}</span>
 				<span class="muted small">{answer.note}</span>
-			</div>
 			<Notice tone={answer.tone}>
 				{answer.text}
 				{#snippet action()}
@@ -151,6 +150,7 @@
 					{/if}
 				{/snippet}
 			</Notice>
+			</div>
 		{/if}
 	</section>
 
@@ -297,6 +297,15 @@
 		padding: 12px 14px;
 		border-radius: var(--radius-sm);
 		background: var(--brand-tint);
+	}
+
+	.big :global(.notice) {
+		margin-top: 10px;
+		padding: 10px 0 0;
+		border: 0;
+		border-top: 1px solid var(--border);
+		border-radius: 0;
+		background: none;
 	}
 
 	.big .label {
