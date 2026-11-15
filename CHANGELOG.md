@@ -1,3 +1,10 @@
+## [0.26.1](https://github.com/uplbtools/gradesim-website/compare/v0.26.0...v0.26.1) (2026-11-15)
+
+
+### Bug Fixes
+
+* **checklist:** BS Math major electives take only MATH courses ([#282](https://github.com/uplbtools/gradesim-website/issues/282)) ([4d11f11](https://github.com/uplbtools/gradesim-website/commit/4d11f11db131454be5be6d7e011d86f549bb2a42))
+
 # [0.26.0](https://github.com/uplbtools/gradesim-website/compare/v0.25.4...v0.26.0) (2026-11-15)
 
 
