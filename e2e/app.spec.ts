@@ -98,6 +98,10 @@ test('planner renders and a failed course shows a retake', async ({ page }) => {
 	const code = await also.getAttribute('data-also');
 	await also.click();
 	await expect(page.getByRole('complementary', { name: `Details for ${code}` })).toBeVisible();
+	await page.getByText('Plan settings').click();
+	await expect(page.locator('.pl-menu-pop')).toContainText(/With 21 units, you'd graduate|Your graduation sem is the same at any load/);
+	await page.getByLabel('Min load per sem').selectOption('18');
+	await expect(sheet.getByText('Under your 18-unit minimum.').first()).toBeVisible();
 });
 
 test('a checklist fix changes the plan and is listed for sending', async ({ page }) => {

@@ -10,6 +10,7 @@ import {
 	compute,
 	DEFAULT_PLANNER_OPTIONS,
 	modelFor,
+	optionEffect,
 	whatIfMessage,
 	summary,
 	type PlannerInput
@@ -93,6 +94,17 @@ test('the checklist load lets a blank BS EE plan take its prescribed heavy sems'
 	const byChecklist = facts('checklist');
 	expect(byChecklist.some((f) => f.units > 18 && f.warn === 'Over 18 units, which the checklist puts in this sem.')).toBe(true);
 	expect(byChecklist.every((f) => !f.loud || f.isMid)).toBe(true);
+});
+
+test('a setting says what it does to graduation, and a sem under the minimum load is marked', () => {
+	const m = modelFor('BSEE')!;
+	const blank = (o = {}) => compute(m, { ...input(), gradesData: null, plannerOptions: { ...DEFAULT_PLANNER_OPTIONS, ...o } }, now);
+	const v = blank();
+	expect(optionEffect(v, { cap: 18 }, now)).toBe('your graduation sem stays the same.');
+	expect(optionEffect(v, { cap: 'checklist' }, now)).toMatch(/^you'd graduate .+, which is earlier\.$/);
+	const warns = (w: typeof v) => buildColumns(w).list.map((c) => columnFacts(c, w).warn);
+	expect(warns(v).some((x) => x.startsWith('Under'))).toBe(false);
+	expect(warns(blank({ minLoad: 18 }))).toContain('Under your 18-unit minimum.');
 });
 
 test('a what-if fail on a course already failed reports what that failure costs', () => {
