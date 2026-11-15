@@ -1,3 +1,10 @@
+## [0.6.1](https://github.com/uplbtools/gradesim-website/compare/v0.6.0...v0.6.1) (2026-11-15)
+
+
+### Bug Fixes
+
+* **planner:** refuse a mark that fails the prerequisite of a passed course ([#91](https://github.com/uplbtools/gradesim-website/issues/91)) ([efd6dde](https://github.com/uplbtools/gradesim-website/commit/efd6dde3c2d39a7158dea1c7bc5d7f4404213dd3))
+
 # [0.6.0](https://github.com/uplbtools/gradesim-website/compare/v0.5.0...v0.6.0) (2026-11-15)
 
 
