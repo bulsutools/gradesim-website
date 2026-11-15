@@ -651,7 +651,7 @@
 						</label>
 					{/if}
 					<label class="pl-menu-item pl-check"><input type="checkbox" checked={options.midyear} onchange={(e) => setOptions({ midyear: e.currentTarget.checked })} /> <span>Take classes in midyear{#if effects?.midyear}<small>With this {options.midyear ? 'off' : 'on'}, {effects.midyear}</small>{/if}</span></label>
-					{#if options.midyear}<label class="pl-menu-item pl-check pl-sub"><input type="checkbox" checked={options.midyear9} onchange={(e) => setOptions({ midyear9: e.currentTarget.checked })} /> <span>Up to 9 units (Dean's approval){#if effects?.midyear9}<small>With this {options.midyear9 ? 'off' : 'on'}, {effects.midyear9}</small>{/if}</span></label>{/if}
+					{#if options.midyear}<label class="pl-menu-item pl-check pl-indent"><input type="checkbox" checked={options.midyear9} onchange={(e) => setOptions({ midyear9: e.currentTarget.checked })} /> <span>Up to 9 units (Dean's approval){#if effects?.midyear9}<small>With this {options.midyear9 ? 'off' : 'on'}, {effects.midyear9}</small>{/if}</span></label>{/if}
 					<hr class="pl-menu-sep" />
 					<button type="button" class="pl-menu-item" onclick={autoPlan}>Auto-plan again</button>
 					{#if petitions.length}
