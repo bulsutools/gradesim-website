@@ -415,11 +415,8 @@ export function summary(v: View) {
 
 	const termsLeft = r.plan.filter((p) => p.courses.length).length;
 	const nowTaking = Object.values(v.info).some((i) => i.status === 'inprogress');
-	const sentences: string[] = [];
-	if (gradAbs != null)
-		sentences.push(`That's ${ayLabel(gradAbs)}, with ${termsText(termsLeft)} of classes from ${absLabel(v.startAbs)}.`);
-	sentences.push(`You have ${unitsText(v.left.units)} left to pass${nowTaking ? ', counting this term' : ''}.`);
-	const sub = sentences.join(' ');
+	const left = gradAbs != null ? `${termsText(termsLeft)} and ${unitsText(v.left.units)}` : unitsText(v.left.units);
+	const sub = `${left} left${nowTaking ? ', counting this term' : ''}.`;
 
 	const showCosts = v.costs.length > 1;
 	return { headline, deltaText, deltaOk, sub, costs: showCosts ? v.costs : [] };

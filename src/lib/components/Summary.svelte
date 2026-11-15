@@ -37,15 +37,11 @@
 			<dt>Units passed</dt>
 			<dd>{g.passedUnits}{#if g.excludedCount}<small> ({g.excludedUnits} left out)</small>{/if}</dd>
 		</div>
-		<div>
-			<dt>Courses in your GWA</dt>
-			<dd>{g.totalCourses}{#if g.excludedCount}<small> ({g.excludedCount} left out)</small>{/if}</dd>
-		</div>
 		{#if surplus.length}
 			<div class="wide">
 				<dt>GWA for Latin honors</dt>
 				<dd data-testid="honors-gwa">{honors.gwa.toFixed(4)}</dd>
-				<dd class="note">Counts only the electives your program requires, the earliest first. Leaves out {surplus.map((r) => r.code).join(', ')}.</dd>
+				<dd class="note">Counts only the electives your program requires. It leaves out {surplus.map((r) => r.code).join(', ')}.</dd>
 			</div>
 		{/if}
 	</dl>
@@ -105,7 +101,7 @@
 	}
 
 	dt {
-		font-size: 0.78rem;
+		font-size: 0.8125rem;
 		color: var(--muted);
 		font-weight: 600;
 	}
@@ -120,7 +116,7 @@
 
 	dd small,
 	dd.note {
-		font-size: 0.75rem;
+		font-size: 0.8125rem;
 		font-weight: 500;
 		color: var(--muted);
 	}

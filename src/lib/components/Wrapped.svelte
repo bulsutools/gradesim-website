@@ -22,7 +22,6 @@
 </script>
 
 <div class="wrapped">
-	<p class="muted intro">Your grades as a story you can share. Flip through the cards, then save the one you like as an image sized for stories.</p>
 
 	<article class="panel" aria-roledescription="slide" aria-label="Card {i + 1} of {panels.length}" aria-live="polite">
 		<span class="emoji" aria-hidden="true">{p.emoji}</span>
@@ -59,11 +58,6 @@
 		display: flex;
 		flex-direction: column;
 		gap: 14px;
-	}
-
-	.intro {
-		text-align: center;
-		font-size: 0.92rem;
 	}
 
 	.panel {

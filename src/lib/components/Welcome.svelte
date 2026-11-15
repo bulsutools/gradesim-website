@@ -24,11 +24,8 @@
 <div class="welcome wrap">
 	<div class="hero">
 		<div class="copy">
-			<h1>Your GWA, your honors standing and your way to graduation</h1>
-			<p class="lede">
-				Elbi GradeSim computes your GWA the way UPLB does, shows the average you need for Latin honors, and maps the terms you
-				have left around prerequisites and when each course is actually offered.
-			</p>
+			<h1>Your GWA, Latin honors and graduation plan</h1>
+			<p class="lede">It computes your GWA the way UPLB does and plans the terms you have left.</p>
 
 			<div class="start">
 				{#if extension === 'found'}
@@ -54,11 +51,11 @@
 						<Icon name="pencil" />Enter grades by hand
 					</button>
 				</div>
-				<p class="hint">Import takes a .json that GradeSim saved, like Export JSON in the extension or the <a href={resolve('install/') + '#phone'}>phone bookmark</a>.</p>
+				<p class="hint">Import takes the .json from Export JSON or the <a href={resolve('install/') + '#phone'}>phone bookmark</a>.</p>
 				<p class="hint">No grades yet? <a href={resolve('curricula/')}>See your program's checklist</a>.</p>
 			</div>
 
-			<p class="privacy"><Icon name="shield" />Your grades stay in this browser. There are no accounts and your grades are never uploaded.</p>
+			<p class="privacy"><Icon name="shield" />Your grades stay in this browser.</p>
 		</div>
 
 		<figure class="shot">
