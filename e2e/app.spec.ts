@@ -64,6 +64,16 @@ test('JSON import from the extension backup', async ({ page }) => {
 	await expect(page.getByRole('region', { name: '1st sem AY 2023-24' })).toContainText('MATH 27');
 });
 
+test('Leave out sits in edit mode and a left-out course stays marked', async ({ page }) => {
+	await importFixture(page);
+	await expect(page.locator('.excl')).toHaveCount(0);
+	await page.getByRole('button', { name: 'Add or edit grades' }).click();
+	await page.locator('.excl').first().click();
+	await page.getByRole('button', { name: 'Done editing' }).click();
+	await expect(page.locator('.excl')).toHaveText(['Left out']);
+	await expect(page.getByTestId('gwa')).toHaveText('2.0000');
+});
+
 test('a junk file is refused with a reason', async ({ page }) => {
 	await open(page);
 	await page.getByTestId('file-input').first().setInputFiles({ name: 'x.json', mimeType: 'application/json', buffer: Buffer.from('{"a":1}') });
