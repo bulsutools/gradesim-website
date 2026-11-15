@@ -1,23 +1,33 @@
 <script lang="ts">
 	import { app, download } from '#lib/app.svelte.ts';
-	import { bare, drawCard, wrappedPanels } from '#lib/wrapped.ts';
+	import { bare, drawCard, shownGwa, wrappedData, wrappedPanels, type GwaShow } from '#lib/wrapped.ts';
 	import Icon from './Icon.svelte';
 
-	const panels = $derived(wrappedPanels(app.courses, app.program.totalUnitsRequired || 155));
+	const sems = $derived(wrappedData(app.courses).semList);
+	let pick = $state<number>();
+	const panels = $derived(wrappedPanels(app.courses, app.program.totalUnitsRequired || 155, pick));
 	let i = $state(0);
 	let busy = $state(false);
 	const p = $derived(panels[Math.min(i, panels.length - 1)]);
 
 	let preview = $state('');
 	let name = $state('');
-	let number = $state(false);
+	let show = $state<GwaShow>('none');
+	const shows: GwaShow[] = ['none', 'xx', 'bx', 'xc', 'bc', 'full'];
+	const amis = $derived.by(() => {
+		const s = app.s;
+		if (s.source !== 'extension' || s.handEdited || Object.keys(s.removals).length || !s.fetchedAt) return '';
+		return new Date(s.fetchedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+	});
+	let top = $state(true);
+	let line = $state('');
 	const ordinal = ['1st', '2nd', '3rd'];
 	const id = $derived.by(() => {
 		const years = new Set(app.courses.map((c) => c.ay)).size;
-		return { name: name.trim(), year: `${ordinal[years - 1] ?? `${years}th`} year`, course: app.program.code, number };
+		return { name: name.trim(), year: `${ordinal[years - 1] ?? `${years}th`} year`, course: app.program.code, show, top, line: line.trim(), amis };
 	});
 	const alt = $derived(
-		[p.title, (p.frame === 'id' || p.frame === 'sem') && number ? `GWA ${p.value}` : '', ...(p.highlights ?? []).map((h) => `${bare(h.label)} ${h.name}, ${h.detail}`), 'drawn on a picnic blanket']
+		[p.title, (p.frame === 'id' || p.frame === 'sem') && show !== 'none' ? `GWA ${shownGwa(p.value, show)}` : '', amis && `from AMIS on ${amis}`, ...(p.frame === 'sem' && !top ? [] : (p.highlights ?? [])).map((h) => `${bare(h.label)} ${h.name}, ${h.detail}`), 'drawn on a picnic blanket']
 			.filter(Boolean)
 			.join(', ')
 	);
@@ -90,14 +100,29 @@
 		</article>
 	{/if}
 
-	{#if p.frame === 'id'}
+	{#snippet gwaPick()}
+		<label class="field">GWA on the card
+			<select class="input" bind:value={show}>
+				{#each shows as k (k)}<option value={k}>{k === 'none' ? 'Tier only' : shownGwa(p.value, k)}</option>{/each}
+			</select>
+		</label>
+	{/snippet}
+	{#if p.frame === 'sem'}
+		<label class="field">Sem
+			<select class="input" value={pick ?? sems.length - 1} onchange={(e) => (pick = Number(e.currentTarget.value))}>
+				{#each sems as s, k (s.name)}<option value={k}>{s.name}</option>{/each}
+			</select>
+		</label>
+		{@render gwaPick()}
+		<label class="field">Your own line<input class="input" bind:value={line} maxlength="40" placeholder={p.extra} /></label>
+		<label class="check"><input type="checkbox" bind:checked={top} />Show my top grade</label>
+	{:else if p.frame === 'id'}
 		<label class="field">Your name on the card<input class="input" bind:value={name} maxlength="40" autocomplete="name" /></label>
-	{/if}
-	{#if p.frame === 'id' || p.frame === 'sem'}
-		<label class="check"><input type="checkbox" bind:checked={number} />Show my GWA, not only its tier</label>
-	{/if}
-	{#if p.frame === 'id'}
+		{@render gwaPick()}
 		<p class="muted">Add your photo over the picture in Instagram or Facebook.</p>
+	{/if}
+	{#if p.frame && !amis}
+		<p class="muted">Get your grades through the extension to add the From AMIS mark.</p>
 	{/if}
 
 	<div class="nav">
