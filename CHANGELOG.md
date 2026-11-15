@@ -1,3 +1,10 @@
+# [0.7.0](https://github.com/uplbtools/gradesim-website/compare/v0.6.13...v0.7.0) (2026-11-15)
+
+
+### Features
+
+* **seo:** new link preview card and one for the Curricula page ([#137](https://github.com/uplbtools/gradesim-website/issues/137)) ([447e653](https://github.com/uplbtools/gradesim-website/commit/447e653d97e042008e4ae3c325b71add8055e01a))
+
 ## [0.6.13](https://github.com/uplbtools/gradesim-website/compare/v0.6.12...v0.6.13) (2026-11-15)
 
 
