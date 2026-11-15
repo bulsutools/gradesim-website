@@ -1,3 +1,10 @@
+## [0.25.3](https://github.com/uplbtools/gradesim-website/compare/v0.25.2...v0.25.3) (2026-11-15)
+
+
+### Bug Fixes
+
+* **planner:** a prerequisite outside the checklist says so in text ([#270](https://github.com/uplbtools/gradesim-website/issues/270)) ([b442019](https://github.com/uplbtools/gradesim-website/commit/b442019fbccf65ab08ff33150a634f00f3721ff7))
+
 ## [0.25.2](https://github.com/uplbtools/gradesim-website/compare/v0.25.1...v0.25.2) (2026-11-15)
 
 
