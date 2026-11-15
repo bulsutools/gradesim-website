@@ -32,6 +32,15 @@
 		const before = start?.previousElementSibling as HTMLElement | null;
 		if (scroller && before) scroller.scrollLeft = before.offsetLeft;
 	});
+	// Keep the picked course in view once the details panel narrows the map.
+	$effect(() => {
+		const code = selected;
+		if (!code || !grid) return;
+		const frame = requestAnimationFrame(() =>
+			grid?.querySelector<HTMLElement>(`.pm-card[data-primary][data-code="${CSS.escape(code)}"]`)?.scrollIntoView({ block: 'nearest', inline: 'nearest' })
+		);
+		return () => cancelAnimationFrame(frame);
+	});
 	let paths = $state<{ d: string; kind: string }[]>([]);
 	let size = $state({ w: 0, h: 0 });
 
@@ -78,6 +87,7 @@
 	});
 </script>
 
+<div class="pm-wrap" class:open={selected && model.byCode.has(selected)}>
 <div class="pm-scroll" bind:this={scroller}>
 	<svg class="pm-arrows" width={size.w} height={size.h} aria-hidden="true">
 		<defs>
@@ -118,14 +128,37 @@
 		{/each}
 	</div>
 </div>
-{#if selected && model.byCode.has(selected)}{@render detail(selected)}{/if}
+{#if selected && model.byCode.has(selected)}<div class="pm-side">{@render detail(selected)}</div>{/if}
+</div>
 
 <style>
+	.pm-wrap {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		gap: 16px;
+		align-items: start;
+		margin-bottom: 16px;
+	}
+
+	.pm-wrap.open {
+		grid-template-columns: minmax(0, 1fr) 340px;
+	}
+
+	.pm-side {
+		position: sticky;
+		top: 76px;
+		max-height: calc(100vh - 92px);
+		overflow-y: auto;
+	}
+
+	.pm-side :global(.pl-detail) {
+		margin: 0;
+	}
+
 	.pm-scroll {
 		position: relative;
 		overflow-x: auto;
 		padding-bottom: 8px;
-		margin-bottom: 16px;
 	}
 
 	.pm-arrows {
