@@ -171,13 +171,13 @@
 							{#if editing}
 								<label>
 									<span class="visually-hidden">Grade for {c.code}</span>
-									<select class="select mini" value={raw} onchange={(e) => (app.s.gradesData = setGrade(app.s.gradesData!, c.termKey, c.id, e.currentTarget.value))}>
+									<select class="select mini" value={raw} onchange={(e) => app.editGrades(setGrade(app.s.gradesData!, c.termKey, c.id, e.currentTarget.value))}>
 										<option value="">No grade yet</option>
 										{#each VALID_GRADES as v (v)}<option value={v}>{v}</option>{/each}
 										{#if raw && !VALID_GRADES.includes(raw)}<option value={raw}>{raw}</option>{/if}
 									</select>
 								</label>
-								<button class="iconbtn" type="button" aria-label="Remove {c.code} from {c.termLabel}" onclick={() => (app.s.gradesData = removeCourse(app.s.gradesData!, c.termKey, c.id))}>
+								<button class="iconbtn" type="button" aria-label="Remove {c.code} from {c.termLabel}" onclick={() => app.editGrades(removeCourse(app.s.gradesData!, c.termKey, c.id))}>
 									<Icon name="trash" />
 								</button>
 							{/if}

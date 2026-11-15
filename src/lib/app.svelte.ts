@@ -16,6 +16,10 @@ export interface Saved {
 	gradesData: GradesData | null;
 	/** Where the grades came from, for the status line. */
 	source: 'extension' | 'file' | 'manual' | null;
+	/** When the extension last read AMIS for these grades, in ms. */
+	fetchedAt: number | null;
+	/** A grade was added, changed or removed here since the last import. */
+	handEdited: boolean;
 	selectedProgram: string;
 	excludedCourses: string[];
 	substitutions: Record<string, string>;
@@ -37,6 +41,8 @@ export const blank = (): Saved => ({
 	version: 1,
 	gradesData: null,
 	source: null,
+	fetchedAt: null,
+	handEdited: false,
 	selectedProgram: DEFAULT_PROGRAM,
 	excludedCourses: [],
 	substitutions: {},
@@ -100,11 +106,30 @@ class AppState {
 	applyGrades(patch: GradesPatch, source: Saved['source']) {
 		this.s.gradesData = patch.gradesData;
 		this.s.source = source;
+		this.s.fetchedAt = patch.fetchedAt ?? null;
+		this.s.handEdited = false;
 		if (patch.selectedProgram) this.s.selectedProgram = patch.selectedProgram;
 		if (patch.excludedCourses) this.s.excludedCourses = patch.excludedCourses;
 		if (patch.substitutions) this.s.substitutions = patch.substitutions;
 		if (patch.removals) this.s.removals = patch.removals;
 		if (patch.selectedSpecializations) this.s.selectedSpecializations = patch.selectedSpecializations;
+		// A backup file restores the track and the plan. The extension only fills them when they're empty here.
+		const s = this.s;
+		const empty = ![s.customCourseStatus, s.plannerPins, s.plannerPetitions].some((o) => Object.keys(o).length);
+		if (patch.track && (source === 'file' || !s.track)) s.track = patch.track;
+		if (patch.plan && (source === 'file' || empty)) Object.assign(s, patch.plan);
+	}
+
+	/** Newer grades from the extension. Everything the student chose here stays. */
+	refreshGrades(patch: GradesPatch) {
+		this.s.gradesData = patch.gradesData;
+		this.s.fetchedAt = patch.fetchedAt ?? null;
+	}
+
+	/** A grade added, changed or removed by hand. */
+	editGrades(data: GradesData) {
+		this.s.gradesData = data;
+		this.s.handEdited = true;
 	}
 
 	/** Pick a specialization for the current program, or none with an empty key. */
