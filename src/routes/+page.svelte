@@ -54,18 +54,30 @@
 		app.load();
 		document.documentElement.dataset.appReady = ''; // hydrated; e2e waits on this
 		readHash();
-		// ?program=BSCHEM from the curricula page picks the program, then the URL is tidied.
+		// ?program=BSCHEM from the curricula page picks the program. ?from=extension and
+		// ?whatif=CMSC 21 come from the extension's popup. Then the URL is tidied.
 		const url = new URL(location.href);
 		const program = url.searchParams.get('program');
+		const fromPopup = url.searchParams.get('from') === 'extension';
+		const failed = url.searchParams.get('whatif');
+		if (failed) app.whatif = { code: failed, mode: 'fail' };
 		if (program && UPLB_PROGRAMS[program]?.available) {
 			app.s.selectedProgram = program;
 			app.blank = true;
-			url.searchParams.delete('program');
+		} else if (!app.hasData && tab === 'planner' && !fromPopup) app.blank = true;
+		if (url.search) {
+			['program', 'from', 'whatif'].forEach((k) => url.searchParams.delete(k));
 			history.replaceState(history.state, '', url.pathname + url.search + url.hash);
-		} else if (!app.hasData && tab === 'planner') app.blank = true;
+		}
 		probeExtension().then(async (r) => {
 			extension = r ? (r.hasGrades ? 'found' : 'empty') : 'missing';
 			const s = app.s;
+			// Opening GradeSim from the popup is the student asking for their grades here.
+			if (fromPopup && !app.hasData) {
+				if (r?.hasGrades) await fromExtension();
+				else if (tab === 'planner') app.blank = true;
+				return;
+			}
 			if (!r?.hasGrades || !r.fetchedAt || s.source !== 'extension' || !s.fetchedAt || r.fetchedAt === s.fetchedAt) return;
 			if (s.handEdited) {
 				message = { text: 'The extension has newer grades from AMIS. Importing them replaces the grades you edited by hand.', tone: 'ok' };
