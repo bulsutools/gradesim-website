@@ -188,6 +188,7 @@
 
 	let menuOpen = $state(false);
 	const CAPS = [[18, '18 units'], [21, '21 units'], ['checklist', "the checklist's load"]] as const;
+	const moved = (text: string) => (text.startsWith("you'd") ? text : '');
 	const effects = $derived.by(() => {
 		if (!menuOpen || !view) return null;
 		const v = view;
@@ -196,9 +197,9 @@
 			.filter(([, text]) => text.startsWith("you'd"))
 			.map(([label, text]) => `With ${label}, ${text}`);
 		return {
-			cap: caps.join(' ') || 'Your graduation sem is the same at any load.',
-			midyear: optionEffect(v, { midyear: !options.midyear }),
-			midyear9: optionEffect(v, { midyear9: !options.midyear9 })
+			cap: caps.join(' '),
+			midyear: moved(optionEffect(v, { midyear: !options.midyear })),
+			midyear9: moved(optionEffect(v, { midyear9: !options.midyear9 }))
 		};
 	});
 	const skipped = $derived(options.skip ?? []);
@@ -613,35 +614,33 @@
 			<details class="pl-menu" bind:this={menu} ontoggle={(e) => (menuOpen = e.currentTarget.open)}>
 				<summary class="btn btn-secondary">Plan settings<Icon name="chevron" /></summary>
 				<div class="pl-menu-pop">
-					<label class="pl-menu-item">
+					<label class="pl-menu-item pl-field">
 						Max load per sem
 						<select class="select" value={String(options.cap)} onchange={(e) => setOptions({ cap: Number(e.currentTarget.value) || 'checklist' })}>
 							<option value="18">18 units</option>
-							<option value="21">21 units (with lab courses)</option>
+							<option value="21">21 units (labs)</option>
 							<option value="checklist">The checklist's load</option>
 						</select>
-						{#if effects}<small>{effects.cap}</small>{/if}
+						{#if effects?.cap}<small>{effects.cap}</small>{/if}
 					</label>
-					<label class="pl-menu-item">
+					<label class="pl-menu-item pl-field">
 						Min load per sem
 						<select class="select" value={String(options.minLoad || 0)} onchange={(e) => setOptions({ minLoad: Number(e.currentTarget.value) })}>
-							<option value="0">No minimum</option>
+							<option value="0">None</option>
 							<option value="12">12 units</option>
 							<option value="15">15 units</option>
 							<option value="18">18 units</option>
 						</select>
-						<small>GradeSim marks a sem under this, for a scholarship that needs a full load.</small>
 					</label>
-					<label class="pl-menu-item">
+					<label class="pl-menu-item pl-field">
 						Take a sem off
 						<select class="select" value="" onchange={(e) => { const abs = Number(e.currentTarget.value); e.currentTarget.value = ''; if (abs) setSkip([...skipped, abs]); }}>
 							<option value="">Pick a sem</option>
 							{#each offChoices as abs (abs)}<option value={abs}>{absLabel(abs)}</option>{/each}
 						</select>
-						<small>For an LOA or MRR. The plan leaves that sem empty and moves the rest later.</small>
 					</label>
 					{#if app.program.specializations}
-						<label class="pl-menu-item">
+						<label class="pl-menu-item pl-field">
 							Specialization
 							<select class="select" value={app.specialization ?? ''} onchange={(e) => app.setSpecialization(e.currentTarget.value)}>
 								<option value="">Not chosen yet</option>
@@ -651,21 +650,22 @@
 							</select>
 						</label>
 					{/if}
-					<label class="pl-menu-item pl-check"><input type="checkbox" checked={options.midyear} onchange={(e) => setOptions({ midyear: e.currentTarget.checked })} /> <span>Take classes in midyear{#if effects}<small>With this {options.midyear ? 'off' : 'on'}, {effects.midyear}</small>{/if}</span></label>
-					{#if options.midyear}<label class="pl-menu-item pl-check pl-sub"><input type="checkbox" checked={options.midyear9} onchange={(e) => setOptions({ midyear9: e.currentTarget.checked })} /> <span>Midyear up to 9 units (Dean's approval){#if effects}<small>With this {options.midyear9 ? 'off' : 'on'}, {effects.midyear9}</small>{/if}</span></label>{/if}
+					<label class="pl-menu-item pl-check"><input type="checkbox" checked={options.midyear} onchange={(e) => setOptions({ midyear: e.currentTarget.checked })} /> <span>Take classes in midyear{#if effects?.midyear}<small>With this {options.midyear ? 'off' : 'on'}, {effects.midyear}</small>{/if}</span></label>
+					{#if options.midyear}<label class="pl-menu-item pl-check pl-sub"><input type="checkbox" checked={options.midyear9} onchange={(e) => setOptions({ midyear9: e.currentTarget.checked })} /> <span>Up to 9 units (Dean's approval){#if effects?.midyear9}<small>With this {options.midyear9 ? 'off' : 'on'}, {effects.midyear9}</small>{/if}</span></label>{/if}
 					<hr class="pl-menu-sep" />
-					<button type="button" class="pl-menu-item" onclick={autoPlan}>Auto-plan again<small>Drops courses you pushed later</small></button>
+					<button type="button" class="pl-menu-item" onclick={autoPlan}>Auto-plan again</button>
 					{#if petitions.length}
-						<button type="button" class="pl-menu-item" onclick={() => (app.s.plannerPetitions = {})}>Clear petitions<small>{petitions.join(', ')} {petitions.length === 1 ? 'goes' : 'go'} back to the sems AMIS offers {petitions.length === 1 ? 'it' : 'them'}</small></button>
+						<button type="button" class="pl-menu-item" onclick={() => (app.s.plannerPetitions = {})}>Clear petitions<small>{petitions.join(', ')}</small></button>
 					{/if}
-					<hr class="pl-menu-sep" />
-					<button type="button" class="pl-menu-item" onclick={savePlan}>Save plan<small>Download your marks, moves and settings as a file</small></button>
-					<button type="button" class="pl-menu-item" onclick={() => planInput?.click()}>Load plan<small>Restore a plan file you saved earlier</small></button>
-					<button type="button" class="pl-menu-item" onclick={copyPlanLink}>Copy a link to this plan<small>It opens your plan for a blockmate or your adviser, with no grades</small></button>
-					<button type="button" class="pl-menu-item" onclick={exportXlsx}>Export to Excel<small>A color-coded sheet with one column per sem</small></button>
-					<button type="button" class="pl-menu-item" onclick={printPlan}>Print<small>Every sem on paper, like the official checklist</small></button>
-					<hr class="pl-menu-sep" />
-					<button type="button" class="pl-menu-item pl-danger" onclick={resetPlan}>Reset plan<small>Clears marks, moves and petitions</small></button>
+					<button type="button" class="pl-menu-item" onclick={copyPlanLink}>Copy a link to this plan</button>
+					<details class="pl-more">
+						<summary class="pl-menu-item">More<Icon name="chevron" size={16} /></summary>
+						<button type="button" class="pl-menu-item" onclick={savePlan}>Save plan</button>
+						<button type="button" class="pl-menu-item" onclick={() => planInput?.click()}>Load plan</button>
+						<button type="button" class="pl-menu-item" onclick={exportXlsx}>Export to Excel</button>
+						<button type="button" class="pl-menu-item" onclick={printPlan}>Print</button>
+						<button type="button" class="pl-menu-item pl-danger" onclick={resetPlan}>Reset plan</button>
+					</details>
 				</div>
 			</details>
 			<input

@@ -133,7 +133,7 @@
   right: 0;
   top: calc(100% + 6px);
   z-index: 40;
-  width: 290px;
+  width: 340px;
   display: flex;
   flex-direction: column;
   padding: 6px;
@@ -177,6 +177,42 @@
 
 .pl-sub {
   padding-left: 36px;
+}
+
+.pl-field {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  column-gap: 12px;
+}
+
+.pl-field .select {
+  width: 9.5rem;
+}
+
+.pl-field small {
+  grid-column: 1 / -1;
+}
+
+.pl-more > summary {
+  list-style: none;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.pl-more > summary::-webkit-details-marker {
+  display: none;
+}
+
+.pl-more[open] > summary .icon {
+  transform: rotate(180deg);
+}
+
+.pl-more .pl-menu-item {
+  width: 100%;
 }
 
 .pl-check {
