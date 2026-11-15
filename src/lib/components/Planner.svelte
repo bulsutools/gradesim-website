@@ -124,6 +124,7 @@
 	const split = (done: boolean) => years.map((y) => ({ ...y, terms: y.terms.filter((t) => isDone(t) === done) })).filter((y) => y.terms.length);
 	const ahead = $derived(split(false));
 	const past = $derived(split(true));
+	const spare = $derived(view?.now.result.spare ?? []);
 	const pastLine = $derived.by(() => {
 		const terms = past.flatMap((y) => y.terms);
 		const dated = terms.filter((t) => t.sem !== undefined);
@@ -429,6 +430,26 @@
 									<li class="pl-empty">Nothing offered that fits</li>
 								{/each}
 							</ul>
+							{#if f.tag === 'Next' && spare.length}
+								<details class="pl-term pl-also">
+									<summary><Icon name="chevron" size={16} />You can also take {spare.length} other course{spare.length === 1 ? '' : 's'}</summary>
+									<p class="pl-muted">Their prerequisites are done, so swap one in if a section is full.</p>
+									<ul class="pl-rows nograde">
+										{#each spare as code (code)}
+											{@const c = model.byCode.get(code)!}
+											<li>
+												<button type="button" class="pl-row" class:generic={!!c.genericRequirement} data-also={code} onclick={() => goto(code)}>
+													<span class="pl-mark"><Icon name="ready" size={16} /></span>
+													<span class="pl-code">{c.code}</span>
+													<span class="pl-title">{c.title}</span>
+													<span class="pl-row-note">Planned for {absLabel(view.startAbs + view.now.result.assignedTerm[code])}</span>
+													<span class="pl-row-units">{c.units}</span>
+												</button>
+											</li>
+										{/each}
+									</ul>
+								</details>
+							{/if}
 						</details>
 			{/each}
 		</section>
