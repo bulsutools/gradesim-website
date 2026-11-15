@@ -58,7 +58,7 @@
 			app.blank = true;
 			url.searchParams.delete('program');
 			history.replaceState(history.state, '', url.pathname + url.search + url.hash);
-		}
+		} else if (!app.hasData && tab === 'planner') app.blank = true;
 		probeExtension().then((r) => (extension = r ?? 'missing'));
 	});
 
@@ -145,7 +145,7 @@
 	<div class="dash wide">
 		<p class="blank">
 			This is the {app.program.name} checklist planned from a blank transcript.
-			<button class="textbtn" type="button" onclick={() => (app.blank = false)}>Add your grades</button> to plan from where you are.
+			<button class="textbtn" type="button" onclick={() => { app.blank = false; setTab('grades'); }}>Add your grades</button> to plan from where you are.
 		</p>
 		<Planner />
 	</div>
