@@ -1,3 +1,10 @@
+## [0.25.4](https://github.com/uplbtools/gradesim-website/compare/v0.25.3...v0.25.4) (2026-11-15)
+
+
+### Bug Fixes
+
+* **requirements:** restricted electives take only the subjects they name ([#274](https://github.com/uplbtools/gradesim-website/issues/274)) ([c51acb5](https://github.com/uplbtools/gradesim-website/commit/c51acb5b4c7a84499ba3a329fa91a0a47a7a71a0))
+
 ## [0.25.3](https://github.com/uplbtools/gradesim-website/compare/v0.25.2...v0.25.3) (2026-11-15)
 
 
