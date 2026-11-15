@@ -1,3 +1,10 @@
+## [0.6.11](https://github.com/uplbtools/gradesim-website/compare/v0.6.10...v0.6.11) (2026-11-15)
+
+
+### Bug Fixes
+
+* **grades:** one line per course from 720px ([#128](https://github.com/uplbtools/gradesim-website/issues/128)) ([ba58349](https://github.com/uplbtools/gradesim-website/commit/ba58349646e870b1c7920f070beb5818fadfebf2))
+
 ## [0.6.10](https://github.com/uplbtools/gradesim-website/compare/v0.6.9...v0.6.10) (2026-11-15)
 
 
