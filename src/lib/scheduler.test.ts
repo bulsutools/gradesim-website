@@ -74,6 +74,29 @@ const C = (code: string, units: number, sem?: string, prereqs: string[] = []): P
 	eq(t0Count, 2);
 	eq(Math.max(...['X1', 'X2', 'X3'].map(c => capped.assignedTerm[c])), 3);
 	
+	// HK and NSTP sit outside the cap, like the checklists' (2) and (3)
+	const withHk = scheduleEarliest({
+	  courses: [C('X1', 3, '1'), C('X2', 3, '1'), C('HK 11', 2, '1'), C('NSTP 1', 3, '1')],
+	  passed: new Set(),
+	  unitCaps: { '1': 6, '2': 21, 'midyear': 6 },
+	  startSem: '1',
+	});
+	eq(withHk.gradTermIndex, 0);
+	const twoHk = scheduleEarliest({
+	  courses: [C('HK 1', 2, '1'), C('HK 2', 2, '1'), C('NSTP 1', 3, '1'), C('NSTP 2', 3, '1')],
+	  passed: new Set(),
+	  startSem: '1',
+	});
+	expect(twoHk.assignedTerm['HK 1']).not.toBe(twoHk.assignedTerm['HK 2']);
+	expect(twoHk.assignedTerm['NSTP 1']).not.toBe(twoHk.assignedTerm['NSTP 2']);
+	const perTerm = scheduleEarliest({
+	  courses: [C('X1', 12, '1'), C('X2', 12, '1')],
+	  passed: new Set(),
+	  termCaps: { 0: 24 },
+	  startSem: '1',
+	});
+	eq(perTerm.assignedTerm['X2'], 0);
+	
 	// notBefore delay honored, and offering still respected (t3 is next 1st sem)
 	const delayed = scheduleEarliest({ courses: [C('A', 3, '1')], passed: new Set(), notBefore: { A: 1 }, startSem: '1' });
 	eq(delayed.assignedTerm['A'], 3);
@@ -233,4 +256,30 @@ const C = (code: string, units: number, sem?: string, prereqs: string[] = []): P
 
 	// Default cap matches the catalog load rule: 18 a regular sem, 6 midyear.
 	deq(DEFAULT_UNIT_CAPS, { '1': 18, '2': 18, midyear: 6 });
+
+	// With no prerequisites, a course only offered now goes first, then the checklist order.
+	const one = { '1': 3, '2': 3, midyear: 0 };
+	const Y = (code: string, year: number, catalogSem: string) => ({
+		code,
+		title: code,
+		units: 3,
+		year,
+		sem: '1',
+		catalogSem,
+		prereqs: []
+	});
+	const order = scheduleEarliest({
+		courses: [Y('THESIS', 4, '1s,2s'), Y('INTRO', 1, '1s,2s')],
+		passed: new Set(),
+		unitCaps: one,
+		startSem: '1'
+	});
+	eq(order.assignedTerm.INTRO, 0);
+	const scarce = scheduleEarliest({
+		courses: [Y('GE', 1, '1s,2s'), Y('LAB', 4, '1s')],
+		passed: new Set(),
+		unitCaps: one,
+		startSem: '1'
+	});
+	eq(scarce.assignedTerm.LAB, 0);
 });

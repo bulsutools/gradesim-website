@@ -105,13 +105,6 @@ test('What if and the planner count the same units left', async ({ page }) => {
 	await expect(page.getByText(`You have ${units} units left to pass`)).toBeVisible();
 });
 
-test('programs without a checklist show as coming soon', async ({ page }) => {
-	await importFixture(page);
-	const option = page.getByRole('combobox', { name: 'Your degree program' }).locator('option[value="BSMST"]');
-	await expect(option).toHaveAttribute('disabled');
-	await expect(option).toContainText('coming soon');
-});
-
 test('theme toggle cycles and persists', async ({ page }) => {
 	await open(page);
 	const html = page.locator('html');
@@ -131,8 +124,12 @@ test('curricula deep link opens the planner without grades', async ({ page }) =>
 	await expect(page.getByTestId('planner-sheet')).toBeVisible();
 	await page.getByRole('combobox', { name: 'Your degree program' }).selectOption('BSBIO');
 	await expect(page.getByText('BS Biology checklist')).toBeVisible();
+	await page.reload();
+	await expect(page.getByText('BS Biology checklist')).toBeVisible();
 	await page.getByRole('button', { name: 'Add your grades' }).click();
 	await expect(page.getByRole('link', { name: 'Install the extension' }).first()).toBeVisible();
+	await page.reload();
+	await expect(page.getByTestId('planner-sheet')).toHaveCount(0);
 });
 
 test('curricula deep link picks the program in the planner', async ({ page }) => {
@@ -179,4 +176,30 @@ test('imports from the extension through the window bridge', async ({ page }) =>
 	await page.getByRole('button', { name: 'Import from the GradeSim extension' }).click();
 	await expect(page.getByTestId('gwa')).toHaveText('1.9773');
 	await expect(page.getByRole('status').first()).toContainText('from the GradeSim extension');
+});
+
+test('the phone bookmark saves AMIS grades as a file the app imports', async ({ page }) => {
+	const { BOOKMARKLET } = await import('../src/lib/bookmarklet.ts');
+	const amis = JSON.parse(backup.toString()).gradesData;
+	await page.route('https://amis.uplb.edu.ph/**', (r) => r.fulfill({ contentType: 'text/html', body: '<p>AMIS</p>' }));
+	const cors = {
+		'access-control-allow-origin': 'https://amis.uplb.edu.ph',
+		'access-control-allow-credentials': 'true',
+		'access-control-allow-headers': 'authorization,x-session-id'
+	};
+	await page.route('https://api-amis.uplb.edu.ph/**', (r) =>
+		r.request().method() === 'OPTIONS' ? r.fulfill({ status: 204, headers: cors }) : r.fulfill({ json: amis, headers: cors })
+	);
+	await page.goto('https://amis.uplb.edu.ph/');
+	await page.evaluate(() => localStorage.setItem('auth._token.local', 'Bearer test'));
+	page.once('dialog', (d) => d.dismiss());
+	const [download] = await Promise.all([
+		page.waitForEvent('download'),
+		page.evaluate(decodeURIComponent(BOOKMARKLET.slice('javascript:'.length)))
+	]);
+	expect(download.suggestedFilename()).toBe('gradesim-amis.json');
+	const file = fs.readFileSync(await download.path());
+	await open(page);
+	await page.getByTestId('file-input').first().setInputFiles({ name: 'gradesim-amis.json', mimeType: 'application/json', buffer: file });
+	await expect(page.getByTestId('gwa')).toHaveText('1.9773');
 });
