@@ -121,7 +121,7 @@
 					Covered by
 					<select class="select" bind:value={subTaken}>
 						<option value="">Choose a course you passed</option>
-						{#each subOptions as c (c.code)}<option value={c.code.toUpperCase().trim()}>{c.code}, {unitsText(c.units)}, {c.grade}</option>{/each}
+						{#each subOptions as c (c.code)}<option value={c.code.toUpperCase().trim()}>{c.code}, {unitsText(c.units)}, {formatGrade(String(c.grade))}</option>{/each}
 					</select>
 				</label>
 				<button class="btn btn-secondary" type="button" disabled={!subReq || !subTaken} onclick={addSub}>Apply substitution</button>
