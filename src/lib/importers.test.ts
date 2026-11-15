@@ -35,7 +35,7 @@ test('round-trips its own backup', () => {
 
 test('rejects junk with a readable reason', () => {
 	expect(parseImport('not json')).toMatchObject({ kind: 'error' });
-	expect(parseImport('{"hello":1}')).toMatchObject({ kind: 'error', message: expect.stringContaining('not a GradeSim backup') });
+	expect(parseImport('{"hello":1}')).toMatchObject({ kind: 'error', message: expect.stringContaining("isn't a GradeSim backup") });
 	expect(parseImport('{"source":"elbi-gradesim","gradesData":null}')).toMatchObject({ kind: 'error', message: expect.stringContaining('no grades') });
 	expect(parseImport('{"student_grades":{"1251":{"values":"x"}}}')).toMatchObject({ kind: 'error' });
 });

@@ -15,7 +15,7 @@
 			<a href="https://uplb.tools" rel="noopener" target="_blank">UPLB Tools</a>
 		</nav>
 		<p>
-			Elbi GradeSim is a student-run project under <a href="https://uplb.tools" rel="noopener" target="_blank">UPLB Tools</a>. It is not an
+			Elbi GradeSim is a student-run project under <a href="https://uplb.tools" rel="noopener" target="_blank">UPLB Tools</a>. It isn't an
 			official UPLB website, and your grades never leave your browser.
 		</p>
 	</div>

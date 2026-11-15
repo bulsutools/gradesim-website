@@ -12,7 +12,7 @@
 </svelte:head>
 
 <div class="wrap">
-	<PageHead title={missing ? 'This page is not here' : 'Something went wrong'}>
+	<PageHead title={missing ? "This page isn't here" : 'Something went wrong'}>
 		{#if missing}
 			The link may be old or mistyped. Your grades are safe, since they live in this browser and not on any page.
 		{:else}

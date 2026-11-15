@@ -7,7 +7,7 @@ const code = `(async () => {
 	if (session) headers['X-Session-Id'] = session;
 	const res = await fetch('https://api-amis.uplb.edu.ph/api/students/grades?summarize=true', { credentials: 'include', headers }).catch(() => null);
 	const data = res && res.ok ? await res.json() : null;
-	if (!data || !data.student_grades) return alert('AMIS did not send your grades. Log in again and retry.');
+	if (!data || !data.student_grades) return alert("AMIS didn't send your grades. Log in again and retry.");
 	const terms = {};
 	for (const [id, t] of Object.entries(data.student_grades)) {
 		if (!t || !Array.isArray(t.values)) continue;

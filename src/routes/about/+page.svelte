@@ -7,11 +7,11 @@
 	const faq = [
 		{
 			q: 'Is this an official UPLB tool?',
-			a: 'No. Elbi GradeSim is built by students under UPLB Tools and is not affiliated with or endorsed by UPLB, the UP System, or AMIS. Treat every number here as an estimate and confirm anything important with your college secretary or the Office of the University Registrar.'
+			a: "No. Elbi GradeSim is built by students under UPLB Tools and isn't affiliated with or endorsed by UPLB, the UP System, or AMIS. Treat every number here as an estimate and confirm anything important with your college secretary or the Office of the University Registrar."
 		},
 		{
 			q: 'Where do my grades go?',
-			a: 'Nowhere. The web app keeps your grades in this browser’s local storage, and the extension keeps them in its own storage on your device. There are no accounts, no analytics, and no server that receives grades.'
+			a: 'They stay on your device. The web app keeps your grades in this browser’s local storage, and the extension keeps them in its own storage on your device. There are no accounts, no analytics, and no server that receives grades.'
 		},
 		{
 			q: 'How is the GWA computed?',
@@ -19,7 +19,7 @@
 		},
 		{
 			q: 'What are the Latin honors cutoffs?',
-			a: 'GradeSim uses a GWA of 1.20 or better for Summa Cum Laude, 1.45 for Magna Cum Laude and 1.75 for Cum Laude. Honors also depend on residency, unit load and having no failing or dropped grades, which GradeSim cannot check for you.'
+			a: "GradeSim uses a GWA of 1.20 or better for Summa Cum Laude, 1.45 for Magna Cum Laude and 1.75 for Cum Laude. Honors also depend on residency, unit load and having no failing or dropped grades, which GradeSim can't check for you."
 		},
 		{
 			q: 'How does the planner decide when I graduate?',
@@ -61,13 +61,13 @@
 	<div class="prose">
 		<h2>What it does</h2>
 		<ul>
-			<li><strong>Grades.</strong> Your GWA, units and courses per term or per year, with University Scholar and College Scholar terms marked.</li>
-			<li><strong>What if.</strong> Pick a target and see the average you need on your remaining units, counting GE slots and free electives.</li>
-			<li><strong>Planner.</strong> Your checklist laid out by term, with prerequisite chains, critical courses, retakes, petitions, and an Excel export.</li>
-			<li><strong>Wrapped.</strong> A set of cards about your grades that you can save as an image.</li>
+			<li>The Grades tab shows your GWA, units and courses by term or by year, and marks your University Scholar and College Scholar terms.</li>
+			<li>What if shows the average you need on your remaining units to reach a target, counting GE slots and free electives.</li>
+			<li>The planner lays out your checklist by term, with prerequisite chains, critical courses, retakes, petitions and an Excel export.</li>
+			<li>Wrapped makes a set of cards about your grades that you can save as an image.</li>
 		</ul>
 
-		<h2>Private by design</h2>
+		<h2>Your data</h2>
 		<p>
 			Everything runs in your browser. Your grades are saved in local storage on this device and are never uploaded. You can
 			export a backup at any time and clear everything with one button on the Grades tab.
@@ -84,7 +84,7 @@
 			Elbi GradeSim is part of <a href="https://uplb.tools" rel="noopener" target="_blank">UPLB Tools</a>, the student-run group
 			behind <a href="https://room-tba.uplb.tools" rel="noopener" target="_blank">Room TBA</a> and other campus tools. The code is open source on
 			<a href="https://github.com/uplbtools/gradesim" rel="noopener" target="_blank">GitHub</a>, and curriculum fixes from
-			students are always welcome.
+			students are welcome.
 		</p>
 		<p><a class="btn btn-primary" href={resolve('/')}>Open Elbi GradeSim</a></p>
 	</div>

@@ -59,7 +59,7 @@
 	};
 
 	// Programs the planner has full data for but no checklist image here yet, by
-	// college. Programs that are not available yet are coming soon, not planner only.
+	// college. Programs that aren't available yet are coming soon, not planner only.
 	const withImage = new Set(Object.values(CHECKLIST_PROGRAM));
 	const plannerOnly = (college: string) =>
 		Object.values(UPLB_PROGRAMS)
