@@ -152,24 +152,6 @@
 
 	<section class="card" aria-labelledby="sub-title">
 		<h2 id="sub-title" class="h">Course substitutions</h2>
-		<p class="muted small">If a course you took stands in for a required one (a shiftee credit or an approved substitute), match them here. The planner and the what-if count the required course as done.</p>
-		<div class="subform">
-			<label class="field">
-				Required course
-				<select class="select" bind:value={subReq}>
-					<option value="">Choose a required course</option>
-					{#each required as r (r.code)}<option value={r.code.toUpperCase().trim()}>{r.code} ({r.units}u)</option>{/each}
-				</select>
-			</label>
-			<label class="field">
-				Covered by
-				<select class="select" bind:value={subTaken}>
-					<option value="">Choose a course you passed</option>
-					{#each subOptions as c (c.code)}<option value={c.code.toUpperCase().trim()}>{c.code} ({c.units}u, {c.grade})</option>{/each}
-				</select>
-			</label>
-			<button class="btn btn-secondary" type="button" disabled={!subReq || !subTaken} onclick={addSub}>Apply substitution</button>
-		</div>
 		{#if Object.keys(app.s.substitutions).length}
 			<ul class="subs">
 				{#each Object.entries(app.s.substitutions) as [req, taken] (req)}
@@ -179,9 +161,28 @@
 					</li>
 				{/each}
 			</ul>
-		{:else}
-			<p class="muted small">No substitutions yet.</p>
 		{/if}
+		<details class="subadd">
+			<summary>Add a substitution</summary>
+			<p class="muted small">If a course you took stands in for a required one (a shiftee credit or an approved substitute), match them here. The planner and the what-if count the required course as done.</p>
+			<div class="subform">
+				<label class="field">
+					Required course
+					<select class="select" bind:value={subReq}>
+						<option value="">Choose a required course</option>
+						{#each required as r (r.code)}<option value={r.code.toUpperCase().trim()}>{r.code} ({r.units}u)</option>{/each}
+					</select>
+				</label>
+				<label class="field">
+					Covered by
+					<select class="select" bind:value={subTaken}>
+						<option value="">Choose a course you passed</option>
+						{#each subOptions as c (c.code)}<option value={c.code.toUpperCase().trim()}>{c.code} ({c.units}u, {c.grade})</option>{/each}
+					</select>
+				</label>
+				<button class="btn btn-secondary" type="button" disabled={!subReq || !subTaken} onclick={addSub}>Apply substitution</button>
+			</div>
+		</details>
 	</section>
 
 	<section class="card" aria-labelledby="data-title">
@@ -421,8 +422,15 @@
 		margin-top: 10px;
 	}
 
-	.subform + p {
-		margin-top: 10px;
+	.subadd summary {
+		cursor: pointer;
+		padding: 8px 0 0;
+		font-weight: 650;
+		color: var(--brand);
+	}
+
+	.subadd p {
+		margin-top: 8px;
 	}
 
 	.subs {
