@@ -13,6 +13,8 @@
 	let preview = $state('');
 	let name = $state('');
 	let show = $state<GwaShow>('none');
+	let semShow = $state<GwaShow>('full');
+	let photo = $state(true);
 	const shows: GwaShow[] = ['none', 'xx', 'bx', 'xc', 'bc', 'full'];
 	const amis = $derived.by(() => {
 		const s = app.s;
@@ -24,10 +26,10 @@
 	const ordinal = ['1st', '2nd', '3rd'];
 	const id = $derived.by(() => {
 		const years = new Set(app.courses.map((c) => c.ay)).size;
-		return { name: name.trim(), year: `${ordinal[years - 1] ?? `${years}th`} year`, course: app.program.code, show, top, line: line.trim(), amis };
+		return { name: name.trim(), year: `${ordinal[years - 1] ?? `${years}th`} year`, course: app.program.code, show: p.frame === 'sem' ? semShow : show, top, line: line.trim(), amis, photo };
 	});
 	const alt = $derived(
-		[p.title, (p.frame === 'id' || p.frame === 'sem') && show !== 'none' ? `GWA ${shownGwa(p.value, show)}` : '', amis && `from AMIS on ${amis}`, ...(p.frame === 'sem' && !top ? [] : (p.highlights ?? [])).map((h) => `${bare(h.label)} ${h.name}, ${h.detail}`), 'drawn on a picnic blanket']
+		[p.title, (p.frame === 'id' || p.frame === 'sem') && id.show !== 'none' ? `GWA ${shownGwa(p.value, id.show!)}` : '', amis && `from AMIS on ${amis}`, ...(p.frame === 'sem' && !top ? [] : (p.highlights ?? [])).map((h) => `${bare(h.label)} ${h.name}, ${h.detail}`), 'drawn on a picnic blanket']
 			.filter(Boolean)
 			.join(', ')
 	);
@@ -100,9 +102,9 @@
 		</article>
 	{/if}
 
-	{#snippet gwaPick()}
+	{#snippet gwaPick(value: GwaShow, set: (v: GwaShow) => void)}
 		<label class="field">GWA on the card
-			<select class="input" bind:value={show}>
+			<select class="input" {value} onchange={(e) => set(e.currentTarget.value as GwaShow)}>
 				{#each shows as k (k)}<option value={k}>{k === 'none' ? 'Tier only' : shownGwa(p.value, k)}</option>{/each}
 			</select>
 		</label>
@@ -113,12 +115,17 @@
 				{#each sems as s, k (s.name)}<option value={k}>{s.name}</option>{/each}
 			</select>
 		</label>
-		{@render gwaPick()}
+		{@render gwaPick(semShow, (v) => (semShow = v))}
 		<label class="field">Your own line<input class="input" bind:value={line} maxlength="40" placeholder={p.extra} /></label>
-		<label class="check"><input type="checkbox" bind:checked={top} />Show my top grade</label>
+		<label class="check"><input type="checkbox" bind:checked={top} />Show my best course</label>
 	{:else if p.frame === 'id'}
 		<label class="field">Your name on the card<input class="input" bind:value={name} maxlength="40" autocomplete="name" /></label>
-		{@render gwaPick()}
+		{@render gwaPick(show, (v) => (show = v))}
+	{/if}
+	{#if p.frame && p.frame !== 'id'}
+		<label class="check"><input type="checkbox" bind:checked={photo} />Leave a spot for my photo</label>
+	{/if}
+	{#if p.frame === 'id' || (p.frame && photo)}
 		<p class="muted">Add your photo over the picture in Instagram or Facebook.</p>
 	{/if}
 	{#if p.frame && !amis}
