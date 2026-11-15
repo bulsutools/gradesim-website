@@ -1,3 +1,10 @@
+## [0.24.3](https://github.com/uplbtools/gradesim-website/compare/v0.24.2...v0.24.3) (2026-11-15)
+
+
+### Bug Fixes
+
+* **wrapped:** drop the cheer words after the facts ([#250](https://github.com/uplbtools/gradesim-website/issues/250)) ([c217ec9](https://github.com/uplbtools/gradesim-website/commit/c217ec969072842e87ad55a29263ca3ea0834b87))
+
 ## [0.24.2](https://github.com/uplbtools/gradesim-website/compare/v0.24.1...v0.24.2) (2026-11-15)
 
 
