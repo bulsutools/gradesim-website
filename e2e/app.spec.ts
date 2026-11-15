@@ -339,8 +339,13 @@ test('every Wrapped card is drawn on the picnic art, this sem comes first, and t
 	await page.getByRole('tab', { name: 'Wrapped' }).click();
 	const card = page.getByRole('img', { name: /drawn on a picnic blanket/ });
 	await expect(card).toHaveAccessibleName(/^Solid sem, Top grade KAS 1, 1\.00, drawn/);
-	await page.getByLabel('Show my GWA, not only its tier').check();
+	await page.getByLabel('GWA on the card').selectOption({ label: '1.8x' });
+	await expect(card).toHaveAccessibleName(/GWA 1\.8x,/);
+	await page.getByLabel('GWA on the card').selectOption({ label: '1.8750' });
 	await expect(card).toHaveAccessibleName(/GWA 1\.8750/);
+	await page.getByRole('combobox', { name: /^Sem/ }).selectOption({ index: 0 });
+	await expect(card).not.toHaveAccessibleName(/1\.8750/);
+	await page.getByRole('combobox', { name: /^Sem/ }).selectOption({ index: 2 });
 	await page.getByRole('button', { name: 'Next' }).click();
 	await expect(card).toHaveAccessibleName(/^Honor roll, GWA 1\.9773/);
 	const blank = await card.getAttribute('src');
