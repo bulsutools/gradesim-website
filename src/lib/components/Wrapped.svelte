@@ -17,7 +17,7 @@
 		return { name: name.trim(), year: `${ordinal[years - 1] ?? `${years}th`} year`, course: app.program.code, number };
 	});
 	const alt = $derived(
-		[p.title, p.frame === 'id' && number ? `GWA ${p.value}` : '', ...(p.highlights ?? []).map((h) => `${bare(h.label)} ${h.name}, ${h.detail}`), 'drawn on a picnic blanket']
+		[p.title, (p.frame === 'id' || p.frame === 'sem') && number ? `GWA ${p.value}` : '', ...(p.highlights ?? []).map((h) => `${bare(h.label)} ${h.name}, ${h.detail}`), 'drawn on a picnic blanket']
 			.filter(Boolean)
 			.join(', ')
 	);
@@ -92,7 +92,11 @@
 
 	{#if p.frame === 'id'}
 		<label class="field">Your name on the card<input class="input" bind:value={name} maxlength="40" autocomplete="name" /></label>
+	{/if}
+	{#if p.frame === 'id' || p.frame === 'sem'}
 		<label class="check"><input type="checkbox" bind:checked={number} />Show my GWA, not only its tier</label>
+	{/if}
+	{#if p.frame === 'id'}
 		<p class="muted">Add your photo over the picture in Instagram or Facebook.</p>
 	{/if}
 
