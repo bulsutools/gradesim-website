@@ -1,3 +1,10 @@
+## [0.24.2](https://github.com/uplbtools/gradesim-website/compare/v0.24.1...v0.24.2) (2026-11-15)
+
+
+### Bug Fixes
+
+* **layout:** group related controls ([#246](https://github.com/uplbtools/gradesim-website/issues/246)) ([235682e](https://github.com/uplbtools/gradesim-website/commit/235682e54376d9a042438e67614e96c8bfbaae9b))
+
 ## [0.24.1](https://github.com/uplbtools/gradesim-website/compare/v0.24.0...v0.24.1) (2026-11-15)
 
 
