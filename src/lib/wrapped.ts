@@ -344,14 +344,14 @@ async function drawFrame(ctx: CanvasRenderingContext2D, p: Panel, font: string, 
 		draw();
 		ctx.restore();
 	};
-	const text = (t: string, style: string, color: string, y: number) => {
-		ctx.font = `${style} ${font}`;
+	const text = (t: string, weight: number, size: number, color: string, y: number, max = 1080) => {
+		do ctx.font = `${weight} ${size}px ${font}`;
+		while (ctx.measureText(t).width > max && --size > 24);
 		ctx.fillStyle = color;
-		ctx.fillText(t, 0, y);
+		ctx.fillText(t, 0, y, max);
 	};
 	if (isId) {
 		ctx.textAlign = 'left';
-		ctx.fillStyle = '#1c1917';
 		const rows: [string, number, number, number][] = [
 			[id.name, 556, 638, 285],
 			[id.year, 566, 738, 295],
@@ -359,32 +359,29 @@ async function drawFrame(ctx: CanvasRenderingContext2D, p: Panel, font: string, 
 		];
 		rows.forEach(([t, x, y, max]) =>
 			tilted(x, y, () => {
-				let size = 40;
-				do ctx.font = `700 ${size}px ${font}`;
-				while (ctx.measureText(t).width > max && --size > 24);
-				ctx.fillText(t, 0, 0, max);
+				text(t, 700, 40, '#1c1917', 0, max);
 			})
 		);
 		ctx.textAlign = 'center';
 		tilted(592, 1215, () => {
-			text(p.value, '800 190px', '#7b2a22', 0);
-			text(p.title, '800 64px', '#2b2321', 95);
-			text('My Elbi GWA on gradesim.uplb.tools', '600 36px', '#4a3f3c', 160);
+			text(p.value, 800, 190, '#7b2a22', 0);
+			text(p.title, 800, 64, '#2b2321', 95);
+			text('My Elbi GWA on gradesim.uplb.tools', 600, 36, '#4a3f3c', 160);
 		});
 		return;
 	}
 	ctx.textAlign = 'center';
 	tilted(500, 700, () => {
-		text(p.title, '800 84px', '#2b2321', 0);
-		text('gradesim.uplb.tools', '600 40px', '#4a3f3c', 80);
+		text(p.title, 800, 84, '#2b2321', 0);
+		text('gradesim.uplb.tools', 600, 40, '#4a3f3c', 80);
 	});
 	const rows = p.highlights ?? [];
 	rows.forEach((h, i) =>
 		tilted(596, 1225, () => {
 			const y = rows.length > 1 ? i * 205 - 150 : -30;
-			text(bare(h.label), '600 38px', '#4a3f3c', y);
-			text(h.name, '800 62px', '#2b2321', y + 72);
-			text(h.detail, '700 42px', '#7b2a22', y + 130);
+			text(bare(h.label), 600, 38, '#4a3f3c', y);
+			text(h.name, 800, 62, '#2b2321', y + 72, 700);
+			text(h.detail, 700, 42, '#7b2a22', y + 130);
 		})
 	);
 }
