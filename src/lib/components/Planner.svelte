@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { tick } from 'svelte';
+	import { onMount, tick } from 'svelte';
 	import { resolve } from '$app/paths';
 	import { app, download } from '#lib/app.svelte.ts';
 	import { formatGrade, groupGWA, substituteOptions, termKeyToAbs } from '#lib/grades.ts';
@@ -40,6 +40,7 @@
 	import FixForm from './FixForm.svelte';
 	import Icon, { type IconName } from './Icon.svelte';
 	import Notice from './Notice.svelte';
+	import PlanMap from './PlanMap.svelte';
 	import StatusLabel from './StatusLabel.svelte';
 	import './planner.css';
 
@@ -68,6 +69,31 @@
 	// The course whose fix form is open, or 'add' for a missing course.
 	let fixing = $state<string | null>(null);
 	let acted = $state<string | null>(null);
+
+	// The map needs a wide screen, so phones and narrow windows keep the sheet.
+	const VIEW_KEY = 'gradesim:planView';
+	let wide = $state(false);
+	let mode = $state<'map' | 'sheet'>('map');
+	onMount(() => {
+		try {
+			if (localStorage.getItem(VIEW_KEY) === 'sheet') mode = 'sheet';
+		} catch {
+			/* storage blocked */
+		}
+		const mq = window.matchMedia('(min-width: 1100px)');
+		wide = mq.matches;
+		const onChange = () => (wide = mq.matches);
+		mq.addEventListener('change', onChange);
+		return () => mq.removeEventListener('change', onChange);
+	});
+	function setMode(next: 'map' | 'sheet') {
+		mode = next;
+		try {
+			localStorage.setItem(VIEW_KEY, next);
+		} catch {
+			/* storage blocked */
+		}
+	}
 
 	function saveFix(fix: ChecklistFix) {
 		app.setFix(fix);
@@ -579,6 +605,12 @@
 		</section>
 
 		<section class="pl-controls">
+			{#if wide}
+				<div class="pl-view" role="group" aria-label="Show the plan as">
+					<button type="button" aria-pressed={mode === 'map'} onclick={() => setMode('map')}>Map</button>
+					<button type="button" aria-pressed={mode === 'sheet'} onclick={() => setMode('sheet')}>Sheet</button>
+				</div>
+			{/if}
 			<details class="pl-menu" bind:this={menu} ontoggle={(e) => (menuOpen = e.currentTarget.open)}>
 				<summary class="btn btn-secondary">Plan settings<Icon name="chevron" /></summary>
 				<div class="pl-menu-pop">
@@ -669,15 +701,19 @@
 			</section>
 		{/if}
 
-		<div class="pl-sheet" data-testid="planner-sheet" bind:this={sheetEl}>
-			{@render yearList(ahead)}
-			{#if past.length}
-				<details class="pl-term pl-past">
-					<summary><Icon name="chevron" size={16} />{pastLine}</summary>
-					{@render yearList(past)}
-				</details>
-			{/if}
-		</div>
+		{#if wide && mode === 'map' && view && layout}
+			<PlanMap {view} columns={layout.list} primary={layout.primary} {selected} onselect={select} {detail} />
+		{:else}
+			<div class="pl-sheet" data-testid="planner-sheet" bind:this={sheetEl}>
+				{@render yearList(ahead)}
+				{#if past.length}
+					<details class="pl-term pl-past">
+						<summary><Icon name="chevron" size={16} />{pastLine}</summary>
+						{@render yearList(past)}
+					</details>
+				{/if}
+			</div>
+		{/if}
 
 		<p class="pl-muted pl-how">GradeSim puts each course in the earliest sem its prerequisites and AMIS offerings allow.</p>
 
