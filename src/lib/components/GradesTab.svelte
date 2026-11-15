@@ -78,7 +78,7 @@
 		<section class="card" aria-labelledby="add-title">
 			<h2 id="add-title" class="h">Add a course</h2>
 			<GradeEditor />
-			<p class="muted small">To change or remove a course, use the controls on its row below.</p>
+			<p class="muted small">To change, remove or leave out a course, use the controls on its row below.</p>
 		</section>
 	{/if}
 
@@ -124,7 +124,8 @@
 								<button class="iconbtn" type="button" aria-label="Remove {c.code} from {c.termLabel}" onclick={() => (app.s.gradesData = removeCourse(app.s.gradesData!, c.termKey, c.id))}>
 									<Icon name="trash" />
 								</button>
-							{:else if !nonNumeric}
+							{/if}
+							{#if !nonNumeric && (editing || out)}
 								<button
 									class="excl"
 									type="button"
@@ -454,13 +455,13 @@
 			white-space: normal;
 		}
 
-		.group li:has(.excl) {
+		.group li:has(.excl):not(:has(.mini)) {
 			display: grid;
 			grid-template: 'info units grade' 'info excl excl' / minmax(0, 1fr) auto auto;
 			gap: 4px 8px;
 		}
 
-		.group li:has(.excl) .right {
+		.group li:has(.excl):not(:has(.mini)) .right {
 			display: contents;
 		}
 
