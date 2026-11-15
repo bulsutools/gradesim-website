@@ -41,6 +41,12 @@
 			message = { text: "GradeSim can't read that link, so nothing changed. Copy a new one on the device that has your grades.", tone: 'bad' };
 			return;
 		}
+		const r = parseImport(text);
+		if (r.kind === 'plan') {
+			app.viewPlan(r.plan);
+			setTab('planner');
+			return;
+		}
 		if (app.hasData && !confirm('This link holds grades. Replace the grades saved in this browser with them?')) return;
 		fromText(text, 'your link');
 	}
@@ -188,8 +194,13 @@
 {:else if !app.hasData}
 	<div class="dash wrap">
 		<p class="blank">
-			This is the {app.program.name} checklist planned from a blank transcript.
-			<button class="textbtn" type="button" onclick={() => { app.blank = false; setTab('grades'); }}>Add your grades</button> to plan from where you are.
+			{#if app.shared != null}
+				This is a {app.program.name} plan someone shared with you. Nothing here is saved in this browser.
+				<button class="textbtn" type="button" onclick={() => { app.closeShared(); setTab('grades'); }}>Close it</button>
+			{:else}
+				This is the {app.program.name} checklist planned from a blank transcript.
+				<button class="textbtn" type="button" onclick={() => { app.blank = false; setTab('grades'); }}>Add your grades</button> to plan from where you are.
+			{/if}
 		</p>
 		<Planner />
 	</div>

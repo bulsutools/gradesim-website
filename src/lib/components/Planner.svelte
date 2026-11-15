@@ -1,8 +1,10 @@
 <script lang="ts">
 	import { tick } from 'svelte';
+	import { resolve } from '$app/paths';
 	import { app, download } from '#lib/app.svelte.ts';
 	import { formatGrade, groupGWA, substituteOptions, termKeyToAbs } from '#lib/grades.ts';
 	import { parseImport } from '#lib/importers.ts';
+	import { packLink } from '#lib/link.ts';
 	import { UPLB_CATALOG } from '#lib/catalog.ts';
 	import { getProgramDataQuality, isNonGwaCourseCode, UPLB_PROGRAMS } from '#lib/curriculum.ts';
 	import {
@@ -50,7 +52,8 @@
 		plannerPins: app.s.plannerPins,
 		plannerPetitions: app.s.plannerPetitions,
 		plannerOptions: options,
-		whatif: app.whatif
+		whatif: app.whatif,
+		startAbs: app.shared ?? undefined
 	});
 	const view = $derived(model ? compute(model, input) : null);
 	const layout = $derived(view ? buildColumns(view) : null);
@@ -258,6 +261,26 @@
 		app.applyPlan(r.plan);
 		const saved = new Date(r.plan.savedAt);
 		notice = { text: `Loaded the plan saved ${Number.isNaN(saved.getTime()) ? 'earlier' : saved.toLocaleDateString('en-CA')}.`, bad: false };
+	}
+
+	async function copyPlanLink() {
+		closeMenu();
+		if (!view || !model) return;
+		const marks = { ...input.customCourseStatus };
+		view.passed.forEach((code) => {
+			if (model.byCode.has(code)) marks[code] = 'passed';
+		});
+		const plan = {
+			...makePlanFile(model.code, { ...input, customCourseStatus: marks, substitutions: {} }),
+			track: model.track,
+			specialization: model.specialization,
+			startAbs: view.startAbs
+		};
+		const url = await packLink(plan, location.origin + resolve('/'));
+		notice = await navigator.clipboard.writeText(url).then(
+			() => ({ text: 'The link is copied. It holds your plan and the courses you passed, with no grades.', bad: false }),
+			() => ({ text: 'Your browser blocked the copy. Save the plan as a file and send that.', bad: true })
+		);
 	}
 
 	function printPlan() {
@@ -574,6 +597,7 @@
 					{/if}
 					<button type="button" class="pl-menu-item" onclick={savePlan}>Save plan<small>Download your marks, moves and settings as a file</small></button>
 					<button type="button" class="pl-menu-item" onclick={() => planInput?.click()}>Load plan<small>Restore a plan file you saved earlier</small></button>
+					<button type="button" class="pl-menu-item" onclick={copyPlanLink}>Copy a link to this plan<small>It opens your plan for a blockmate or your adviser, with no grades</small></button>
 					<button type="button" class="pl-menu-item" onclick={exportXlsx}>Export to Excel<small>A color-coded sheet with one column per sem</small></button>
 					<button type="button" class="pl-menu-item" onclick={printPlan}>Print<small>Every sem on paper, like the official checklist</small></button>
 					<button type="button" class="pl-menu-item pl-danger" onclick={resetPlan}>Reset plan<small>Clears marks, moves and petitions</small></button>

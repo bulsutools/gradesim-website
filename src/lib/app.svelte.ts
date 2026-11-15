@@ -79,6 +79,8 @@ class AppState {
 	whatif = $state<PlannerInput['whatif']>(null);
 	/** Planning a program with no grades, from a ?program= link. Not saved. */
 	blank = $state(false);
+	/** The first sem of a plan opened from a link, or null. Nothing is saved while one is open. */
+	shared = $state<number | null>(null);
 
 	/** The stored grades with removal exam results applied. */
 	grades = $derived(applyRemovals(this.s.gradesData, this.s.removals));
@@ -96,6 +98,7 @@ class AppState {
 	}
 
 	persist() {
+		if (this.shared != null) return;
 		try {
 			localStorage.setItem(STORAGE_KEY, JSON.stringify(this.s));
 		} catch {
@@ -157,6 +160,21 @@ class AppState {
 		this.s.plannerOptions = plan.plannerOptions;
 		this.s.substitutions = plan.substitutions;
 		this.whatif = plan.whatif;
+	}
+
+	/** Show a plan from a link without touching what's saved here. */
+	viewPlan(plan: PlanFile) {
+		this.shared = plan.startAbs ?? 0;
+		this.s = { ...blank(), track: plan.track ?? null, selectedSpecializations: plan.specialization ? { [plan.program]: plan.specialization } : {} };
+		this.applyPlan(plan);
+		this.blank = true;
+	}
+
+	closeShared() {
+		this.whatif = null;
+		this.blank = false;
+		this.s = read();
+		this.shared = null;
 	}
 
 	/** Record a removal exam result for a 4.00, or clear it with an empty result. */
