@@ -17,6 +17,7 @@
 		markConflict,
 		modelFor,
 		offeringLabel,
+		optionEffect,
 		planTrack,
 		restricted,
 		STATUS,
@@ -154,6 +155,23 @@
 	function setOptions(patch: Partial<typeof options>) {
 		app.s.plannerOptions = { ...options, ...patch };
 	}
+
+	let menuOpen = $state(false);
+	const CAPS = [[18, '18 units'], [21, '21 units'], ['checklist', "the checklist's load"]] as const;
+	const effects = $derived.by(() => {
+		if (!menuOpen || !view) return null;
+		const v = view;
+		const caps = CAPS.filter(([cap]) => cap !== options.cap)
+			.map(([cap, label]) => [label, optionEffect(v, { cap })] as const)
+			.filter(([, text]) => text.startsWith("you'd"))
+			.map(([label, text]) => `With ${label}, ${text}`);
+		return {
+			cap: caps.join(' ') || 'Your graduation sem is the same at any load.',
+			midyear: optionEffect(v, { midyear: !options.midyear }),
+			midyear9: optionEffect(v, { midyear9: !options.midyear9 })
+		};
+	});
+	const petitions = $derived(Object.keys(app.s.plannerPetitions));
 
 	function act(name: 'passed' | 'failed' | 'clear' | 'later' | 'unpin', code: string) {
 		if (!view) return;
@@ -344,7 +362,7 @@
 			{#if restricted(c) && i.status !== 'passed'}
 				<label class="pl-petition">
 					<input type="checkbox" checked={!!app.s.plannerPetitions[code]} onchange={(e) => togglePetition(code, e.currentTarget.checked)} />
-					<span>Plan on a petitioned class when it isn't offered. It needs about 10 students and department, college and OVCAA approval, so treat it as conditional.</span>
+					<span>Plan on a petition<small>A petition needs about 10 students and approval from the department, the college and OVCAA.</small></span>
 				</label>
 			{/if}
 			{#if fixing === code}
@@ -494,8 +512,8 @@
 		</section>
 
 		<section class="pl-controls">
-			<details class="pl-menu" bind:this={menu}>
-				<summary class="btn btn-secondary">Plan options<Icon name="chevron" /></summary>
+			<details class="pl-menu" bind:this={menu} ontoggle={(e) => (menuOpen = e.currentTarget.open)}>
+				<summary class="btn btn-secondary">Plan settings<Icon name="chevron" /></summary>
 				<div class="pl-menu-pop">
 					<button type="button" class="pl-menu-item" onclick={autoPlan}>Auto-plan again<small>Drops courses you pushed later</small></button>
 					<label class="pl-menu-item">
@@ -505,6 +523,17 @@
 							<option value="21">21 units (with lab courses)</option>
 							<option value="checklist">The checklist's load</option>
 						</select>
+						{#if effects}<small>{effects.cap}</small>{/if}
+					</label>
+					<label class="pl-menu-item">
+						Min load per sem
+						<select class="select" value={String(options.minLoad || 0)} onchange={(e) => setOptions({ minLoad: Number(e.currentTarget.value) })}>
+							<option value="0">No minimum</option>
+							<option value="12">12 units</option>
+							<option value="15">15 units</option>
+							<option value="18">18 units</option>
+						</select>
+						<small>GradeSim marks a sem under this, for a scholarship that needs a full load.</small>
 					</label>
 					{#if app.program.specializations}
 						<label class="pl-menu-item">
@@ -517,9 +546,12 @@
 							</select>
 						</label>
 					{/if}
-					<label class="pl-menu-item pl-check"><input type="checkbox" checked={options.midyear} onchange={(e) => setOptions({ midyear: e.currentTarget.checked })} /> Take classes in midyear</label>
-					<label class="pl-menu-item pl-check"><input type="checkbox" checked={options.midyear9} onchange={(e) => setOptions({ midyear9: e.currentTarget.checked })} /> Midyear up to 9 units (Dean's approval)</label>
-					<button type="button" class="pl-menu-item" onclick={savePlan}>Save plan<small>Download your marks, moves and options as a file</small></button>
+					<label class="pl-menu-item pl-check"><input type="checkbox" checked={options.midyear} onchange={(e) => setOptions({ midyear: e.currentTarget.checked })} /> <span>Take classes in midyear{#if effects}<small>With this {options.midyear ? 'off' : 'on'}, {effects.midyear}</small>{/if}</span></label>
+					<label class="pl-menu-item pl-check"><input type="checkbox" checked={options.midyear9} onchange={(e) => setOptions({ midyear9: e.currentTarget.checked })} /> <span>Midyear up to 9 units (Dean's approval){#if effects && options.midyear}<small>With this {options.midyear9 ? 'off' : 'on'}, {effects.midyear9}</small>{/if}</span></label>
+					{#if petitions.length}
+						<button type="button" class="pl-menu-item" onclick={() => (app.s.plannerPetitions = {})}>Clear petitions<small>{petitions.join(', ')} {petitions.length === 1 ? 'goes' : 'go'} back to the sems AMIS offers {petitions.length === 1 ? 'it' : 'them'}</small></button>
+					{/if}
+					<button type="button" class="pl-menu-item" onclick={savePlan}>Save plan<small>Download your marks, moves and settings as a file</small></button>
 					<button type="button" class="pl-menu-item" onclick={() => planInput?.click()}>Load plan<small>Restore a plan file you saved earlier</small></button>
 					<button type="button" class="pl-menu-item" onclick={exportXlsx}>Export to Excel<small>A color-coded sheet with one column per sem</small></button>
 					<button type="button" class="pl-menu-item" onclick={printPlan}>Print<small>Every sem on paper, like the official checklist</small></button>
