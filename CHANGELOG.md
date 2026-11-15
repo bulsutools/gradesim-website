@@ -1,3 +1,10 @@
+## [0.6.13](https://github.com/uplbtools/gradesim-website/compare/v0.6.12...v0.6.13) (2026-11-15)
+
+
+### Bug Fixes
+
+* **copy:** drop the assumed track warning ([#134](https://github.com/uplbtools/gradesim-website/issues/134)) ([31e1ef2](https://github.com/uplbtools/gradesim-website/commit/31e1ef2e49e3b8fb42b9492b8c28e4f42f1d4a34))
+
 ## [0.6.12](https://github.com/uplbtools/gradesim-website/compare/v0.6.11...v0.6.12) (2026-11-15)
 
 
