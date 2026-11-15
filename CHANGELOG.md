@@ -1,3 +1,18 @@
+# [0.23.0](https://github.com/uplbtools/gradesim-website/compare/v0.22.0...v0.23.0) (2026-11-15)
+
+
+### Bug Fixes
+
+* **curriculum:** BSCS free electives need no senior standing ([#228](https://github.com/uplbtools/gradesim-website/issues/228)) ([10d5da7](https://github.com/uplbtools/gradesim-website/commit/10d5da771b9c4a4dd9d47c28a28b70b58b3e3d2f))
+* **layout:** action rows don't wrap on any screen ([#232](https://github.com/uplbtools/gradesim-website/issues/232)) ([454a2dc](https://github.com/uplbtools/gradesim-website/commit/454a2dccdf7eae3931552504d985459ff966e033))
+* **requirements:** each HK 12 sport fills its own HK slot ([#226](https://github.com/uplbtools/gradesim-website/issues/226)) ([4949c8e](https://github.com/uplbtools/gradesim-website/commit/4949c8e828e26f1369b12284eb380287d207c567))
+
+
+### Features
+
+* **wrapped:** credit Reann Vargas and Danica Manadong on every card ([#230](https://github.com/uplbtools/gradesim-website/issues/230)) ([e580a3e](https://github.com/uplbtools/gradesim-website/commit/e580a3efabdcc74c3c40693626c4ac3be02bc6b8))
+* **wrapped:** the sem card sits in Reann's tin with a photo spot, its GWA and a scholar ribbon ([#234](https://github.com/uplbtools/gradesim-website/issues/234)) ([e890a5f](https://github.com/uplbtools/gradesim-website/commit/e890a5fda564c0c90b052df4ac12151dc2af44fb))
+
 # [0.22.0](https://github.com/uplbtools/gradesim-website/compare/v0.21.0...v0.22.0) (2026-11-15)
 
 
