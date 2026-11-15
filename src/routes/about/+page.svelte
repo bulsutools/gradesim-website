@@ -87,6 +87,12 @@
 		margin: 24px 0 8px;
 	}
 
+	@media (max-width: 719px) {
+		.shot {
+			display: none;
+		}
+	}
+
 	details {
 		border-bottom: 1px solid var(--border);
 	}
