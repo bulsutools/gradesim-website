@@ -1,3 +1,10 @@
+# [0.16.0](https://github.com/uplbtools/gradesim-website/compare/v0.15.0...v0.16.0) (2026-11-15)
+
+
+### Features
+
+* **planner:** credit a course you passed to a checklist row ([#186](https://github.com/uplbtools/gradesim-website/issues/186)) ([4091a15](https://github.com/uplbtools/gradesim-website/commit/4091a151252d5c5761c8edee391e3e54463c103b))
+
 # [0.15.0](https://github.com/uplbtools/gradesim-website/compare/v0.14.0...v0.15.0) (2026-11-15)
 
 
