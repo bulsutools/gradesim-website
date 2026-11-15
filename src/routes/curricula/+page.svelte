@@ -21,7 +21,7 @@
 		],
 		CAFS: [
 			['BS Agricultural Biotechnology', 'BS-Agricultural-Biotechnology', 2],
-			['BS Agriculture', 'BS-Agriculture', 2],
+			['BS Agriculture', 'BS-Agriculture', 1],
 			['BS Food Science and Technology', 'BS-Food-Science-and-Technology', 2]
 		],
 		CDC: [['BS Development Communication', 'BS-Development-Communication', 2]],
