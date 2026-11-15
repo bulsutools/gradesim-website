@@ -184,6 +184,13 @@
   font-size: 0.875rem;
 }
 
+.pl-roomtba {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0 0 12px 30px;
+}
+
 .pl-also {
   margin: 0 0 12px 30px;
 }

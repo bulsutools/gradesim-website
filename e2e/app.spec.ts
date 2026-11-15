@@ -347,3 +347,12 @@ test('the GWA and semester cards in Wrapped are drawn in the tin frame', async (
 	await page.getByRole('button', { name: 'Next' }).click();
 	await expect(card).toHaveCount(0);
 });
+
+test('courses from Room TBA land in the plan, and the next sem links back', async ({ page }) => {
+	await importFixture(page);
+	await open(page, '/?take=CMSC 21,NOPE 1&term=1271#planner');
+	await expect(page.getByText('Room TBA put CMSC 21 in 1st sem 2027.')).toBeVisible();
+	await expect(page).toHaveURL(/\/#planner$/);
+	const link = page.getByRole('link', { name: 'Plan sections in Room TBA' }).first();
+	await expect(link).toHaveAttribute('href', /^https:\/\/room-tba\.uplb\.tools\/planner\?plan=/);
+});

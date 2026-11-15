@@ -49,6 +49,28 @@ export function absLabel(abs: number): string {
 }
 export const ayLabel = ayOfAbs;
 
+/** The AMIS term id of a sem, such as 1261 for 1st sem 2026 and 1253 for midyear 2026. */
+export const amisTerm = (abs: number) => (Math.floor(abs / 3) - 1900) * 10 + (abs % 3) + 1;
+export const absOfAmisTerm = (id: number) => (Math.floor(id / 10) + 1900) * 3 + (id % 10) - 1;
+
+/** Room TBA's planner with these courses for one sem, each on its first section. */
+export function roomTbaLink(abs: number, codes: string[]): string {
+	const s = [...new Set(codes.map((c) => c.replace(/ \(\d+\)$/, '')))].map((c) => [c, '', '']);
+	const plan = btoa(JSON.stringify({ v: 1, t: amisTerm(abs), s }));
+	return `https://room-tba.uplb.tools/planner?plan=${plan.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')}`;
+}
+
+/** Courses a student takes in one sem, from Room TBA. A sem that has started marks them in progress, and a later one moves them there. */
+export function takeCourses(codes: string[], abs: number, s: Pick<PlannerInput, 'customCourseStatus' | 'plannerPins'>, now = new Date()) {
+	const customCourseStatus = { ...s.customCourseStatus };
+	const plannerPins = { ...s.plannerPins };
+	codes.forEach((c) => {
+		if (abs <= calendarAbs(now)) customCourseStatus[c] = 'inprogress';
+		else plannerPins[c] = abs;
+	});
+	return { customCourseStatus, plannerPins };
+}
+
 // Month heuristic for the current term (Aug-Dec 1st, Jan-May 2nd,
 // Jun-Jul midyear). Only used when grades are older than the calendar.
 export function calendarAbs(now = new Date()): number {

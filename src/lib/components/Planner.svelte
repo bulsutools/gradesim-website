@@ -22,6 +22,7 @@
 		optionEffect,
 		planTrack,
 		restricted,
+		roomTbaLink,
 		STATUS,
 		summary,
 		termsLate,
@@ -495,6 +496,10 @@
 									<li class="pl-empty">Nothing offered that fits</li>
 								{/each}
 							</ul>
+							{#if f.tag === 'Next' || f.tag === 'Now'}
+								{@const codes = term.cards.filter((c) => !model.byCode.get(c.code)?.genericRequirement && c.status !== 'passed' && c.status !== 'failed').map((c) => c.code)}
+								{#if codes.length}<a class="textbtn pl-roomtba" href={roomTbaLink(term.column.abs, codes)} target="_blank" rel="noopener">Plan sections in Room TBA <Icon name="external" size={14} /></a>{/if}
+							{/if}
 							{#if f.tag === 'Next' && spare.length}
 								<details class="pl-term pl-also">
 									<summary><Icon name="chevron" size={16} />You can also take {spare.length} other course{spare.length === 1 ? '' : 's'}</summary>
