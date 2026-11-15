@@ -129,8 +129,12 @@ test('curricula deep link opens the planner without grades', async ({ page }) =>
 	await expect(page.getByTestId('planner-sheet')).toBeVisible();
 	await page.getByRole('combobox', { name: 'Your degree program' }).selectOption('BSBIO');
 	await expect(page.getByText('BS Biology checklist')).toBeVisible();
+	await page.reload();
+	await expect(page.getByText('BS Biology checklist')).toBeVisible();
 	await page.getByRole('button', { name: 'Add your grades' }).click();
 	await expect(page.getByRole('link', { name: 'Install the extension' }).first()).toBeVisible();
+	await page.reload();
+	await expect(page.getByTestId('planner-sheet')).toHaveCount(0);
 });
 
 test('curricula deep link picks the program in the planner', async ({ page }) => {
