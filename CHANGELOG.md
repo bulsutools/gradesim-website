@@ -1,3 +1,10 @@
+## [0.17.1](https://github.com/uplbtools/gradesim-website/compare/v0.17.0...v0.17.1) (2026-11-15)
+
+
+### Bug Fixes
+
+* **planner:** shorter course details and a chevron on each row ([#194](https://github.com/uplbtools/gradesim-website/issues/194)) ([dd56434](https://github.com/uplbtools/gradesim-website/commit/dd56434fd238d54ed4bb8cc53de0b92f7aa3baf1))
+
 # [0.17.0](https://github.com/uplbtools/gradesim-website/compare/v0.16.0...v0.17.0) (2026-11-15)
 
 
