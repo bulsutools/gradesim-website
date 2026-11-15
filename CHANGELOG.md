@@ -1,3 +1,10 @@
+## [0.6.9](https://github.com/uplbtools/gradesim-website/compare/v0.6.8...v0.6.9) (2026-11-15)
+
+
+### Bug Fixes
+
+* **copy:** less text on every screen ([#122](https://github.com/uplbtools/gradesim-website/issues/122)) ([d02ece6](https://github.com/uplbtools/gradesim-website/commit/d02ece6ad38d6a5eb0e0fa34be6e8d5f7697518b))
+
 ## [0.6.8](https://github.com/uplbtools/gradesim-website/compare/v0.6.7...v0.6.8) (2026-11-15)
 
 
