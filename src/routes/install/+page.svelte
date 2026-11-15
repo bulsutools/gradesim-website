@@ -76,7 +76,7 @@
 	</section>
 
 	<section class="prose steps">
-		<h2>On a phone</h2>
+		<h2 id="phone">On a phone</h2>
 		<p>
 			Firefox for Android can install the extension from <a href={stores[1].href} rel="noopener" target="_blank">Firefox Add-ons</a>.
 			Chrome and Safari on phones can't install extensions, so use a bookmark that saves your grades as a file.

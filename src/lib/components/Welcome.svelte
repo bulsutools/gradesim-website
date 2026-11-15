@@ -55,7 +55,7 @@
 						<Icon name="pencil" />Enter grades by hand
 					</button>
 				</div>
-				<p class="hint">A file can be a JSON backup from the extension or a plan you saved from this planner.</p>
+				<p class="hint">Import takes a .json that GradeSim saved, like Export JSON in the extension or the <a href={resolve('install/') + '#phone'}>phone bookmark</a>.</p>
 				<p class="hint">No grades yet? <a href={resolve('curricula/')}>See your program's checklist</a>.</p>
 			</div>
 
