@@ -475,7 +475,7 @@
 		{#if inList}
 			<button type="button" class="pl-link st-{st}" onclick={() => goto(code)}><Icon name={st === 'passed' ? 'check' : st === 'failed' ? 'x' : 'planned'} size={14} />{code}</button>
 		{:else}
-			<span class="pl-link st-{st}" title="Not in your checklist"><Icon name="planned" size={14} />{code}</span>
+			<span class="pl-link st-{st}"><Icon name="planned" size={14} />{code}<small class="pl-outside">, not in your checklist</small></span>
 		{/if}
 	{/each}
 {/snippet}
