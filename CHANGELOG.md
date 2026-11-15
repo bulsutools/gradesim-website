@@ -1,3 +1,10 @@
+# [0.26.0](https://github.com/uplbtools/gradesim-website/compare/v0.25.4...v0.26.0) (2026-11-15)
+
+
+### Features
+
+* **honors:** name each past sem under 15 units under the Latin honors badge ([#278](https://github.com/uplbtools/gradesim-website/issues/278)) ([4fc8e11](https://github.com/uplbtools/gradesim-website/commit/4fc8e11b8ec0d71210fa8a954a9f1723d76f027f))
+
 ## [0.25.4](https://github.com/uplbtools/gradesim-website/compare/v0.25.3...v0.25.4) (2026-11-15)
 
 
