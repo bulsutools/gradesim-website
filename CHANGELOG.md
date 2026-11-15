@@ -1,3 +1,10 @@
+## [0.8.1](https://github.com/uplbtools/gradesim-website/compare/v0.8.0...v0.8.1) (2026-11-15)
+
+
+### Bug Fixes
+
+* **dashboard:** one width for every tab and the shared chevron on What if ([#145](https://github.com/uplbtools/gradesim-website/issues/145)) ([4f7c8f6](https://github.com/uplbtools/gradesim-website/commit/4f7c8f6978672a285fb5dbad9b25d743a11bc1fc))
+
 # [0.8.0](https://github.com/uplbtools/gradesim-website/compare/v0.7.0...v0.8.0) (2026-11-15)
 
 
