@@ -1,7 +1,7 @@
 // Elbi GradeSim Wrapped, ported from the extension popup. The panels are data
 // here; Wrapped.svelte shows them and drawCard() paints the shareable image.
 
-import { isPrefixExcluded, NON_NUMERIC_GRADES, numericGrade, termKeyToAbs, type Course } from './grades.ts';
+import { groupGWA, isPrefixExcluded, NON_NUMERIC_GRADES, numericGrade, scholarFor, scholarHolds, termKeyToAbs, type Course } from './grades.ts';
 
 interface Highlight {
 	label: string;
@@ -20,7 +20,7 @@ export interface Panel {
 	/** Caption under the highlights on the exported card. */
 	caption?: string;
 	/** Which of Reann Vargas's pages the card is drawn on. */
-	frame?: 'id' | 'tin' | 'note' | 'tray' | 'open';
+	frame?: 'sem' | 'id' | 'tin' | 'note' | 'tray' | 'open';
 	/** Sem GWAs in order, for the line on the lid. */
 	sems?: number[];
 	/** Share of units passed, 0 to 1. */
@@ -99,6 +99,44 @@ export function wrappedData(courses: Course[]) {
 }
 
 type Data = ReturnType<typeof wrappedData>;
+
+function thisSemPanel(courses: Course[], d: Data): Panel | null {
+	const n = d.semList.length;
+	if (!n) return null;
+	const sem = d.semList[n - 1];
+	const taken = courses.filter((c) => c.termLabel === sem.name);
+	const scholar = scholarHolds(courses).has(taken[0].termKey) ? null : scholarFor(groupGWA(taken));
+	const g = sem.gwa;
+	const [title, message] =
+		scholar ? [scholar, 'Ikaw na. Screenshot mo na, deserve mo.']
+		: g <= 1.75 ? ['Uno-heavy sem', 'Ang ganda ng sem mo. Flex mo na.']
+		: g <= 2.0 ? ['Solid sem', 'Kinaya mo lahat. Proud of u.']
+		: g <= 2.5 ? ['Steady sem', 'Pasado lahat ng pinaghirapan mo. Pahinga ka muna.']
+		: g <= 3.0 ? ['Survived the sem', 'Tapos na, nakaraos ka. Panalo pa rin.']
+		: ['Bawi next sem', "Mabigat 'tong sem na 'to. Kaya mo pa 'yan."];
+	let top: { code: string; grade: number } | null = null;
+	taken.forEach((c) => {
+		const v = numericGrade(c.grade);
+		if (v != null && !isPrefixExcluded(c.code) && (!top || v < top.grade)) top = { code: c.code, grade: v };
+	});
+	const prev = n > 1 ? d.semList[n - 2].gwa : null;
+	const extra =
+		prev == null ? 'My first sem in Elbi'
+		: d.bestSem === sem ? 'My best sem yet'
+		: prev - g >= 0.01 ? `Up ${(prev - g).toFixed(2)} from last sem`
+		: `${taken.filter((c) => !isPrefixExcluded(c.code)).reduce((u, c) => u + (c.units || 0), 0)} units done this sem`;
+	const t = top as { code: string; grade: number } | null;
+	return {
+		emoji: '🍓',
+		title,
+		value: g.toFixed(4),
+		subtitle: sem.name,
+		message,
+		highlights: t ? [{ label: '🏆 Top grade', name: t.code, detail: t.grade.toFixed(2) }] : [],
+		extra,
+		frame: 'sem'
+	};
+}
 
 function gwaPanel(d: Data): Panel {
 	const g = d.gwa;
@@ -191,7 +229,8 @@ function progressPanel(d: Data, totalRequired: number): Panel {
 
 export function wrappedPanels(courses: Course[], totalRequired = 155): Panel[] {
 	const d = wrappedData(courses);
-	return [gwaPanel(d), semesterPanel(d), highlightsPanel(d), collectorPanel(d), progressPanel(d, totalRequired)];
+	const sem = thisSemPanel(courses, d);
+	return [...(sem ? [sem] : []), gwaPanel(d), semesterPanel(d), highlightsPanel(d), collectorPanel(d), progressPanel(d, totalRequired)];
 }
 
 /* ---------- Shareable card ---------- */
@@ -342,7 +381,7 @@ export async function drawCard(canvas: HTMLCanvasElement, p: Panel, id: IdCard):
 
 
 /** Reann Vargas's pages. Each tin, tray and note is tilted, so text is drawn turned with it. */
-const FRAMES = { id: 'tin-id', tin: 'tin', note: 'tin-note', tray: 'tray', open: 'tin-red' };
+const FRAMES = { sem: 'tin-grass', id: 'tin-id', tin: 'tin', note: 'tin-note', tray: 'tray', open: 'tin-red' };
 const INK = '#1c1917';
 const SOFT = '#4a3f3c';
 const RED = '#7b2a22';
@@ -374,6 +413,22 @@ async function drawFrame(ctx: CanvasRenderingContext2D, p: Panel, font: string, 
 		ctx.restore();
 	};
 	const url = 'gradesim.uplb.tools';
+
+	if (p.frame === 'sem') {
+		const top = p.highlights?.[0];
+		ctx.translate(540, 1040);
+		ctx.rotate(-0.08);
+		ctx.translate(-540, -1040);
+		onGrass(`My ${p.subtitle}`, 700, 50, 540, 760);
+		if (id.number) {
+			onGrass(p.value, 800, 220, 540, 990);
+			onGrass(p.title, 800, 76, 540, 1090);
+		} else onGrass(p.title, 800, 112, 540, 960);
+		onGrass(p.extra ?? '', 700, 50, 540, id.number ? 1180 : 1070);
+		if (top) onGrass(`Top grade ${top.name}, ${top.detail}`, 600, 44, 540, id.number ? 1260 : 1150);
+		onGrass(url, 600, 38, 540, id.number ? 1350 : 1250);
+		return;
+	}
 
 	if (p.frame === 'id') {
 		ctx.textAlign = 'left';
