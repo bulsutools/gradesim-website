@@ -10,7 +10,7 @@
 />
 
 <div class="wrap">
-	<PageHead title="Privacy policy">Last updated November 13, 2026</PageHead>
+	<PageHead title="Privacy policy">Last updated November 16, 2026</PageHead>
 
 	<article class="prose">
 		<h2>What Elbi GradeSim is</h2>
@@ -47,8 +47,9 @@
 			pages and, so that it can hand your grades to this web app when you ask, on gradesim.uplb.tools.
 		</p>
 		<p>
-			When you choose Import from the GradeSim extension, the extension passes your grades directly to this page inside your
-			browser. They don't travel over the network.
+			When you choose Import from the GradeSim extension, or open this page from the extension, it passes your grades directly to this page inside your
+			browser. After that, this page asks the extension for newer grades each time you open it. They don't travel over the
+			network.
 		</p>
 
 		<h2>Hosting</h2>

@@ -3,7 +3,7 @@
 
 import { UPLB_PROGRAMS } from './curriculum.ts';
 import { manualTermKey, valueId, type AmisGradeValue, type GradesData, type SemNo } from './grades.ts';
-import { checkPlan, type PlanFile } from './planner.ts';
+import { checkPlan, type PlanFile, type PlannerInput, type PlannerOptions } from './planner.ts';
 
 const isObj = (x: unknown): x is Record<string, unknown> => x != null && typeof x === 'object' && !Array.isArray(x);
 
@@ -20,6 +20,10 @@ export interface GradesPatch {
 	substitutions?: Record<string, string>;
 	removals?: Record<string, string>;
 	selectedSpecializations?: Record<string, string>;
+	/** When the extension last read AMIS, in ms. */
+	fetchedAt?: number;
+	track?: string;
+	plan?: Pick<PlannerInput, 'customCourseStatus' | 'plannerPins' | 'plannerPetitions'> & { plannerOptions: PlannerOptions };
 }
 
 /**
@@ -42,6 +46,18 @@ export function parseBackup(obj: unknown): GradesPatch | string {
 	}
 	if (isObj(obj.selectedSpecializations) && Object.values(obj.selectedSpecializations).every((v) => typeof v === 'string')) {
 		patch.selectedSpecializations = obj.selectedSpecializations as Record<string, string>;
+	}
+	if (typeof obj.fetchedAt === 'number') patch.fetchedAt = obj.fetchedAt;
+	const track = isObj(obj.selectedTracks) && patch.selectedProgram ? obj.selectedTracks[patch.selectedProgram] : null;
+	if (typeof track === 'string') patch.track = track;
+	const plan = {
+		customCourseStatus: obj.customCourseStatus ?? {},
+		plannerPins: obj.plannerPins ?? {},
+		plannerPetitions: obj.plannerPetitions ?? {},
+		plannerOptions: obj.plannerOptions
+	};
+	if (patch.selectedProgram && !checkPlan({ source: 'elbi-gradesim-plan', version: 1, program: patch.selectedProgram, substitutions: {}, ...plan })) {
+		patch.plan = plan as GradesPatch['plan'];
 	}
 	return patch;
 }
@@ -72,6 +88,12 @@ export function makeBackup(s: {
 	substitutions: Record<string, string>;
 	removals?: Record<string, string>;
 	selectedSpecializations?: Record<string, string>;
+	fetchedAt?: number | null;
+	track?: string | null;
+	customCourseStatus?: PlannerInput['customCourseStatus'];
+	plannerPins?: PlannerInput['plannerPins'];
+	plannerPetitions?: PlannerInput['plannerPetitions'];
+	plannerOptions?: PlannerOptions | null;
 }) {
 	return {
 		source: 'elbi-gradesim',
@@ -81,6 +103,12 @@ export function makeBackup(s: {
 		substitutions: s.substitutions,
 		removals: s.removals ?? {},
 		selectedSpecializations: s.selectedSpecializations ?? {},
+		...(s.fetchedAt ? { fetchedAt: s.fetchedAt } : {}),
+		...(s.track ? { selectedTracks: { [s.selectedProgram]: s.track } } : {}),
+		customCourseStatus: s.customCourseStatus ?? {},
+		plannerPins: s.plannerPins ?? {},
+		plannerPetitions: s.plannerPetitions ?? {},
+		...(s.plannerOptions ? { plannerOptions: s.plannerOptions } : {}),
 		gradesData: s.gradesData
 	};
 }
