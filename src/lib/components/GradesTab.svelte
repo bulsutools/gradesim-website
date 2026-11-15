@@ -506,6 +506,26 @@
 	}
 
 	@media (min-width: 720px) {
+		.group li {
+			min-height: 44px;
+		}
+
+		.info {
+			flex-direction: row;
+			flex-wrap: wrap;
+			align-items: baseline;
+			column-gap: 12px;
+		}
+
+		.code {
+			flex: 0 0 6.5em;
+		}
+
+		.title {
+			flex: 1 1 0;
+			font-size: 0.92rem;
+		}
+
 		.subform {
 			grid-template-columns: 1fr 1fr auto;
 			align-items: end;
