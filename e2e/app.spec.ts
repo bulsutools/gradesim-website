@@ -8,6 +8,11 @@ async function open(page: Page, path = '/') {
 	await page.locator('html[data-app-ready]').waitFor({ state: 'attached' });
 }
 
+// Most planner tests read the sheet, which a wide screen only shows when picked.
+test.beforeEach(async ({ page }, info) => {
+	if (!info.title.includes('@map')) await page.addInitScript(() => localStorage.setItem('gradesim:planView', 'sheet'));
+});
+
 async function importFixture(page: Page) {
 	await open(page);
 	await page.getByTestId('file-input').first().setInputFiles({ name: 'backup.json', mimeType: 'application/json', buffer: backup });
@@ -319,7 +324,7 @@ test('a plan link opens the same plan for someone else, with no grades and nothi
 	await other.goto(link);
 	await expect(other.getByText('plan someone shared with you')).toBeVisible();
 	await expect(other.getByTestId('grad-term').locator('span').first()).toHaveText(grad!);
-	await expect(other.getByTestId('planner-sheet').locator('.pl-row[data-code="CMSC 12"]')).toHaveClass(/st-passed/);
+	await expect(other.locator('.pm-card[data-primary][data-code="CMSC 12"]')).toHaveClass(/st-passed/);
 	await expect(other.getByText('1.25')).toHaveCount(0);
 	await other.waitForTimeout(200);
 	expect(await other.evaluate(() => JSON.stringify(localStorage))).not.toContain('CMSC 12');
@@ -382,4 +387,20 @@ test('a sem off leaves that sem empty and can be undone', async ({ page }) => {
 	await sheet.getByRole('button', { name: 'Take it after all' }).click();
 	await expect(sheet.getByText("You're taking this sem off.")).toHaveCount(0);
 	expect(first).toMatch(/sem \d{4}/);
+});
+
+test('@map a wide screen shows the plan as a map with arrows, and remembers the sheet', async ({ page }) => {
+	await importFixture(page);
+	await page.getByRole('tab', { name: 'Planner' }).click();
+	const map = page.getByTestId('planner-map');
+	await expect(map.locator('.pm-card[data-primary][data-code="CMSC 123"]')).toBeVisible();
+	await expect(page.locator('.pm-edge').first()).toBeAttached();
+	await map.locator('.pm-card[data-primary][data-code="CMSC 123"]').click();
+	await expect(page.getByRole('complementary', { name: 'Details for CMSC 123' })).toBeVisible();
+	await expect(page.locator('.pm-edge.chain').first()).toBeAttached();
+	await page.getByRole('button', { name: 'Sheet' }).click();
+	await expect(page.getByTestId('planner-sheet')).toBeVisible();
+	await page.reload();
+	await page.getByRole('tab', { name: 'Planner' }).click();
+	await expect(page.getByTestId('planner-sheet')).toBeVisible();
 });
