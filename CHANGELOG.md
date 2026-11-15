@@ -1,3 +1,10 @@
+## [0.6.10](https://github.com/uplbtools/gradesim-website/compare/v0.6.9...v0.6.10) (2026-11-15)
+
+
+### Bug Fixes
+
+* **layout:** hide the product screenshots on phones ([#125](https://github.com/uplbtools/gradesim-website/issues/125)) ([f7e3bb0](https://github.com/uplbtools/gradesim-website/commit/f7e3bb08116b37e7d036b0415b58129bfb297c66))
+
 ## [0.6.9](https://github.com/uplbtools/gradesim-website/compare/v0.6.8...v0.6.9) (2026-11-15)
 
 
