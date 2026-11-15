@@ -199,12 +199,12 @@ export async function drawCard(canvas: HTMLCanvasElement, p: Panel): Promise<voi
 	const ctx = canvas.getContext('2d');
 	if (!ctx) return;
 	try {
-		await Promise.all([document.fonts.load('800 96px Raleway'), document.fonts.load('500 40px Inter')]);
+		await Promise.all([document.fonts.load('800 96px Figtree'), document.fonts.load('500 40px Figtree')]);
 	} catch {
 		/* system fonts are fine */
 	}
-	const display = 'Raleway, Inter, system-ui, sans-serif';
-	const body = 'Inter, system-ui, sans-serif';
+	const display = 'Figtree, system-ui, sans-serif';
+	const body = display;
 
 	ctx.fillStyle = '#7b2a22'; // hsl(5, 53%, 32%)
 	ctx.fillRect(0, 0, W, H);

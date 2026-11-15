@@ -102,6 +102,7 @@
 
 	<section class="card" aria-labelledby="target-title">
 		<h2 id="target-title" class="h">What GWA are you aiming for?</h2>
+		{#if g.gwa > 0}<p class="muted small now">Your GWA is {g.gwa.toFixed(4)} now.</p>{/if}
 		<div class="targets" role="radiogroup" aria-labelledby="target-title">
 			{#each HONORS as h (h.key)}
 				<label class="target" class:on={choice === String(h.max)}>
@@ -131,7 +132,7 @@
 	<section class="card result" aria-live="polite" aria-labelledby="result-title">
 		<h2 id="result-title" class="h">What you need</h2>
 		{#if !left}
-			<Notice tone="info">GradeSim doesn't have the {app.program.name} checklist yet, so it can't count your remaining units. Your GWA above still works.</Notice>
+			<Notice tone="info">GradeSim doesn't have the {app.program.name} checklist yet, so it can't count your remaining units. Your GWA on the Grades tab still works.</Notice>
 		{:else if !validTarget}
 			<p class="muted">Enter a target GWA from 1.00 to 5.00.</p>
 		{:else if answer}
@@ -227,6 +228,10 @@
 	.h {
 		font-size: 1.1rem;
 		margin-bottom: 10px;
+	}
+
+	.now {
+		margin: -6px 0 10px;
 	}
 
 	.targets {
