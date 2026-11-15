@@ -1,3 +1,11 @@
+# [0.9.0](https://github.com/uplbtools/gradesim-website/compare/v0.8.1...v0.9.0) (2026-11-15)
+
+
+### Features
+
+* **wrapped:** a name or a photo turns the GWA card into the tin ID card ([#151](https://github.com/uplbtools/gradesim-website/issues/151)) ([c4ceb61](https://github.com/uplbtools/gradesim-website/commit/c4ceb6163ada6b86745ab2dc5715d1d7e162b463))
+* **wrapped:** the GWA card is drawn in Reann's tin frame ([#148](https://github.com/uplbtools/gradesim-website/issues/148)) ([d47f8eb](https://github.com/uplbtools/gradesim-website/commit/d47f8ebccd95b5e8089b6496ed9f984e035dc4d2))
+
 ## [0.8.1](https://github.com/uplbtools/gradesim-website/compare/v0.8.0...v0.8.1) (2026-11-15)
 
 
