@@ -334,11 +334,13 @@ test('@phone the welcome screen leads with the AMIS bookmark', async ({ page }) 
 	await expect(page.locator('#main').getByRole('link', { name: 'Get the extension' })).toBeHidden();
 });
 
-test('every Wrapped card is drawn on the picnic art, this sem comes first, and the GWA shows only when asked', async ({ page }) => {
+test('every Wrapped card is drawn on the picnic art, this sem comes first with its GWA, and the overall GWA shows only when asked', async ({ page }) => {
 	await importFixture(page);
 	await page.getByRole('tab', { name: 'Wrapped' }).click();
 	const card = page.getByRole('img', { name: /drawn on a picnic blanket/ });
-	await expect(card).toHaveAccessibleName(/^Solid sem, Top grade KAS 1, 1\.00, drawn/);
+	await expect(card).toHaveAccessibleName(/^Solid sem, GWA 1\.8750, Best course KAS 1, 1\.00, drawn/);
+	await page.getByLabel('Show my best course').uncheck();
+	await expect(card).toHaveAccessibleName(/^Solid sem, GWA 1\.8750, drawn/);
 	await page.getByLabel('GWA on the card').selectOption({ label: '1.8x' });
 	await expect(card).toHaveAccessibleName(/GWA 1\.8x,/);
 	await page.getByLabel('GWA on the card').selectOption({ label: '1.8750' });
@@ -347,6 +349,8 @@ test('every Wrapped card is drawn on the picnic art, this sem comes first, and t
 	await expect(card).not.toHaveAccessibleName(/1\.8750/);
 	await page.getByRole('combobox', { name: /^Sem/ }).selectOption({ index: 2 });
 	await page.getByRole('button', { name: 'Next' }).click();
+	await expect(card).toHaveAccessibleName(/^Honor roll, drawn/);
+	await page.getByLabel('GWA on the card').selectOption({ label: '1.9773' });
 	await expect(card).toHaveAccessibleName(/^Honor roll, GWA 1\.9773/);
 	const blank = await card.getAttribute('src');
 	await page.getByRole('textbox', { name: 'Your name on the card' }).fill('Iska');

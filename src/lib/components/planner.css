@@ -652,6 +652,22 @@ button.pl-link:hover {
   margin-top: 14px;
 }
 
+.pl-marks {
+  flex-wrap: nowrap;
+}
+
+.pl-marks .btn {
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: 12rem;
+}
+
+.pl-links {
+  display: flex;
+  gap: 4px 12px;
+  margin: 6px 0 0 -8px;
+}
+
 .pl-actions .btn {
   display: inline-flex;
   align-items: center;

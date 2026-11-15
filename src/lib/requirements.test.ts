@@ -6,7 +6,7 @@ import { UPLB_CATALOG } from './catalog.ts';
 import { getPlannerCourses, isNonGwaCourseCode, UPLB_PROGRAMS } from './curriculum.ts';
 import type { GradesData } from './grades.ts';
 import { compute, DEFAULT_PLANNER_OPTIONS, markConflict, modelFor } from './planner.ts';
-import { amisCourses, applyRemovals, gradeResult, gwaOutlook, plannerCourseList, remainingRequirements, removalKey, surplusElectives } from './requirements.ts';
+import { amisCourses, applyRemovals, fillRequirementSlots, gradeResult, gwaOutlook, plannerCourseList, remainingRequirements, removalKey, surplusElectives } from './requirements.ts';
 import { enrichCourses, scheduleEarliest, semAt } from './scheduler.ts';
 
 test('grade results', () => {
@@ -150,7 +150,7 @@ test('HIST 1 fills KAS 1 and is not counted again as an elective', () => {
 	expect(both.fill.get('KAS 1')?.code).toBe('KAS 1');
 });
 
-test('BSCS special problem twice, midyear practicum and senior year electives', () => {
+test('BSCS special problem twice, midyear practicum and electives with no standing', () => {
 	const sp = plannerCourseList(BSCS, 'sp', UPLB_CATALOG);
 	const gwaUnits = sp.filter((c) => !isNonGwaCourseCode(c.code)).reduce((s, c) => s + c.units, 0);
 	expect(gwaUnits).toBe(BSCS.totalUnitsRequired);
@@ -161,7 +161,7 @@ test('BSCS special problem twice, midyear practicum and senior year electives', 
 	const fresh = scheduleEarliest({ courses: sp, passed: new Set(), useMidyear: false, totalUnits: 130 });
 	expect(fresh.plan.find((t) => t.courses.includes('CMSC 198'))!.sem).toBe('midyear');
 	const firstFE = Math.min(...sp.filter((c) => /^FE/.test(c.code)).map((c) => fresh.assignedTerm[c.code]));
-	expect(firstFE).toBeGreaterThanOrEqual(9);
+	expect(firstFE).toBeLessThan(9);
 
 	// CMSC 56 failed with CMSC 57 passed, the practicum, and a second CMSC 190 being taken now.
 	const taken: GradesData = {
@@ -183,6 +183,13 @@ test('BSCS special problem twice, midyear practicum and senior year electives', 
 	expect(view.info['CMSC 198'].status).toBe('passed');
 	expect(view.info['FE 1'].status).toBe('todo');
 	expect(view.conflicts).toEqual([{ code: 'CMSC 57', pre: 'CMSC 56' }]);
+});
+
+test('HK 12 taken for three sports fills three HK slots', () => {
+	const sp = plannerCourseList(BSCS, 'sp', UPLB_CATALOG);
+	const row = (code: string) => ({ code, title: '', units: 2, result: 'passed' as const });
+	const filled = fillRequirementSlots(sp, [row('HK 11'), row('HK 12'), row('HK 12'), row('HK 12')]);
+	expect(['HK 1', 'HK 2', 'HK 3', 'HK 4'].every((c) => filled.has(c))).toBe(true);
 });
 
 test('a mark that would fail the prerequisite of a passed course, or pass a course after a failed prerequisite, is refused', () => {

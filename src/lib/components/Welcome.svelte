@@ -201,6 +201,13 @@
 		margin: 4px 0 4px -8px;
 	}
 
+	@media (max-width: 479px) {
+		.links {
+			flex-direction: column;
+			align-items: flex-start;
+		}
+	}
+
 	.privacy {
 		display: flex;
 		align-items: center;
