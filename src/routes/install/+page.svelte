@@ -43,8 +43,8 @@
 />
 
 <div class="wrap">
-	<PageHead title="Install the extension">
-		It reads your grades when you open AMIS. It's free, open source and keeps everything on your device.
+	<PageHead title="Get the extension">
+		The extension reads your grades when you open AMIS. It's free and open source, and it keeps everything on your device.
 	</PageHead>
 
 	<ul class="stores">
@@ -72,7 +72,7 @@
 		<ol>
 			<li>Log in to <a href="https://amis.uplb.edu.ph" rel="noopener" target="_blank">AMIS</a>.</li>
 			<li>Open your grades. The extension saves them in your browser.</li>
-			<li>Come back to <a href={resolve('/')}>Elbi GradeSim</a> and choose Import from the GradeSim extension.</li>
+			<li>Come back to <a href={resolve('/')}>GradeSim</a>. Your grades load after you choose Import from the extension once.</li>
 		</ol>
 	</section>
 

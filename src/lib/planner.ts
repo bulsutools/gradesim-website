@@ -687,9 +687,9 @@ export function checkPlan(p: unknown): string {
 	const isObj = (x: unknown): x is Record<string, unknown> => x != null && typeof x === 'object' && !Array.isArray(x);
 	const all = (o: unknown, ok: (x: unknown) => boolean) => isObj(o) && Object.values(o).every(ok);
 	if (!isObj(p) || p.source !== 'elbi-gradesim-plan') return "That file isn't a GradeSim course plan. Pick a file made with Save plan.";
-	if (p.version !== 1) return 'That plan was saved by a newer GradeSim. Reload this page and try again.';
+	if (p.version !== 1) return 'A newer GradeSim saved that plan. Reload this page, then load it again.';
 	const prog = UPLB_PROGRAMS[String(p.program)];
-	if (!prog || !prog.majorCourses) return `That plan is for a program this version doesn't have (${String(p.program)}).`;
+	if (!prog || !prog.majorCourses) return "That plan is for a program GradeSim doesn't have yet, so nothing changed.";
 	const o = p.plannerOptions;
 	const w = p.whatif;
 	const ok =
@@ -700,7 +700,7 @@ export function checkPlan(p: unknown): string {
 		isObj(o) &&
 		(o.cap === 'checklist' || [18, 21].includes(Number(o.cap))) &&
 		(w == null || (isObj(w) && typeof w.code === 'string' && ['fail', '1', '3'].includes(w.mode as string)));
-	return ok ? '' : 'That plan file looks damaged, so nothing was changed.';
+	return ok ? '' : 'That plan file is damaged, so nothing changed. Save the plan again and load the new file.';
 }
 
 export const today = (d = new Date()) => d.toLocaleDateString('en-CA'); // local YYYY-MM-DD

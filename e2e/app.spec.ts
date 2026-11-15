@@ -18,8 +18,8 @@ test('first visit leads with the extension and offers two other ways in', async 
 	await page.goto('/');
 	await expect(page.getByRole('heading', { level: 1 })).toContainText('Your GWA');
 	await expect(page.getByText('Your grades stay in this browser.')).toBeVisible();
-	await expect(page.locator('#main').getByRole('link', { name: 'Install the extension' })).toHaveAttribute('href', /install\/$/);
-	await expect(page.getByRole('button', { name: 'Import a file' })).toBeVisible();
+	await expect(page.locator('#main').getByRole('link', { name: 'Get the extension' })).toHaveAttribute('href', /install\/$/);
+	await expect(page.getByRole('button', { name: 'Load backup' })).toBeVisible();
 	await expect(page.getByRole('button', { name: 'Enter grades by hand' })).toBeVisible();
 });
 
@@ -27,7 +27,7 @@ test('unknown URLs get the branded 404', async ({ page }) => {
 	const res = await page.goto('/does-not-exist/');
 	expect(res?.status()).toBe(404);
 	await expect(page.getByRole('heading', { level: 1 })).toHaveText("This page isn't here");
-	await expect(page.getByRole('link', { name: 'Open Elbi GradeSim' })).toHaveAttribute('href', '/');
+	await expect(page.getByRole('link', { name: 'Open GradeSim' })).toHaveAttribute('href', '/');
 });
 
 test('curricula opens a checklist with a link to plan it', async ({ page }) => {
@@ -60,9 +60,9 @@ test('JSON import from the extension backup', async ({ page }) => {
 	await importFixture(page);
 	await expect(page.getByRole('status').first()).toContainText('Imported 15 courses');
 	// 1.9773 is on no Latin honor track, and Honor Roll is not one.
-	await expect(page.getByText(/Honor Roll|Cum Laude track/)).toHaveCount(0);
+	await expect(page.getByText(/Honor Roll|cum laude range/i)).toHaveCount(0);
 	await expect(page.getByRole('region', { name: '1st sem AY 2023-24' })).toContainText('MATH 27');
-	await page.getByRole('tab', { name: 'What if' }).click();
+	await page.getByRole('tab', { name: 'Target' }).click();
 	await expect(page.getByText('Imported 15 courses')).toHaveCount(0);
 });
 
@@ -136,7 +136,7 @@ test('curricula deep link opens the planner without grades', async ({ page }) =>
 	await page.reload();
 	await expect(page.getByText('BS Biology checklist')).toBeVisible();
 	await page.getByRole('button', { name: 'Add your grades' }).click();
-	await expect(page.getByRole('link', { name: 'Install the extension' }).first()).toBeVisible();
+	await expect(page.getByRole('link', { name: 'Get the extension' }).first()).toBeVisible();
 	await page.reload();
 	await expect(page.getByTestId('planner-sheet')).toHaveCount(0);
 });
@@ -182,9 +182,9 @@ test('imports from the extension through the window bridge', async ({ page }) =>
 		});
 	}, backup.toString());
 	await open(page);
-	await page.getByRole('button', { name: 'Import from the GradeSim extension' }).click();
+	await page.getByRole('button', { name: 'Import from the extension' }).click();
 	await expect(page.getByTestId('gwa')).toHaveText('1.9773');
-	await expect(page.getByRole('status').first()).toContainText('from the GradeSim extension');
+	await expect(page.getByRole('status').first()).toContainText('from the extension');
 });
 
 test('a visit from the extension popup imports the grades and opens the planner', async ({ page }) => {
@@ -197,7 +197,7 @@ test('a visit from the extension popup imports the grades and opens the planner'
 		});
 	}, backup.toString());
 	await open(page, '/?from=extension&whatif=MATH%2027#planner');
-	await expect(page.getByRole('status').first()).toContainText('from the GradeSim extension');
+	await expect(page.getByRole('status').first()).toContainText('from the extension');
 	await expect(page.getByRole('tab', { name: 'Planner' })).toHaveAttribute('aria-selected', 'true');
 	await expect(page.getByText('MATH 27 is failed on your record')).toBeVisible();
 	expect(new URL(page.url()).search).toBe('');
@@ -217,7 +217,7 @@ test('newer grades from the extension load on the next visit', async ({ page }) 
 		});
 	}, backup.toString());
 	await open(page);
-	await page.getByRole('button', { name: 'Import from the GradeSim extension' }).click();
+	await page.getByRole('button', { name: 'Import from the extension' }).click();
 	await expect(page.getByTestId('gwa')).toHaveText('1.9773');
 	await page.reload();
 	await expect(page.getByTestId('gwa')).toHaveText('1.9773');
@@ -253,7 +253,7 @@ test('the phone bookmark opens GradeSim with the AMIS grades in the link', async
 test('a copied link opens the grades in another browser, and asks before it replaces any', async ({ page, context, browser }) => {
 	await context.grantPermissions(['clipboard-read', 'clipboard-write']);
 	await importFixture(page);
-	await page.getByText('Import, export or clear your data').click();
+	await page.getByText('Back up or clear your data').click();
 	await page.getByRole('button', { name: 'Copy a link to my grades' }).click();
 	await expect(page.getByText('The link is copied.')).toBeVisible();
 	const link = await page.evaluate(() => navigator.clipboard.readText());
@@ -276,7 +276,7 @@ test('a copied link opens the grades in another browser, and asks before it repl
 test('@phone the welcome screen leads with the AMIS bookmark', async ({ page }) => {
 	await page.goto('/');
 	await expect(page.locator('#main').getByRole('link', { name: 'Get my grades from AMIS' })).toHaveAttribute('href', /install\/#phone$/);
-	await expect(page.locator('#main').getByRole('link', { name: 'Install the extension' })).toBeHidden();
+	await expect(page.locator('#main').getByRole('link', { name: 'Get the extension' })).toBeHidden();
 });
 
 test('the GWA and semester cards in Wrapped are drawn in the tin frame', async ({ page }) => {

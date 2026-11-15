@@ -13,7 +13,7 @@
 	} from '#lib/grades.ts';
 	import { makeBackup, removeCourse, setGrade, VALID_GRADES } from '#lib/importers.ts';
 	import { packLink } from '#lib/link.ts';
-	import { today } from '#lib/planner.ts';
+	import { today, unitsText } from '#lib/planner.ts';
 	import { removalKey } from '#lib/requirements.ts';
 	import Icon from './Icon.svelte';
 	import Summary from './Summary.svelte';
@@ -40,7 +40,7 @@
 	const holds = $derived(scholarHolds(app.courses));
 	const subOptions = $derived(substituteOptions(app.program, app.gwa.completedCourses, app.s.substitutions));
 	const required = $derived([...app.program.majorCourses].sort((a, b) => a.code.localeCompare(b.code)));
-	const SOURCE = { extension: 'the GradeSim extension', file: 'a file you imported', manual: 'grades you entered' };
+	const SOURCE = { extension: 'the extension', file: 'a backup or a link', manual: 'what you entered by hand' };
 
 	function addSub() {
 		if (!subReq || !subTaken) return;
@@ -70,7 +70,7 @@
 	}
 
 	function clearAll() {
-		if (!confirm("Clear everything GradeSim saved in this browser? Your grades, exclusions, substitutions and plan are removed. This can't be undone, so export a backup first if you want one.")) return;
+		if (!confirm("Clear everything GradeSim saved in this browser? Your grades, left-out courses, substitutions and plan are removed. This can't be undone, so save a backup first if you want one.")) return;
 		app.clear();
 	}
 </script>
@@ -79,7 +79,7 @@
 	<Summary />
 	<div class="toolbar">
 		<div class="seg" role="group" aria-label="Group courses">
-			<button type="button" aria-pressed={view === 'term'} onclick={() => (view = 'term')}>By term</button>
+			<button type="button" aria-pressed={view === 'term'} onclick={() => (view = 'term')}>By sem</button>
 			<button type="button" aria-pressed={view === 'year'} onclick={() => (view = 'year')}>By year</button>
 		</div>
 		<button class="btn btn-secondary" type="button" aria-expanded={editing} onclick={() => (editing = !editing)}>
@@ -114,14 +114,14 @@
 					Required course
 					<select class="select" bind:value={subReq}>
 						<option value="">Choose a required course</option>
-						{#each required as r (r.code)}<option value={r.code.toUpperCase().trim()}>{r.code} ({r.units}u)</option>{/each}
+						{#each required as r (r.code)}<option value={r.code.toUpperCase().trim()}>{r.code}{r.units ? `, ${unitsText(r.units)}` : ''}</option>{/each}
 					</select>
 				</label>
 				<label class="field">
 					Covered by
 					<select class="select" bind:value={subTaken}>
 						<option value="">Choose a course you passed</option>
-						{#each subOptions as c (c.code)}<option value={c.code.toUpperCase().trim()}>{c.code} ({c.units}u, {c.grade})</option>{/each}
+						{#each subOptions as c (c.code)}<option value={c.code.toUpperCase().trim()}>{c.code}, {unitsText(c.units)}, {c.grade}</option>{/each}
 					</select>
 				</label>
 				<button class="btn btn-secondary" type="button" disabled={!subReq || !subTaken} onclick={addSub}>Apply substitution</button>
@@ -129,25 +129,25 @@
 		</details>
 
 		<details class="fold">
-			<summary><Icon name="chevron" size={16} />Import, export or clear your data</summary>
+			<summary><Icon name="chevron" size={16} />Back up or clear your data</summary>
 			<p class="small">
 				{#if app.s.source}These grades came from {SOURCE[app.s.source]}.{/if}
 				It's saved in this browser only. A backup moves it to another device or the extension.
 			</p>
 			<div class="actions">
 				{#if extension === 'found'}
-					<button class="btn btn-secondary" type="button" onclick={onExtension}><Icon name="plug" />Import from the GradeSim extension</button>
+					<button class="btn btn-secondary" type="button" onclick={onExtension}><Icon name="plug" />Import from the extension</button>
 				{:else}
 					<a class="btn btn-secondary" href={resolve('install/')}><Icon name="plug" />Get the extension</a>
 				{/if}
-				<FileButton label="Import a file" {onFile} />
-				<button class="btn btn-secondary" type="button" onclick={exportBackup}><Icon name="download" />Export backup</button>
+				<FileButton label="Load backup" {onFile} />
+				<button class="btn btn-secondary" type="button" onclick={exportBackup}><Icon name="download" />Save backup</button>
 				<button class="btn btn-secondary" type="button" onclick={copyLink}><Icon name="external" />Copy a link to my grades</button>
 				<button class="btn btn-danger" type="button" onclick={clearAll}><Icon name="trash" />Clear my data</button>
 			</div>
 			<p class="small" aria-live="polite">
 				{#if link === 'failed'}
-					Your browser blocked the copy. Export a backup instead.
+					Your browser blocked the copy. Save a backup instead.
 				{:else}
 					{link === 'copied' ? 'The link is copied.' : 'The link opens your grades on another device, such as your phone.'}
 					It holds your grades, so send it only to yourself.
@@ -165,7 +165,7 @@
 				<Icon name="chevron" size={16} />
 				<h2>{g.label}</h2>
 				{#if scholar}<span class="badge">{scholar}</span>{/if}
-				<span class="ggwa">GWA {gwa > 0 ? gwa.toFixed(4) : 'not yet'}</span>
+				<span class="ggwa">{gwa > 0 ? `GWA ${gwa.toFixed(4)}` : 'No GWA yet'}</span>
 			</summary>
 			<ul>
 				{#each g.courses as c (c.id)}
@@ -211,7 +211,7 @@
 									{out ? 'Left out' : 'Leave out'}
 								</button>
 							{/if}
-							<span class="units">{c.units}u</span>
+							<span class="units">{unitsText(c.units)}</span>
 							{#if !editing}
 								<span class="grade {c.grade ? tone : 'none'}">
 									{#if tone === 'failed'}<Icon name="x" size={14} />{:else if tone === 'other' && c.grade}<Icon name="alert" size={14} />{/if}
