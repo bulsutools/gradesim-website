@@ -5,11 +5,13 @@
 	import PageHead from '#lib/components/PageHead.svelte';
 	import { BOOKMARKLET } from '#lib/bookmarklet.ts';
 
-	let copied = $state(false);
+	let copied = $state<boolean | 'failed'>(false);
 
 	async function copyBookmarklet() {
-		await navigator.clipboard.writeText(BOOKMARKLET);
-		copied = true;
+		copied = await navigator.clipboard.writeText(BOOKMARKLET).then(
+			() => true,
+			() => 'failed' as const
+		);
 	}
 
 	const stores = [
@@ -78,13 +80,18 @@
 		<h2 id="phone">On a phone</h2>
 		<p>
 			Firefox for Android can install the extension from <a href={stores[1].href} rel="noopener" target="_blank">Firefox Add-ons</a>.
-			Chrome and Safari on phones can't install extensions, so use a bookmark that saves your grades as a file.
+			Chrome and Safari on phones can't install extensions, so use a bookmark that opens GradeSim with your grades.
 		</p>
 		<ol>
-			<li><button class="btn" type="button" onclick={copyBookmarklet}>{copied ? 'Copied' : 'Copy the bookmark'}</button></li>
+			<li>
+				<button class="btn" type="button" onclick={copyBookmarklet}>{copied === true ? 'Copied' : 'Copy the bookmark'}</button>
+				{#if copied === 'failed'}<span role="alert">Your browser blocked the copy. Allow clipboard access for this site, then try again.</span>{/if}
+			</li>
 			<li>Bookmark any page, edit the bookmark, name it gradesim and paste what you copied as its address.</li>
-			<li>Log in to <a href="https://amis.uplb.edu.ph" rel="noopener" target="_blank">AMIS</a>, type gradesim in the address bar and tap the bookmark.</li>
-			<li>Open <a href={resolve('/')}>Elbi GradeSim</a>, choose Import a file and pick gradesim-amis.json.</li>
+			<li>
+				Log in to <a href="https://amis.uplb.edu.ph" rel="noopener" target="_blank">AMIS</a>, type gradesim in the address bar and tap the
+				bookmark. GradeSim opens with your grades.
+			</li>
 		</ol>
 	</section>
 </div>
