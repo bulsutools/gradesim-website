@@ -1,3 +1,10 @@
+## [0.18.1](https://github.com/uplbtools/gradesim-website/compare/v0.18.0...v0.18.1) (2026-11-15)
+
+
+### Bug Fixes
+
+* **ui:** no button swap while the extension is checked, and a placeholder while a tin card draws ([#202](https://github.com/uplbtools/gradesim-website/issues/202)) ([64bdb96](https://github.com/uplbtools/gradesim-website/commit/64bdb96891071b739341d6a6dab152cb8f7a407e))
+
 # [0.18.0](https://github.com/uplbtools/gradesim-website/compare/v0.17.1...v0.18.0) (2026-11-15)
 
 
