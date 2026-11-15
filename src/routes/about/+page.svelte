@@ -44,8 +44,7 @@
 
 <div class="wrap">
 	<PageHead title="A GWA calculator and course planner for UPLB students">
-		Elbi GradeSim started as a browser extension that reads your grades from AMIS. The web app brings the same math to any
-		browser. It shows your GWA, what you need for Latin honors, and a term by term map to graduation.
+		It shows your GWA, what you need for Latin honors and a term by term plan to graduation.
 	</PageHead>
 
 	<figure class="shot">
@@ -55,16 +54,15 @@
 			width={1440}
 			height={900}
 		/>
-		<figcaption>The planner maps every remaining course to the earliest term it can go, and shows what a failed course costs.</figcaption>
 	</figure>
 
 	<div class="prose">
 		<h2>What it does</h2>
 		<ul>
-			<li>The Grades tab shows your GWA, units and courses by term or by year, and marks your University Scholar and College Scholar terms.</li>
-			<li>What if shows the average you need on your remaining units to reach a target, counting GE slots and free electives.</li>
-			<li>The planner lays out your checklist by term, with prerequisite chains, critical courses, retakes, petitions and an Excel export.</li>
-			<li>Wrapped makes a set of cards about your grades that you can save as an image.</li>
+			<li>Grades shows your GWA by term or year and marks your scholar terms.</li>
+			<li>What if shows the average you need for a target GWA.</li>
+			<li>Planner lays out your checklist term by term around prerequisites.</li>
+			<li>Wrapped makes cards about your grades to share.</li>
 		</ul>
 
 		<h2>Questions</h2>
@@ -77,10 +75,8 @@
 
 		<h2>Credits</h2>
 		<p>
-			Elbi GradeSim is part of <a href="https://uplb.tools" rel="noopener" target="_blank">UPLB Tools</a>, the student-run group
-			behind <a href="https://room-tba.uplb.tools" rel="noopener" target="_blank">Room TBA</a> and other campus tools. The code is open source on
-			<a href="https://github.com/uplbtools/gradesim" rel="noopener" target="_blank">GitHub</a>, and curriculum fixes from
-			students are welcome.
+			Elbi GradeSim is part of <a href="https://uplb.tools" rel="noopener" target="_blank">UPLB Tools</a>. The code is open source on
+			<a href="https://github.com/uplbtools/gradesim" rel="noopener" target="_blank">GitHub</a>.
 		</p>
 		<p><a class="btn btn-primary" href={resolve('/')}>Open Elbi GradeSim</a></p>
 	</div>
@@ -89,12 +85,6 @@
 <style>
 	.shot {
 		margin: 24px 0 8px;
-	}
-
-	figcaption {
-		margin-top: 8px;
-		font-size: 0.88rem;
-		color: var(--muted);
 	}
 
 	details {

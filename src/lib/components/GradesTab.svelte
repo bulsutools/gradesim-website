@@ -275,7 +275,7 @@
 		border-radius: var(--radius-pill);
 		background: var(--brand-tint-strong);
 		color: var(--brand);
-		font-size: 0.76rem;
+		font-size: 0.8125rem;
 		font-weight: 700;
 	}
 
@@ -333,7 +333,7 @@
 	}
 
 	.units {
-		font-size: 0.78rem;
+		font-size: 0.8125rem;
 		font-weight: 600;
 		padding: 1px 7px;
 		border-radius: var(--radius-pill);
@@ -377,7 +377,7 @@
 		border-radius: var(--radius-pill);
 		background: var(--bg-card);
 		color: var(--muted);
-		font-size: 0.76rem;
+		font-size: 0.8125rem;
 		font-weight: 600;
 		cursor: pointer;
 	}

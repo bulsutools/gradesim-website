@@ -149,26 +149,11 @@
 					{/if}
 				{/snippet}
 			</Notice>
-			<dl>
-				<div><dt>GWA units so far</dt><dd>{g.totalUnits}</dd></div>
-				<div><dt>GWA units left</dt><dd>{left.gwaUnits}</dd></div>
-			</dl>
 		{/if}
 	</section>
 
-	{#if left}
-		<section class="card" aria-labelledby="rem-title">
-			<h2 id="rem-title" class="h">Left to take for {app.program.name}</h2>
-			<dl>
-				<div><dt>Courses</dt><dd>{left.left.length}</dd></div>
-				<div><dt>Units</dt><dd data-testid="units-left">{left.units}</dd></div>
-				<div><dt>GE courses done</dt><dd>{left.ge.done} of {left.ge.total}</dd></div>
-				{#if left.electives.totalUnits > 0}
-					<div><dt>Free elective units done</dt><dd>{left.electives.doneUnits} of {left.electives.totalUnits}</dd></div>
-				{/if}
-			</dl>
-			<a class="btn btn-secondary" href="#planner">See them in the planner</a>
-
+	{#if left && (tracks.length || specs.length)}
+		<section class="card" aria-label="Track and specialization">
 			{#if tracks.length}
 				<details class="track">
 					<summary>{app.program.tracks![(detected ?? track)!].name}{detected ? '' : ' (assumed)'}</summary>
@@ -310,7 +295,7 @@
 	}
 
 	.big .label {
-		font-size: 0.78rem;
+		font-size: 0.8125rem;
 		font-weight: 600;
 		color: var(--muted);
 	}
@@ -331,7 +316,7 @@
 	}
 
 	dt {
-		font-size: 0.78rem;
+		font-size: 0.8125rem;
 		color: var(--muted);
 		font-weight: 600;
 	}
@@ -347,7 +332,7 @@
 		font-size: 0.82rem;
 	}
 
-	.track {
+	.track + .track {
 		margin-top: 16px;
 	}
 
@@ -393,7 +378,7 @@
 		}
 
 		.tmax {
-			font-size: 0.75rem;
+			font-size: 0.8125rem;
 		}
 
 		.custom {
