@@ -69,7 +69,7 @@
 
 		<h2>Questions</h2>
 		{#each faq as item (item.q)}
-			<details>
+			<details name="faq">
 				<summary>{item.q}</summary>
 				<p>{item.a}</p>
 			</details>
