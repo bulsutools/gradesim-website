@@ -124,8 +124,6 @@
 	.pm-scroll {
 		position: relative;
 		overflow-x: auto;
-		margin-right: calc(50% - 50vw);
-		padding-right: 24px;
 		padding-bottom: 8px;
 		margin-bottom: 16px;
 	}
