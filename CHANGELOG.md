@@ -1,3 +1,10 @@
+## [0.6.3](https://github.com/uplbtools/gradesim-website/compare/v0.6.2...v0.6.3) (2026-11-15)
+
+
+### Bug Fixes
+
+* **planner:** a passed course's details skip the what-if-it-fails box ([#99](https://github.com/uplbtools/gradesim-website/issues/99)) ([acc4ce8](https://github.com/uplbtools/gradesim-website/commit/acc4ce8f586bf09acf2611e272b709c9f75e009e))
+
 ## [0.6.2](https://github.com/uplbtools/gradesim-website/compare/v0.6.1...v0.6.2) (2026-11-15)
 
 
