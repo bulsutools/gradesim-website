@@ -1,3 +1,10 @@
+# [0.13.0](https://github.com/uplbtools/gradesim-website/compare/v0.12.2...v0.13.0) (2026-11-15)
+
+
+### Features
+
+* **planner:** next sem comes first, and past sems fold into one line ([#170](https://github.com/uplbtools/gradesim-website/issues/170)) ([5ac1b85](https://github.com/uplbtools/gradesim-website/commit/5ac1b854b4724e501a4761811112434b2dd63859))
+
 ## [0.12.2](https://github.com/uplbtools/gradesim-website/compare/v0.12.1...v0.12.2) (2026-11-15)
 
 
