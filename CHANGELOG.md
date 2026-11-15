@@ -1,3 +1,10 @@
+# [0.18.0](https://github.com/uplbtools/gradesim-website/compare/v0.17.1...v0.18.0) (2026-11-15)
+
+
+### Features
+
+* **welcome:** a landing under the start buttons ([#198](https://github.com/uplbtools/gradesim-website/issues/198)) ([1425e0e](https://github.com/uplbtools/gradesim-website/commit/1425e0ea705befaec46bee29e6714e4b7f3ba00e))
+
 ## [0.17.1](https://github.com/uplbtools/gradesim-website/compare/v0.17.0...v0.17.1) (2026-11-15)
 
 
