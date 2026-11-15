@@ -5,6 +5,7 @@
 	import { HONORS } from '#lib/grades.ts';
 	import { modelFor, planTrack } from '#lib/planner.ts';
 	import { amisCourses, gwaOutlook, remainingRequirements } from '#lib/requirements.ts';
+	import Icon from './Icon.svelte';
 	import Notice from './Notice.svelte';
 
 	// Counts come from requirements.ts, the same code the planner uses, so both show the same units left.
@@ -157,7 +158,7 @@
 		<section class="card" aria-label="Track and specialization">
 			{#if tracks.length}
 				<details class="track">
-					<summary>{app.program.tracks![(detected ?? track)!].name}{detected ? '' : ' (assumed)'}</summary>
+					<summary><Icon name="chevron" size={16} />{app.program.tracks![(detected ?? track)!].name}{detected ? '' : ' (assumed)'}</summary>
 					{#if detected}
 						<p class="muted small">Your grades show this track.</p>
 					{:else}
@@ -175,7 +176,7 @@
 
 			{#if specs.length}
 				<details class="track" open>
-					<summary>Specialization</summary>
+					<summary><Icon name="chevron" size={16} />Specialization</summary>
 					<label class="field">
 						Field of specialization
 						<select class="select" value={app.specialization ?? ''} onchange={(e) => app.setSpecialization(e.currentTarget.value)}>
@@ -341,10 +342,34 @@
 	}
 
 	.track summary {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		min-height: 44px;
 		cursor: pointer;
-		padding: 8px 0;
+		list-style: none;
 		font-weight: 650;
 		color: var(--ink);
+	}
+
+	.track summary::-webkit-details-marker {
+		display: none;
+	}
+
+	.track summary > :global(.icon) {
+		color: var(--muted);
+		transform: rotate(-90deg);
+		transition: transform var(--transition-fast);
+	}
+
+	.track[open] summary > :global(.icon) {
+		transform: none;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.track summary > :global(.icon) {
+			transition: none;
+		}
 	}
 
 	.pool {
