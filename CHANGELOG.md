@@ -1,3 +1,10 @@
+## [0.28.1](https://github.com/uplbtools/gradesim-website/compare/v0.28.0...v0.28.1) (2026-11-16)
+
+
+### Bug Fixes
+
+* **checklist:** BA Socio's social science electives take only ANTH, HIST, POSC or PSY ([#314](https://github.com/uplbtools/gradesim-website/issues/314)) ([d517448](https://github.com/uplbtools/gradesim-website/commit/d517448eb94c1fa8714983fcbf747bd97ee7b4e5))
+
 # [0.28.0](https://github.com/uplbtools/gradesim-website/compare/v0.27.3...v0.28.0) (2026-11-16)
 
 
