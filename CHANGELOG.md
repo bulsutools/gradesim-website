@@ -1,3 +1,10 @@
+# [0.27.0](https://github.com/uplbtools/gradesim-website/compare/v0.26.1...v0.27.0) (2026-11-16)
+
+
+### Features
+
+* **brand:** use UP maroon ([#7](https://github.com/uplbtools/gradesim-website/issues/7)b1113), the same maroon as Room TBA ([#286](https://github.com/uplbtools/gradesim-website/issues/286)) ([153165b](https://github.com/uplbtools/gradesim-website/commit/153165b105f3bfaf66a6a1b5b4e92784459bfa76)), closes [#7b1113](https://github.com/uplbtools/gradesim-website/issues/7b1113)
+
 ## [0.26.1](https://github.com/uplbtools/gradesim-website/compare/v0.26.0...v0.26.1) (2026-11-15)
 
 
