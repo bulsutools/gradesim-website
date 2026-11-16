@@ -1,3 +1,10 @@
+## [0.27.1](https://github.com/uplbtools/gradesim-website/compare/v0.27.0...v0.27.1) (2026-11-16)
+
+
+### Bug Fixes
+
+* **welcome:** screenshots sit on a maroon panel so they don't read as the page itself ([#290](https://github.com/uplbtools/gradesim-website/issues/290)) ([0a05284](https://github.com/uplbtools/gradesim-website/commit/0a052845b1f3762ca45b80b7f9e88354a3f3dd4d))
+
 # [0.27.0](https://github.com/uplbtools/gradesim-website/compare/v0.26.1...v0.27.0) (2026-11-16)
 
 
