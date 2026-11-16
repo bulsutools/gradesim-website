@@ -1,3 +1,10 @@
+## [0.27.3](https://github.com/uplbtools/gradesim-website/compare/v0.27.2...v0.27.3) (2026-11-16)
+
+
+### Bug Fixes
+
+* **checklist:** either-or checklist lines take either course ([#302](https://github.com/uplbtools/gradesim-website/issues/302)) ([2c36f6b](https://github.com/uplbtools/gradesim-website/commit/2c36f6b9ba08232d1ab5199d601ba370256b4ca9))
+
 ## [0.27.2](https://github.com/uplbtools/gradesim-website/compare/v0.27.1...v0.27.2) (2026-11-16)
 
 
