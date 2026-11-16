@@ -1,3 +1,10 @@
+# [0.28.0](https://github.com/uplbtools/gradesim-website/compare/v0.27.3...v0.28.0) (2026-11-16)
+
+
+### Features
+
+* **planner:** an open major slot asks students which courses they took there ([#308](https://github.com/uplbtools/gradesim-website/issues/308)) ([e3b232a](https://github.com/uplbtools/gradesim-website/commit/e3b232a28bc62836e88882c1e9e61c2aaf3dd310))
+
 ## [0.27.3](https://github.com/uplbtools/gradesim-website/compare/v0.27.2...v0.27.3) (2026-11-16)
 
 
