@@ -90,13 +90,17 @@ export function fillRequirementSlots<R extends Row>(
 ): Map<string, R> {
 	const norm = (r: Row) => normalizeCourseCode(r.code);
 	const named = new Set(courses.filter((c) => !c.genericRequirement).map((c) => normalizeCourseCode(c.code)));
+	// A checklist row that names either of two courses takes the other one too.
+	const altOf = new Map(courses.flatMap((c) => (c.alt ?? []).map((a) => [a, normalizeCourseCode(c.code)] as const)));
+	const base = (r: Row) => (named.has(norm(r)) ? norm(r) : (altOf.get(norm(r)) ?? norm(r)));
 	const fill = new Map<string, R>();
 	// A repeat enrollment fills the next "CODE (n)" row.
-	rows.forEach((r) => {
-		let code = norm(r);
-		for (let n = 2; fill.has(code) && named.has(`${norm(r)} (${n})`); n++) code = `${norm(r)} (${n})`;
+	[...rows.filter((r) => named.has(norm(r))), ...rows.filter((r) => !named.has(norm(r)))].forEach((r) => {
+		let code = base(r);
+		for (let n = 2; fill.has(code) && named.has(`${base(r)} (${n})`); n++) code = `${base(r)} (${n})`;
 		if (named.has(code) && !fill.has(code)) fill.set(code, r);
 	});
+	const filled = new Set([...fill.values()].map(norm));
 	const used = new Set<string>();
 	// The student's own substitutions come first and win.
 	[...Object.entries(substitutions || {}), ...BUILT_IN_EQUIVALENTS].forEach(([req, taken]) => {
@@ -111,7 +115,7 @@ export function fillRequirementSlots<R extends Row>(
 	const seen = new Set<string>();
 	const outside = rows.filter((r) => {
 		const code = norm(r);
-		if (named.has(code) || used.has(code) || seen.has(code)) return false;
+		if (named.has(code) || used.has(code) || seen.has(code) || filled.has(code)) return false;
 		// HK 12 repeats once per sport.
 		if (!/^(HK|PE)\b/.test(code)) seen.add(code);
 		return true;
