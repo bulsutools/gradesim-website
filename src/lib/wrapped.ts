@@ -285,7 +285,7 @@ export async function drawCard(canvas: HTMLCanvasElement, p: Panel, id: IdCard):
 	const body = display;
 	if (p.frame) return drawFrame(ctx, p, display, id);
 
-	ctx.fillStyle = '#7b2a22'; // hsl(5, 53%, 32%)
+	ctx.fillStyle = '#7b1113';
 	ctx.fillRect(0, 0, W, H);
 	ctx.fillStyle = 'rgba(255,255,255,0.06)';
 	ctx.beginPath();
@@ -403,7 +403,7 @@ const CREDIT = 'Design by Reann Vargas and Danica Manadong';
 const FRAMES = { sem: 'tin-note', id: 'tin-id', tin: 'tin', note: 'tin', tray: 'tray', open: 'tin-red' };
 const INK = '#1c1917';
 const SOFT = '#4a3f3c';
-const RED = '#7b2a22';
+const RED = '#7b1113';
 
 async function drawFrame(ctx: CanvasRenderingContext2D, p: Panel, font: string, id: IdCard) {
 	const img = new Image();
