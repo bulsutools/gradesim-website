@@ -226,7 +226,7 @@
 		AASS: 'Associate in Arts in Sports Studies (AASS)'
 	};
 	const confirmUrl = (c: PlanCourse) =>
-		c.code.startsWith('MAJ ') && !c.allow && CONFIRM_FORM[app.program.code]
+		c.code.startsWith('MAJ ') && !c.allow && !c.options && CONFIRM_FORM[app.program.code]
 			? `https://docs.google.com/forms/d/e/1FAIpQLSf3AEKf6DTpsXfq3WZAc3RXGPaX2V3qLydheP21g_gMHtUcXQ/viewform?usp=pp_url&entry.1230122317=${encodeURIComponent(CONFIRM_FORM[app.program.code])}`
 			: null;
 	const subOptions = $derived(substituteOptions(app.program, app.gwa.completedCourses, app.s.substitutions));
