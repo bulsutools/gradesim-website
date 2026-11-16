@@ -1,3 +1,10 @@
+## [0.29.2](https://github.com/uplbtools/gradesim-website/compare/v0.29.1...v0.29.2) (2026-11-16)
+
+
+### Bug Fixes
+
+* **planner:** ask for the specialization before the course check form, and link the form for BS EE ([#324](https://github.com/uplbtools/gradesim-website/issues/324)) ([5d25e96](https://github.com/uplbtools/gradesim-website/commit/5d25e96ee692230cd24c8a99b88fc07de195ec68))
+
 ## [0.29.1](https://github.com/uplbtools/gradesim-website/compare/v0.29.0...v0.29.1) (2026-11-16)
 
 
