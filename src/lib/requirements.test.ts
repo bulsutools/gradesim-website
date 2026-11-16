@@ -238,3 +238,14 @@ test('a 4.00 removal exam: a pass gives 3.00, a fail gives 5.00, other grades st
 	expect(fours.student_grades['1251'].values[0].grade).toBe('4.00');
 	expect(applyRemovals(fours, {})).toBe(fours);
 });
+
+test('an either-or checklist line takes the other course, and a second one is an elective', () => {
+	const row = (code: string) => ({ code, title: '', units: 3, result: 'passed' as const });
+	const he = plannerCourseList(UPLB_PROGRAMS.BSHE, null, UPLB_CATALOG);
+	const thesis = fillRequirementSlots(he, [row('HFDS 200'), row('HFDS 200')]);
+	expect(thesis.has('CERP 200') && thesis.has('CERP 200 (2)')).toBe(true);
+	const socio = plannerCourseList(UPLB_PROGRAMS.BASOCIO, null, UPLB_CATALOG);
+	const both = fillRequirementSlots(socio, [row('SOC 135'), row('SOC 130')]);
+	expect(both.get('SOC 130')?.code).toBe('SOC 130');
+	expect([...both.values()].some((r) => r.code === 'SOC 135')).toBe(true);
+});
