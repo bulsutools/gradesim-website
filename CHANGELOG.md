@@ -1,3 +1,15 @@
+# [0.29.0](https://github.com/uplbtools/gradesim-website/compare/v0.28.1...v0.29.0) (2026-11-16)
+
+
+### Bug Fixes
+
+* **checklist:** BS IE technical cognates and BA Comm majors take only their department lists ([#318](https://github.com/uplbtools/gradesim-website/issues/318)) ([ab7b8a2](https://github.com/uplbtools/gradesim-website/commit/ab7b8a21658b0f83aa91f77bc33fa2ce38b28272))
+
+
+### Features
+
+* **grades:** say when the latest sem's grades below 3.00 mean a warning or probation ([#306](https://github.com/uplbtools/gradesim-website/issues/306)) ([32467e9](https://github.com/uplbtools/gradesim-website/commit/32467e94877b751a6c6f86a5a4b3af39672d1e09))
+
 ## [0.28.1](https://github.com/uplbtools/gradesim-website/compare/v0.28.0...v0.28.1) (2026-11-16)
 
 
