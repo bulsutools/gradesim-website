@@ -1,3 +1,10 @@
+## [0.27.2](https://github.com/uplbtools/gradesim-website/compare/v0.27.1...v0.27.2) (2026-11-16)
+
+
+### Bug Fixes
+
+* **checklist:** BA Philo's Readings in Speculative Thought takes only SPEC ([#298](https://github.com/uplbtools/gradesim-website/issues/298)) ([08962b9](https://github.com/uplbtools/gradesim-website/commit/08962b9b4c032ee0639452048079500c67dda716))
+
 ## [0.27.1](https://github.com/uplbtools/gradesim-website/compare/v0.27.0...v0.27.1) (2026-11-16)
 
 
