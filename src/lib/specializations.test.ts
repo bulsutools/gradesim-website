@@ -26,7 +26,7 @@ test('every specialization course is real, not already required, and fills MAJ e
 		const rows = new Map(p.majorCourses.map((c) => [normalizeCourseCode(c.code), c]));
 		const baseUnits = units(getPlannerCourses(p, p.defaultTrack));
 		Object.entries(p.specializations!).forEach(([key, spec]) => {
-			if (!/page \d+/.test(spec.source)) failures.push(`${p.code} ${key}: no catalog page`);
+			if (!/page \d+|https:\/\//.test(spec.source)) failures.push(`${p.code} ${key}: no catalog page`);
 			const courseRows = spec.courses || [];
 			courseRows.forEach((c) => {
 				if (c.slot && rows.get(c.slot)?.genericRequirement !== 'elective') failures.push(`${p.code} ${key}: ${c.slot} is not a MAJ elective row`);
