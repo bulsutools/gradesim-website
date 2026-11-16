@@ -219,6 +219,7 @@
 		BSAAE: 'BS Agricultural and Applied Economics (BSAAE)',
 		BSCHE: 'BS Chemical Engineering (BSCHE)',
 		BSECON: 'BS Economics (BSECON)',
+		BSEE: 'BS Electrical Engineering (BSEE)',
 		BSHE: 'BS Human Ecology (BSHE)',
 		BSSTAT: 'BS Statistics (BSSTAT)',
 		BSDC: 'BS Development Communication (BSDC)',
@@ -229,6 +230,8 @@
 		c.code.startsWith('MAJ ') && !c.allow && !c.options && CONFIRM_FORM[app.program.code]
 			? `https://docs.google.com/forms/d/e/1FAIpQLSf3AEKf6DTpsXfq3WZAc3RXGPaX2V3qLydheP21g_gMHtUcXQ/viewform?usp=pp_url&entry.1230122317=${encodeURIComponent(CONFIRM_FORM[app.program.code])}`
 			: null;
+	const pickSpec = (c: PlanCourse) =>
+		!app.specialization && Object.values(app.program.specializations ?? {}).some((s) => s.pools?.some((p) => p.slots.includes(c.code)));
 	const subOptions = $derived(substituteOptions(app.program, app.gwa.completedCourses, app.s.substitutions));
 
 	function credit(code: string, taken: string) {
@@ -466,6 +469,8 @@
 				</details>
 			{:else if !c.genericRequirement}
 				{@render fixLine(c, fix)}
+			{:else if pickSpec(c)}
+				<p class="pl-muted">Pick your specialization in Plan settings to see which courses count here. {#if confirmUrl(c)}If yours isn't there, <a href={confirmUrl(c)} target="_blank" rel="external noopener">tell us what you took</a>.{/if}</p>
 			{:else if confirmUrl(c)}
 				<p class="pl-muted">GradeSim doesn't know yet which courses count here. <a href={confirmUrl(c)} target="_blank" rel="external noopener">Tell us what you took</a></p>
 			{/if}
