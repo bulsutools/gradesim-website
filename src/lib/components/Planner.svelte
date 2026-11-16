@@ -211,6 +211,24 @@
 	});
 	const setSkip = (next: number[]) => setOptions({ skip: next.length ? next.sort((a, b) => a - b) : undefined });
 	const petitions = $derived(Object.keys(app.s.plannerPetitions));
+	// Programs whose major slots have no official course list yet, by their label on the check form.
+	const CONFIRM_FORM: Record<string, string> = {
+		BSAGRI: 'BS Agriculture (BSAGRI)',
+		BSACHEM: 'BS Agricultural Chemistry (BSACHEM)',
+		BSABE: 'BS Agricultural and Biosystems Engineering (BSABE)',
+		BSAAE: 'BS Agricultural and Applied Economics (BSAAE)',
+		BSCHE: 'BS Chemical Engineering (BSCHE)',
+		BSECON: 'BS Economics (BSECON)',
+		BSHE: 'BS Human Ecology (BSHE)',
+		BSSTAT: 'BS Statistics (BSSTAT)',
+		BSDC: 'BS Development Communication (BSDC)',
+		ASDC: 'Associate of Science in Development Communication (ASDC)',
+		AASS: 'Associate in Arts in Sports Studies (AASS)'
+	};
+	const confirmUrl = (c: PlanCourse) =>
+		c.code.startsWith('MAJ ') && !c.allow && CONFIRM_FORM[app.program.code]
+			? `https://docs.google.com/forms/d/e/1FAIpQLSf3AEKf6DTpsXfq3WZAc3RXGPaX2V3qLydheP21g_gMHtUcXQ/viewform?usp=pp_url&entry.1230122317=${encodeURIComponent(CONFIRM_FORM[app.program.code])}`
+			: null;
 	const subOptions = $derived(substituteOptions(app.program, app.gwa.completedCourses, app.s.substitutions));
 
 	function credit(code: string, taken: string) {
@@ -448,6 +466,8 @@
 				</details>
 			{:else if !c.genericRequirement}
 				{@render fixLine(c, fix)}
+			{:else if confirmUrl(c)}
+				<p class="pl-muted">GradeSim doesn't know yet which courses count here. <a href={confirmUrl(c)} target="_blank" rel="external noopener">Tell us what you took</a></p>
 			{/if}
 		</aside>
 	{/if}
