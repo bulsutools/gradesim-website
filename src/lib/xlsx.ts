@@ -229,7 +229,7 @@ function writeXlsx(sheets: Sheet[]): Uint8Array {
 // Light theme colors from tokens.css, as hex. Tints are the token mixed into
 // white (12%), the same weight the planner uses for status washes.
 const XL = {
-  brand: '7D2E26', onBrand: 'FFFFFF', brandTint: 'F5EEEE',
+  brand: '7B1113', onBrand: 'FFFFFF', brandTint: 'F5EEEE',
   ink: '2E2524', body: '474747', muted: '666666',
   border: 'EAD9D7', borderInput: 'DBBFBD', bgCard: 'FBF9F9', white: 'FFFFFF',
   ok: '1A7440', okTint: 'E4EEE8', bad: 'B12525', badTint: 'F6E5E5',

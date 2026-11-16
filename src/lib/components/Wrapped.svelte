@@ -163,7 +163,7 @@
 		min-height: 440px;
 		padding: 32px 24px;
 		border-radius: 24px;
-		background: hsl(5, 53%, 32%);
+		background: hsl(359, 76%, 27%);
 		color: hsl(0, 0%, 100%);
 		box-shadow: var(--shadow-md);
 	}
