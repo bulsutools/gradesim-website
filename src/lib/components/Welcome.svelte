@@ -82,7 +82,7 @@
 				<h2>Your GWA, counted the UPLB way</h2>
 				<p>GradeSim weighs each grade by its units, leaves out HK and NSTP, and shows the GWA of every sem.</p>
 			</div>
-			<figure>
+			<figure class="stage">
 				<ThemedShot name="grades-phone" alt="The Grades tab. The GWA is 1.9773, and the 1st sem of AY 2024-25 lists four courses with their grades." width={680} height={1040} />
 			</figure>
 		</section>
@@ -91,7 +91,7 @@
 				<h2>The grades you need for honors</h2>
 				<p>Pick summa, magna, cum laude or your own target. GradeSim tells you the average you need on the units you have left.</p>
 			</div>
-			<figure>
+			<figure class="stage">
 				<ThemedShot name="target-phone" alt="The Target tab. Magna cum laude is picked, and the average needed on the 100 units left is 1.28." width={680} height={986} />
 			</figure>
 		</section>
@@ -100,7 +100,7 @@
 				<h2>A plan for the sems you have left</h2>
 				<p>The planner puts each course in the earliest sem its prerequisites and AMIS offerings allow. It shows what failing CHEM 18, a full section or a sem off does to your graduation. If you're shifting, pick your new program and credit the courses you already passed.</p>
 			</div>
-			<figure>
+			<figure class="stage">
 				<ThemedShot name="planner-phone" alt="The planner. Graduation is the 2nd sem of 2029, and the next sem lists six courses with the retake of MATH 27." width={680} height={1222} />
 			</figure>
 		</section>
@@ -258,6 +258,21 @@
 		margin: 0;
 		width: 100%;
 		max-width: 340px;
+	}
+
+	.feature .stage {
+		max-width: 380px;
+		max-height: 440px;
+		padding: 24px 24px 0;
+		overflow: hidden;
+		border-radius: var(--radius-lg);
+		background: hsl(359 76% 27%);
+	}
+
+	.stage :global(img) {
+		border: 0;
+		border-radius: var(--radius-md) var(--radius-md) 0 0;
+		box-shadow: 0 12px 32px hsl(0 0% 0% / 0.35);
 	}
 
 	.card-shot {
