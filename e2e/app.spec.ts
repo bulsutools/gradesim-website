@@ -421,6 +421,7 @@ test('@map a wide screen shows the plan as a map with arrows, and remembers the 
 	await expect(page.locator('.pm-edge.chain').first()).toBeAttached();
 	await map.locator('.pm-card[data-primary][data-code="CMSC 123"]').click();
 	await expect.poll(() => page.locator('.pm-scroll').evaluate((e) => e.scrollWidth <= e.clientWidth)).toBe(true);
+	expect(await map.locator('.pm-card[data-primary][data-code="CMSC 123"] .pm-code').evaluate((e) => e.scrollWidth <= e.clientWidth)).toBe(true);
 	await page.getByRole('button', { name: 'Sheet' }).click();
 	await expect(page.getByTestId('planner-sheet')).toBeVisible();
 	await page.reload();
