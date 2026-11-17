@@ -192,6 +192,13 @@ test('HK 12 taken for three sports fills three HK slots', () => {
 	expect(['HK 1', 'HK 2', 'HK 3', 'HK 4'].every((c) => filled.has(c))).toBe(true);
 });
 
+test('a special topics course taken again fills another elective slot', () => {
+	const sp = plannerCourseList(BSCS, 'sp', UPLB_CATALOG);
+	const row = (code: string) => ({ code, title: '', units: 3, result: 'passed' as const });
+	const filled = fillRequirementSlots(sp, [row('CMSC 191'), row('CMSC 191'), row('ECON 11'), row('ECON 11')]);
+	expect(['FE 1', 'FE 2', 'FE 3', 'FE 4'].map((c) => filled.has(c))).toEqual([true, true, true, false]);
+});
+
 test('a restricted elective takes only the subjects its title names', () => {
 	const comm = plannerCourseList(UPLB_PROGRAMS.BACOMM, null, UPLB_CATALOG);
 	const slot = (title: string) => comm.find((c) => c.title === title)!.code;
