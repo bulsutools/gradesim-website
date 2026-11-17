@@ -149,11 +149,11 @@ export interface GwaResult {
 }
 
 /**
- * CMSC 190 is taken twice. The first unit gets an S, and the final grade then
- * counts for all three units. Returns that grade for the S row, or null.
+ * A special problem (190) is enlisted in parts. The early units get an S, and
+ * the final grade then counts for all of them. Returns that grade for the S row, or null.
  */
 export function carriedGrade(course: Course, courses: Course[]): number | null {
-	if (course.grade !== 'S' || normalizeCourseCode(course.code) !== 'CMSC 190') return null;
+	if (course.grade !== 'S' || !/ 190$/.test(normalizeCourseCode(course.code))) return null;
 	const final = courses.map((c) => (c.code === course.code ? numericGrade(c.grade) : null)).find((g) => g != null && g <= 3);
 	return final ?? null;
 }
