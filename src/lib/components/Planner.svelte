@@ -617,6 +617,7 @@
 			<Notice tone="warn"><strong>Treat this plan as a rough guide.</strong> {quality.reasons.join(' ')}</Notice>
 		{/if}
 
+		<div class="pl-top">
 		<section class="pl-summary" aria-live="polite">
 			<p class="pl-print-only">{app.program.name}</p>
 			<h2 class="pl-grad" data-testid="grad-term">
@@ -719,6 +720,7 @@
 				}}
 			/>
 		</section>
+		</div>
 
 		<p class="pl-result" aria-live="polite">{#if wiResult}{wiResult} <button class="textbtn" type="button" onclick={clearWhatif}>Clear</button>{/if}</p>
 
