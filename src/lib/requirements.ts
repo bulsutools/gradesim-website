@@ -164,6 +164,24 @@ export function surplusElectives<R extends Row>(courses: PlanCourse[], passedRow
 	return passedRows.filter((r) => !used.has(r) && !named.has(normalizeCourseCode(r.code)) && !isNonGwaCourseCode(r.code) && r.units > 0);
 }
 
+/**
+ * Course codes a student took that the checklist doesn't place: not a named
+ * row, not GE, HK or NSTP, and not in a slot with a known list. These are what
+ * an open major or elective slot may have taken. Failed courses are left out.
+ */
+export function unlistedCourses(courses: PlanCourse[], rows: Row[], substitutions: Record<string, string> = {}): string[] {
+	const live = rows.filter((r) => r.units > 0 && (r.result === 'passed' || r.result === 'nograde'));
+	const bySlot = new Map(courses.map((c) => [normalizeCourseCode(c.code), c]));
+	const placed = new Set<Row>();
+	fillRequirementSlots(courses, live, substitutions).forEach((r, slot) => {
+		const c = bySlot.get(slot);
+		if (c && !(c.genericRequirement === 'elective' && !c.allow && !c.options)) placed.add(r);
+	});
+	const named = new Set(courses.filter((c) => !c.genericRequirement).flatMap((c) => [c.code, ...(c.alt ?? [])].map(normalizeCourseCode)));
+	const code = (r: Row) => normalizeCourseCode(r.code);
+	return [...new Set(live.filter((r) => !placed.has(r) && !named.has(code(r)) && !isGECourse(code(r), r.title) && !isNonGwaCourseCode(code(r))).map(code))];
+}
+
 /** The planner's course list: checklist rows for the track and specialization plus GE, HK, NSTP and free elective slots, with catalog data. */
 export function plannerCourseList(
 	program: Program,
