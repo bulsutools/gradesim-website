@@ -338,7 +338,7 @@ test('a plan link opens the same plan for someone else, with no grades and nothi
 	await page.getByText('Plan settings').click();
 	const link = await copied(page, 'Copy a link to this plan');
 
-	const other = await (await browser.newContext()).newPage();
+	const other = await (await browser.newContext({ viewport: { width: 1280, height: 800 } })).newPage();
 	await other.goto(link);
 	await expect(other.getByText('plan someone shared with you')).toBeVisible();
 	await expect(other.getByTestId('grad-term').locator('span').first()).toHaveText(grad!);
