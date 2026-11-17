@@ -60,6 +60,7 @@
 		const ch = chain;
 		const focus = selected;
 		void columns;
+		void compact;
 		if (!g) return;
 		const frame = requestAnimationFrame(() => {
 			const box = g.getBoundingClientRect();
@@ -306,8 +307,13 @@
 		box-shadow: 0 0 0 3px var(--brand);
 	}
 
+	.compact.pm-grid {
+		width: auto;
+	}
+
 	.compact .pm-col {
-		width: 108px;
+		flex: 1 0 92px;
+		max-width: 148px;
 	}
 
 	.compact .pm-sub {
@@ -318,7 +324,7 @@
 	.compact .pm-card {
 		justify-content: center;
 		height: 30px;
-		padding: 4px 7px;
+		padding: 4px 6px;
 	}
 
 	.compact .pm-code {
