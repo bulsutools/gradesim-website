@@ -1,3 +1,10 @@
+# [0.30.0](https://github.com/uplbtools/gradesim-website/compare/v0.29.2...v0.30.0) (2026-11-17)
+
+
+### Features
+
+* **planner:** the course check form opens filled in from the student's grades ([#327](https://github.com/uplbtools/gradesim-website/issues/327)) ([46bebeb](https://github.com/uplbtools/gradesim-website/commit/46bebeb1f0082bd618eb356075ba0973745f35d2))
+
 ## [0.29.2](https://github.com/uplbtools/gradesim-website/compare/v0.29.1...v0.29.2) (2026-11-16)
 
 
