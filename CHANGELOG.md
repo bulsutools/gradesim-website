@@ -1,3 +1,10 @@
+## [0.32.2](https://github.com/uplbtools/gradesim-website/compare/v0.32.1...v0.32.2) (2026-11-17)
+
+
+### Bug Fixes
+
+* **checklist:** BS AAE's Major Farm Practice rows take AAE 200 ([#346](https://github.com/uplbtools/gradesim-website/issues/346)) ([9a4f988](https://github.com/uplbtools/gradesim-website/commit/9a4f988e823f544121c6260db440803977eb8a8c))
+
 ## [0.32.1](https://github.com/uplbtools/gradesim-website/compare/v0.32.0...v0.32.1) (2026-11-17)
 
 
