@@ -10,7 +10,8 @@
 		primary,
 		selected,
 		onselect,
-		detail
+		detail,
+		compact = false
 	}: {
 		view: View;
 		columns: Column[];
@@ -18,10 +19,11 @@
 		selected: string | null;
 		onselect: (code: string) => void;
 		detail: Snippet<[string]>;
+		compact?: boolean;
 	} = $props();
 
-	const COL_GAP = 40;
-	const ROW_GAP = 14;
+	const COL_GAP = $derived(compact ? 16 : 40);
+	const ROW_GAP = $derived(compact ? 6 : 14);
 
 	let grid: HTMLDivElement | undefined = $state();
 	let scroller: HTMLDivElement | undefined = $state();
@@ -95,7 +97,7 @@
 		</defs>
 		{#each paths as p, k (k)}<path class="pm-edge {p.kind}" d={p.d} marker-end="url(#pm-head)" />{/each}
 	</svg>
-	<div class="pm-grid" data-testid="planner-map" bind:this={grid} style="--gap: {COL_GAP}px; --row: {ROW_GAP}px">
+	<div class="pm-grid" class:compact data-testid="planner-map" bind:this={grid} style="--gap: {COL_GAP}px; --row: {ROW_GAP}px">
 		{#each columns as column (column.abs)}
 			{@const f = columnFacts(column, view)}
 			<section class="pm-col" class:past={f.isPast && f.tag !== 'Now'} data-start={column.abs === view.startAbs ? '' : undefined} aria-label="{f.name} {f.sub}">
@@ -117,6 +119,7 @@
 						data-code={card.code}
 						data-primary={isPrimary ? '1' : undefined}
 						aria-pressed={selected === card.code && isPrimary}
+						title={compact ? c.title : undefined}
 						aria-label="{c.code}, {c.title}. {facts.statusLabel}{facts.crit ? ', take on time' : ''}. {unitsText(Number(c.units) || 0)}{card.grade ? `, grade ${card.grade}` : ''}."
 						onclick={() => onselect(card.code)}
 					>
@@ -301,6 +304,32 @@
 
 	.pm-card.focus {
 		box-shadow: 0 0 0 3px var(--brand);
+	}
+
+	.compact .pm-col {
+		width: 108px;
+	}
+
+	.compact .pm-sub {
+		flex-direction: column;
+		gap: 0;
+	}
+
+	.compact .pm-card {
+		justify-content: center;
+		height: 30px;
+		padding: 4px 7px;
+	}
+
+	.compact .pm-code {
+		overflow: hidden;
+		font-size: 0.8125rem;
+		text-overflow: ellipsis;
+	}
+
+	.compact .pm-grade,
+	.compact .pm-title {
+		display: none;
 	}
 
 	.pm-edge {

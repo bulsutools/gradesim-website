@@ -412,6 +412,9 @@ test('@map a wide screen shows the plan as a map with arrows, and remembers the 
 	await map.locator('.pm-card[data-primary][data-code="CMSC 123"]').click();
 	await expect(page.getByRole('complementary', { name: 'Details for CMSC 123' })).toBeVisible();
 	await expect(page.locator('.pm-edge.chain').first()).toBeAttached();
+	await page.getByRole('button', { name: 'Compact' }).click();
+	await expect(map.locator('.pm-card[data-primary][data-code="CMSC 123"] .pm-title')).toBeHidden();
+	await expect(page.locator('.pm-edge.chain').first()).toBeAttached();
 	await page.getByRole('button', { name: 'Sheet' }).click();
 	await expect(page.getByTestId('planner-sheet')).toBeVisible();
 	await page.reload();
