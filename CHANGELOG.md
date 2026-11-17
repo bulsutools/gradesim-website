@@ -1,3 +1,10 @@
+# [0.34.0](https://github.com/uplbtools/gradesim-website/compare/v0.33.2...v0.34.0) (2026-11-17)
+
+
+### Features
+
+* **planner:** the compact map fits a short laptop window ([#388](https://github.com/uplbtools/gradesim-website/issues/388)) ([8507ae1](https://github.com/uplbtools/gradesim-website/commit/8507ae1d5f988a36fcf0d1ee8e344a388ab30abc))
+
 ## [0.33.2](https://github.com/uplbtools/gradesim-website/compare/v0.33.1...v0.33.2) (2026-11-17)
 
 
