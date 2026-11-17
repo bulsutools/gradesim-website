@@ -95,7 +95,7 @@
 <div class="pm-scroll" bind:this={scroller}>
 	<svg class="pm-arrows" width={size.w} height={size.h} aria-hidden="true">
 		<defs>
-			<marker id="pm-head" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" /></marker>
+			<marker id="pm-head" viewBox="0 0 8 8" markerWidth={compact ? 6 : 8} markerHeight={compact ? 6 : 8} markerUnits={compact ? 'userSpaceOnUse' : undefined} refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" /></marker>
 		</defs>
 		{#each paths as p, k (k)}<path class="pm-edge {p.kind}" d={p.d} marker-end="url(#pm-head)" />{/each}
 	</svg>
