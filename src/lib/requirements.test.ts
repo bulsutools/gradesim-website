@@ -47,7 +47,7 @@ const leftCodes = new Set(left.left.map((c) => c.code));
 
 test('GE by code, HK and NSTP complete, PEd and ECON 11 fill free electives', () => {
 	expect(left.ge).toEqual({ done: 3, total: 9 });
-	expect(!leftCodes.has('HK 1') && leftCodes.has('HK 2')).toBe(true);
+	expect(!leftCodes.has('HK 11') && leftCodes.has('HK 12')).toBe(true);
 	expect(!leftCodes.has('NSTP 1') && leftCodes.has('NSTP 2')).toBe(true);
 	expect(left.electives).toEqual({ doneUnits: 6, totalUnits: 18 });
 	expect(leftCodes.has('CMSC 21')).toBe(false);
@@ -189,7 +189,9 @@ test('HK 12 taken for three sports fills three HK slots', () => {
 	const sp = plannerCourseList(BSCS, 'sp', UPLB_CATALOG);
 	const row = (code: string) => ({ code, title: '', units: 2, result: 'passed' as const });
 	const filled = fillRequirementSlots(sp, [row('HK 11'), row('HK 12'), row('HK 12'), row('HK 12')]);
-	expect(['HK 1', 'HK 2', 'HK 3', 'HK 4'].every((c) => filled.has(c))).toBe(true);
+	expect(['HK 11', 'HK 12', 'HK 12 (2)', 'HK 12 (3)'].every((c) => filled.has(c))).toBe(true);
+	const noHk11 = fillRequirementSlots(sp, [row('HK 12'), row('HK 12'), row('HK 12'), row('HK 12')]);
+	expect(noHk11.has('HK 11')).toBe(false);
 });
 
 test('a special topics course taken again fills another elective slot', () => {
