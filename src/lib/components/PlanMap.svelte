@@ -22,8 +22,10 @@
 		compact?: boolean;
 	} = $props();
 
-	const COL_GAP = $derived(compact ? 16 : 40);
-	const ROW_GAP = $derived(compact ? 6 : 14);
+	const COL_GAP = $derived(compact ? 10 : 40);
+	const ROW_GAP = $derived(compact ? 4 : 14);
+	// More sems than the page width holds, so the compact map takes the window's width.
+	const bleed = $derived(compact && columns.length > 11);
 
 	let grid: HTMLDivElement | undefined = $state();
 	let scroller: HTMLDivElement | undefined = $state();
@@ -90,7 +92,8 @@
 	});
 </script>
 
-<div class="pm-wrap" class:open={selected && model.byCode.has(selected)}>
+{#snippet tag(t: string)}{#if t === 'Now' || t === 'Next'}<span class="pm-tag">{t === 'Now' ? 'now' : 'next'}</span>{/if}{/snippet}
+<div class="pm-wrap" class:bleed class:open={selected && model.byCode.has(selected)}>
 <div class="pm-scroll" bind:this={scroller}>
 	<svg class="pm-arrows" width={size.w} height={size.h} aria-hidden="true">
 		<defs>
@@ -103,8 +106,8 @@
 			{@const f = columnFacts(column, view)}
 			<section class="pm-col" class:past={f.isPast && f.tag !== 'Now'} data-start={column.abs === view.startAbs ? '' : undefined} aria-label="{f.name} {f.sub}">
 				<header>
-					<span class="pm-name">{f.name}{#if f.tag === 'Now' || f.tag === 'Next'}<span class="pm-tag">{f.tag === 'Now' ? 'now' : 'next'}</span>{/if}</span>
-					<span class="pm-sub">{f.sub}<span class:warn={f.loud}>{f.off ? 'Off' : unitsText(f.units)}</span></span>
+					<span class="pm-name">{f.name}{#if !compact}{@render tag(f.tag)}{/if}</span>
+					<span class="pm-sub">{f.sub}<span class="pm-units"><span class:warn={f.loud}>{f.off ? 'Off' : unitsText(f.units)}</span>{#if compact}{@render tag(f.tag)}{/if}</span></span>
 				</header>
 				{#each column.cards as card (card)}
 					{@const c = model.byCode.get(card.code)!}
@@ -124,7 +127,7 @@
 						aria-label="{c.code}, {c.title}. {facts.statusLabel}{facts.crit ? ', take on time' : ''}. {unitsText(Number(c.units) || 0)}{card.grade ? `, grade ${card.grade}` : ''}."
 						onclick={() => onselect(card.code)}
 					>
-						<span class="pm-top"><Icon name={STATUS[card.status][0] as IconName} size={14} /><span class="pm-code">{c.code}</span>{#if card.grade}<span class="pm-grade">{card.grade}</span>{/if}</span>
+						<span class="pm-top"><Icon name={STATUS[card.status][0] as IconName} size={compact ? 12 : 14} /><span class="pm-code">{c.code}</span>{#if card.grade}<span class="pm-grade">{card.grade}</span>{/if}</span>
 						<span class="pm-title">{c.title}</span>
 					</button>
 				{/each}
@@ -146,6 +149,10 @@
 
 	.pm-wrap.open {
 		grid-template-columns: minmax(0, 1fr) 340px;
+	}
+
+	.pm-wrap.bleed {
+		margin-inline: calc((100% - 100vw) / 2 + 32px);
 	}
 
 	.pm-side {
@@ -312,14 +319,17 @@
 	}
 
 	.compact .pm-col {
-		flex: 1 0 92px;
+		flex: 1 0 88px;
 		min-width: 0;
 		max-width: 148px;
 	}
 
+	.compact header {
+		gap: 0;
+		padding-bottom: 6px;
+	}
+
 	.compact .pm-name {
-		gap: 4px;
-		overflow: hidden;
 		font-size: 0.9375rem;
 		white-space: nowrap;
 	}
@@ -333,10 +343,21 @@
 		gap: 0;
 	}
 
+	.pm-units {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 4px;
+	}
+
 	.compact .pm-card {
 		justify-content: center;
-		height: 30px;
-		padding: 4px 6px;
+		height: 28px;
+		padding: 3px 5px;
+	}
+
+	.compact .pm-top {
+		gap: 4px;
 	}
 
 	.compact .pm-code {
