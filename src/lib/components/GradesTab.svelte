@@ -96,73 +96,6 @@
 		</section>
 	{/if}
 
-	<div class="card folds">
-		<details class="fold">
-			<summary><Icon name="chevron" size={16} />{`Course substitutions${subCount ? ` (${subCount})` : ''}`}</summary>
-			{#if subCount}
-				<ul class="subs">
-					{#each Object.entries(app.s.substitutions) as [req, taken] (req)}
-						<li>
-							<span><strong>{req}</strong> is covered by <strong>{taken}</strong></span>
-							<button class="iconbtn" type="button" aria-label="Remove the substitution for {req}" onclick={() => removeSub(req)}><Icon name="x" /></button>
-						</li>
-					{/each}
-				</ul>
-			{/if}
-			<p class="muted small">Match a course you passed to the required course it stands in for. The planner and the what-if count it as done.</p>
-			<div class="subform">
-				<label class="field">
-					Required course
-					<select class="select" bind:value={subReq}>
-						<option value="">Choose a required course</option>
-						{#each required as r (r.code)}<option value={r.code.toUpperCase().trim()}>{r.code}{r.units ? `, ${unitsText(r.units)}` : ''}</option>{/each}
-					</select>
-				</label>
-				<label class="field">
-					Covered by
-					<select class="select" bind:value={subTaken}>
-						<option value="">Choose a course you passed</option>
-						{#each subOptions as c (c.code)}<option value={c.code.toUpperCase().trim()}>{c.code}, {unitsText(c.units)}, {formatGrade(String(c.grade))}</option>{/each}
-					</select>
-				</label>
-				<button class="btn btn-secondary" type="button" disabled={!subReq || !subTaken} onclick={addSub}>Apply substitution</button>
-			</div>
-		</details>
-
-		<details class="fold">
-			<summary><Icon name="chevron" size={16} />Back up or clear your data</summary>
-			<p class="small">
-				{#if app.s.source}These grades came from {SOURCE[app.s.source]}.{/if}
-				It's saved in this browser only. A backup moves it to another device or the extension.
-			</p>
-			<div class="actions pair">
-				<FileButton label="Load backup" {onFile} />
-				<button class="btn btn-secondary" type="button" onclick={exportBackup}><Icon name="download" />Save backup</button>
-			</div>
-			<div class="actions">
-				<button class="btn btn-secondary" type="button" onclick={copyLink}><Icon name="external" />Copy a link to my grades</button>
-			</div>
-			<p class="small hint" aria-live="polite">
-				{#if link === 'failed'}
-					Your browser blocked the copy. Save a backup instead.
-				{:else}
-					{link === 'copied' ? 'The link is copied.' : 'The link opens your grades on another device, such as your phone.'}
-					It holds your grades, so send it only to yourself.
-				{/if}
-			</p>
-			<div class="actions">
-				{#if extension === 'found'}
-					<button class="btn btn-secondary" type="button" onclick={onExtension}><Icon name="plug" />Import from the extension</button>
-				{:else}
-					<a class="btn btn-secondary" href={resolve('install/')}><Icon name="plug" />Get the extension</a>
-				{/if}
-			</div>
-			<div class="actions danger">
-				<button class="btn btn-danger" type="button" onclick={clearAll}><Icon name="trash" />Clear my data</button>
-			</div>
-		</details>
-	</div>
-
 	{#each groups as g, i (g.key)}
 		{@const group = groupGWA(g.courses, app.excluded)}
 		{@const gwa = group.gwa}
@@ -233,6 +166,72 @@
 		</details>
 	{/each}
 
+	<div class="card folds">
+		<details class="fold">
+			<summary><Icon name="chevron" size={16} />{`Course substitutions${subCount ? ` (${subCount})` : ''}`}</summary>
+			{#if subCount}
+				<ul class="subs">
+					{#each Object.entries(app.s.substitutions) as [req, taken] (req)}
+						<li>
+							<span><strong>{req}</strong> is covered by <strong>{taken}</strong></span>
+							<button class="iconbtn" type="button" aria-label="Remove the substitution for {req}" onclick={() => removeSub(req)}><Icon name="x" /></button>
+						</li>
+					{/each}
+				</ul>
+			{/if}
+			<p class="muted small">Match a course you passed to the required course it stands in for. The planner and the what-if count it as done.</p>
+			<div class="subform">
+				<label class="field">
+					Required course
+					<select class="select" bind:value={subReq}>
+						<option value="">Choose a required course</option>
+						{#each required as r (r.code)}<option value={r.code.toUpperCase().trim()}>{r.code}{r.units ? `, ${unitsText(r.units)}` : ''}</option>{/each}
+					</select>
+				</label>
+				<label class="field">
+					Covered by
+					<select class="select" bind:value={subTaken}>
+						<option value="">Choose a course you passed</option>
+						{#each subOptions as c (c.code)}<option value={c.code.toUpperCase().trim()}>{c.code}, {unitsText(c.units)}, {formatGrade(String(c.grade))}</option>{/each}
+					</select>
+				</label>
+				<button class="btn btn-secondary" type="button" disabled={!subReq || !subTaken} onclick={addSub}>Apply substitution</button>
+			</div>
+		</details>
+
+		<details class="fold">
+			<summary><Icon name="chevron" size={16} />Back up or clear your data</summary>
+			<p class="small">
+				{#if app.s.source}These grades came from {SOURCE[app.s.source]}.{/if}
+				It's saved in this browser only. A backup moves it to another device or the extension.
+			</p>
+			<div class="actions pair">
+				<FileButton label="Load backup" {onFile} />
+				<button class="btn btn-secondary" type="button" onclick={exportBackup}><Icon name="download" />Save backup</button>
+			</div>
+			<div class="actions">
+				<button class="btn btn-secondary" type="button" onclick={copyLink}><Icon name="external" />Copy a link to my grades</button>
+			</div>
+			<p class="small hint" aria-live="polite">
+				{#if link === 'failed'}
+					Your browser blocked the copy. Save a backup instead.
+				{:else}
+					{link === 'copied' ? 'The link is copied.' : 'The link opens your grades on another device, such as your phone.'}
+					It holds your grades, so send it only to yourself.
+				{/if}
+			</p>
+			<div class="actions">
+				{#if extension === 'found'}
+					<button class="btn btn-secondary" type="button" onclick={onExtension}><Icon name="plug" />Import from the extension</button>
+				{:else}
+					<a class="btn btn-secondary" href={resolve('install/')}><Icon name="plug" />Get the extension</a>
+				{/if}
+			</div>
+			<div class="actions danger">
+				<button class="btn btn-danger" type="button" onclick={clearAll}><Icon name="trash" />Clear my data</button>
+			</div>
+		</details>
+	</div>
 </div>
 
 <style>
