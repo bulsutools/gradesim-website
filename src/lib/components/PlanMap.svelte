@@ -24,8 +24,6 @@
 
 	const COL_GAP = $derived(compact ? 10 : 40);
 	const ROW_GAP = $derived(compact ? 4 : 14);
-	// More sems than the page width holds, so the compact map takes the window's width.
-	const bleed = $derived(compact && columns.length > 11);
 
 	let grid: HTMLDivElement | undefined = $state();
 	let scroller: HTMLDivElement | undefined = $state();
@@ -93,7 +91,7 @@
 </script>
 
 {#snippet tag(t: string)}{#if t === 'Now' || t === 'Next'}<span class="pm-tag">{t === 'Now' ? 'now' : 'next'}</span>{/if}{/snippet}
-<div class="pm-wrap" class:bleed class:open={selected && model.byCode.has(selected)}>
+<div class="pm-wrap" class:wide={compact} class:open={selected && model.byCode.has(selected)} style="--cols: {columns.length}">
 <div class="pm-scroll" bind:this={scroller}>
 	<svg class="pm-arrows" width={size.w} height={size.h} aria-hidden="true">
 		<defs>
@@ -151,8 +149,9 @@
 		grid-template-columns: minmax(0, 1fr) 340px;
 	}
 
-	.pm-wrap.bleed {
-		margin-inline: calc((100% - 100vw) / 2 + 32px);
+	/* Widens past the page for 100px columns, up to the window's width. */
+	.pm-wrap.wide {
+		margin-inline: min(0px, max((100% - 100vw) / 2 + 32px, (100% - var(--cols) * 110px + 10px) / 2));
 	}
 
 	.pm-side {
