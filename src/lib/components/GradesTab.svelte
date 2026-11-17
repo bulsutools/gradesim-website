@@ -2,6 +2,7 @@
 	import { resolve } from '$app/paths';
 	import { app, download } from '#lib/app.svelte.ts';
 	import {
+		carriedGrade,
 		formatGrade,
 		gradeTone,
 		groupCourses,
@@ -183,6 +184,7 @@
 						<div class="info">
 							<span class="code">{c.code}</span>
 							<span class="title">{c.title}</span>
+							{#if carriedGrade(c, app.courses) != null}<span class="title">Counts as {carriedGrade(c, app.courses)!.toFixed(2)}, your final {c.code} grade</span>{/if}
 							{#if !editing && parseFloat(raw) === 4}
 								{@const key = removalKey(c.termKey, c.code)}
 								<select class="select removal" aria-label="Removal exam result for {c.code}" value={app.s.removals[key] ?? ''} onchange={(e) => app.setRemoval(key, e.currentTarget.value)}>

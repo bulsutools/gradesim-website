@@ -3,7 +3,7 @@
 // math is pure and the Svelte components render the results.
 
 import { UPLB_CATALOG } from './catalog.ts';
-import { isGECourse, isNonGwaCourseCode, type Program } from './curriculum.ts';
+import { isGECourse, isNonGwaCourseCode, normalizeCourseCode, type Program } from './curriculum.ts';
 
 /* ---------- AMIS grades API shape ---------- */
 
@@ -149,6 +149,16 @@ export interface GwaResult {
 }
 
 /**
+ * CMSC 190 is taken twice. The first unit gets an S, and the final grade then
+ * counts for all three units. Returns that grade for the S row, or null.
+ */
+export function carriedGrade(course: Course, courses: Course[]): number | null {
+	if (course.grade !== 'S' || normalizeCourseCode(course.code) !== 'CMSC 190') return null;
+	const final = courses.map((c) => (c.code === course.code ? numericGrade(c.grade) : null)).find((g) => g != null && g <= 3);
+	return final ?? null;
+}
+
+/**
  * Weighted GWA. NSTP, HK and PE never count. Non-numeric grades are shown but
  * skipped; S still counts as passed. Courses the student excluded (shiftees)
  * are tallied separately.
@@ -165,11 +175,12 @@ export function calculateGWA(courses: Course[], excludedIds: Set<string> = new S
 	courses.forEach((course) => {
 		if (isPrefixExcluded(course.code)) return;
 		const units = course.units || 0;
-		if (NON_NUMERIC_GRADES.includes(course.grade)) {
+		const carried = carriedGrade(course, courses);
+		if (carried == null && NON_NUMERIC_GRADES.includes(course.grade)) {
 			if (course.grade === 'S') completedCourses.push({ code: course.code, title: course.title, units, grade: 'S' });
 			return;
 		}
-		const grade = numericGrade(course.grade);
+		const grade = carried ?? numericGrade(course.grade);
 		if (grade == null || units === 0) return;
 		if (excludedIds.has(course.id)) {
 			excludedUnits += units;
