@@ -23,7 +23,7 @@
 	} = $props();
 
 	const COL_GAP = $derived(compact ? 10 : 40);
-	const ROW_GAP = $derived(compact ? 4 : 14);
+	const ROW_GAP = $derived(compact ? 3 : 14);
 
 	let grid: HTMLDivElement | undefined = $state();
 	let scroller: HTMLDivElement | undefined = $state();
@@ -149,9 +149,9 @@
 		grid-template-columns: minmax(0, 1fr) 340px;
 	}
 
-	/* Widens past the page for 100px columns, up to the window's width. */
+	/* Widens past the page for 98px columns, up to the window's width. */
 	.pm-wrap.wide {
-		margin-inline: min(0px, max((100% - 100vw) / 2 + 32px, (100% - var(--cols) * 110px + 10px) / 2));
+		margin-inline: min(0px, max((100% - 100vw) / 2 + 32px, (100% - var(--cols) * 108px + 10px) / 2));
 	}
 
 	.pm-side {
@@ -325,7 +325,8 @@
 
 	.compact header {
 		gap: 0;
-		padding-bottom: 6px;
+		padding-bottom: 4px;
+		line-height: 1.25;
 	}
 
 	.compact .pm-name {
@@ -351,8 +352,8 @@
 
 	.compact .pm-card {
 		justify-content: center;
-		height: 28px;
-		padding: 3px 5px;
+		height: 26px;
+		padding: 2px 5px;
 	}
 
 	.compact .pm-top {
