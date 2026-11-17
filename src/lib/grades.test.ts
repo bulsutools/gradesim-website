@@ -3,6 +3,7 @@ import backup from './fixtures/backup.json';
 import { shownGwa } from './wrapped.ts';
 import {
 	calculateGWA,
+	carriedGrade,
 	gradeTone,
 	groupCourses,
 	groupGWA,
@@ -60,6 +61,18 @@ test('GWA skips NSTP, HK, PE and non-numeric grades and weights by units', () =>
 	expect(g.completedCourses.some((c) => c.code === 'MATH 27')).toBe(false);
 	expect(g.completedCourses.some((c) => c.code === 'NSTP 1')).toBe(false);
 	expect(g.completedCourses.some((c) => c.code === 'STS 1')).toBe(false);
+});
+
+test('the final CMSC 190 grade counts for the first unit, which AMIS shows as S', () => {
+	const row = (termKey: string, units: number, grade: string) => ({ id: termKey, termKey, termLabel: termKey, ay: '', code: 'CMSC 190', title: 'Special Problem', units, grade });
+	const s = row('1251', 1, 'S');
+	expect(carriedGrade(s, [s])).toBeNull();
+	const g = calculateGWA([row('1252', 2, '1.50'), s]);
+	expect(g.totalUnits).toBe(3);
+	expect(g.passedUnits).toBe(3);
+	expect(g.gwa).toBeCloseTo(1.5, 10);
+	expect(calculateGWA([row('1252', 2, '5.00'), s]).totalUnits).toBe(2);
+	expect(carriedGrade({ ...s, code: 'CMSC 199' }, [{ ...row('1252', 2, '1.50'), code: 'CMSC 199' }])).toBeNull();
 });
 
 test('excluding a course takes it out of the GWA and tallies it', () => {
