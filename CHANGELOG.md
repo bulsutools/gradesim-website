@@ -1,3 +1,10 @@
+## [0.33.2](https://github.com/uplbtools/gradesim-website/compare/v0.33.1...v0.33.2) (2026-11-17)
+
+
+### Bug Fixes
+
+* **planner:** smaller arrowheads in the compact map ([#384](https://github.com/uplbtools/gradesim-website/issues/384)) ([b677695](https://github.com/uplbtools/gradesim-website/commit/b677695268c2764ad69a523ced1b526026203375))
+
 ## [0.33.1](https://github.com/uplbtools/gradesim-website/compare/v0.33.0...v0.33.1) (2026-11-17)
 
 
