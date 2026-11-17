@@ -72,7 +72,13 @@
 </script>
 
 <div class="wrapped">
-
+	{#snippet gwaPick(value: GwaShow, set: (v: GwaShow) => void)}
+		<label class="field">GWA on the card
+			<select class="input" {value} onchange={(e) => set(e.currentTarget.value as GwaShow)}>
+				{#each shows as k (k)}<option value={k}>{k === 'none' ? 'Tier only' : shownGwa(p.value, k)}</option>{/each}
+			</select>
+		</label>
+	{/snippet}
 	{#if p.frame}
 		{#if preview}
 			<img class="frame" src={preview} {alt} />
@@ -100,6 +106,7 @@
 			<p class="message">{p.message}</p>
 		</article>
 	{/if}
+	<div class="side">
 	<div class="nav">
 		<button class="btn btn-secondary" type="button" onclick={() => i--} disabled={i === 0}><Icon name="left" />Previous</button>
 		<span class="count" aria-hidden="true">{i + 1} of {panels.length}</span>
@@ -107,13 +114,6 @@
 	</div>
 	<button class="btn btn-primary save" type="button" onclick={save} disabled={busy}><Icon name="download" />{busy ? 'Making your image' : 'Save this card'}</button>
 
-	{#snippet gwaPick(value: GwaShow, set: (v: GwaShow) => void)}
-		<label class="field">GWA on the card
-			<select class="input" {value} onchange={(e) => set(e.currentTarget.value as GwaShow)}>
-				{#each shows as k (k)}<option value={k}>{k === 'none' ? 'Tier only' : shownGwa(p.value, k)}</option>{/each}
-			</select>
-		</label>
-	{/snippet}
 	{#if p.frame}
 		<div class="opts">
 			{#if p.frame === 'sem'}
@@ -142,13 +142,19 @@
 			{/if}
 		</div>
 	{/if}
-
+	</div>
 </div>
 
 <style>
 	.wrapped {
 		max-width: 460px;
 		margin: 0 auto;
+		display: flex;
+		flex-direction: column;
+		gap: 14px;
+	}
+
+	.side {
 		display: flex;
 		flex-direction: column;
 		gap: 14px;
@@ -273,5 +279,26 @@
 	.count {
 		font-weight: 600;
 		color: var(--muted);
+	}
+
+	/* On a wide screen the card fits the window height and the options sit beside it. */
+	@media (min-width: 900px) {
+		.wrapped {
+			max-width: none;
+			flex-direction: row;
+			justify-content: center;
+			align-items: flex-start;
+			gap: 32px;
+		}
+
+		.frame,
+		.panel {
+			flex: none;
+			width: clamp(280px, calc((100dvh - 280px) * 9 / 16), 460px);
+		}
+
+		.side {
+			width: 320px;
+		}
 	}
 </style>
