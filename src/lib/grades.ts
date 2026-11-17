@@ -149,11 +149,11 @@ export interface GwaResult {
 }
 
 /**
- * A special problem (190) is enlisted in parts. The early units get an S, and
- * the final grade then counts for all of them. Returns that grade for the S row, or null.
+ * A special problem (190) or thesis (200) is enlisted in parts. The early units get an S,
+ * and the final grade then counts for all of them. Returns that grade for the S row, or null.
  */
 export function carriedGrade(course: Course, courses: Course[]): number | null {
-	if (course.grade !== 'S' || !/ 190$/.test(normalizeCourseCode(course.code))) return null;
+	if (course.grade !== 'S' || !/ (190|200[A-Z]?)$/i.test(normalizeCourseCode(course.code))) return null;
 	const final = courses.map((c) => (c.code === course.code ? numericGrade(c.grade) : null)).find((g) => g != null && g <= 3);
 	return final ?? null;
 }
