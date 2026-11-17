@@ -174,7 +174,8 @@ export function calculateGWA(courses: Course[], excludedIds: Set<string> = new S
 
 	courses.forEach((course) => {
 		if (isPrefixExcluded(course.code)) return;
-		const units = course.units || 0;
+		// A 1-unit thesis sem extends the work and adds no credit.
+		const units = course.units === 1 && / 200[A-Z]?$/i.test(normalizeCourseCode(course.code)) ? 0 : course.units || 0;
 		const carried = carriedGrade(course, courses);
 		if (carried == null && NON_NUMERIC_GRADES.includes(course.grade)) {
 			if (course.grade === 'S') completedCourses.push({ code: course.code, title: course.title, units, grade: 'S' });

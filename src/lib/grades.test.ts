@@ -77,6 +77,8 @@ test('the final special problem grade counts for the first unit, which AMIS show
 	expect(carriedGrade(stat, [stat, row('1252', 2, '1.50')])).toBeNull();
 	const thesis = [{ ...row('1261', 3, 'S'), code: 'SOC 200' }, { ...row('1262', 3, '1.25'), code: 'SOC 200' }];
 	expect(calculateGWA(thesis).totalUnits).toBe(6);
+	const late = [thesis[0], { ...thesis[0], termKey: '1262' }, { ...row('1271', 1, 'S'), code: 'SOC 200' }, { ...row('1272', 1, '1.25'), code: 'SOC 200' }];
+	expect(calculateGWA(late).totalUnits).toBe(6);
 	expect(carriedGrade({ ...s, code: 'ABE 200a' }, [{ ...row('1252', 3, '2.00'), code: 'ABE 200a' }])).toBe(2);
 	expect(carriedGrade({ ...s, code: 'CMSC 199' }, [{ ...row('1252', 2, '1.50'), code: 'CMSC 199' }])).toBeNull();
 });
