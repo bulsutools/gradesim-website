@@ -1,3 +1,10 @@
+## [0.32.3](https://github.com/uplbtools/gradesim-website/compare/v0.32.2...v0.32.3) (2026-11-17)
+
+
+### Bug Fixes
+
+* **checklist:** a special topics course taken again fills another slot ([#354](https://github.com/uplbtools/gradesim-website/issues/354)) ([83df4b2](https://github.com/uplbtools/gradesim-website/commit/83df4b2754274b4da19e503a84e866431a378c87))
+
 ## [0.32.2](https://github.com/uplbtools/gradesim-website/compare/v0.32.1...v0.32.2) (2026-11-17)
 
 
