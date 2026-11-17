@@ -1,3 +1,18 @@
+# [0.33.0](https://github.com/uplbtools/gradesim-website/compare/v0.32.3...v0.33.0) (2026-11-17)
+
+
+### Bug Fixes
+
+* **checklist:** the HK rows are HK 11, then HK 12 three times ([#362](https://github.com/uplbtools/gradesim-website/issues/362)) ([7af2461](https://github.com/uplbtools/gradesim-website/commit/7af246139d94c285e3f1e6f12c749cfcb9b59be6))
+* **grades:** the sems sit right under the GWA ([#366](https://github.com/uplbtools/gradesim-website/issues/366)) ([fe7d376](https://github.com/uplbtools/gradesim-website/commit/fe7d37696ac3ea2dcb39d0e3c47ea90c0853584e))
+* **planner:** the compact map fits ten sems and redraws its arrows ([#370](https://github.com/uplbtools/gradesim-website/issues/370)) ([e23f82d](https://github.com/uplbtools/gradesim-website/commit/e23f82dddf85afab1416836ec28a6213353fbfda))
+
+
+### Features
+
+* **planner:** a compact map that shows more sems at once ([#364](https://github.com/uplbtools/gradesim-website/issues/364)) ([2b373c4](https://github.com/uplbtools/gradesim-website/commit/2b373c4bc6aef4e2a9ab5edc9ea52ec37635d789))
+* **wrapped:** on a wide screen the options sit beside the card ([#368](https://github.com/uplbtools/gradesim-website/issues/368)) ([5e8ee46](https://github.com/uplbtools/gradesim-website/commit/5e8ee4611cdefe4bb18669d2c715eef7554bc9aa))
+
 ## [0.32.3](https://github.com/uplbtools/gradesim-website/compare/v0.32.2...v0.32.3) (2026-11-17)
 
 
