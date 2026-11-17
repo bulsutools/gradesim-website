@@ -1,3 +1,10 @@
+# [0.32.0](https://github.com/uplbtools/gradesim-website/compare/v0.31.0...v0.32.0) (2026-11-17)
+
+
+### Features
+
+* **planner:** the Room TBA link carries the program ([#334](https://github.com/uplbtools/gradesim-website/issues/334)) ([6b4e08a](https://github.com/uplbtools/gradesim-website/commit/6b4e08a62f23ad75952329f1a71119b1f15d0cef))
+
 # [0.31.0](https://github.com/uplbtools/gradesim-website/compare/v0.30.0...v0.31.0) (2026-11-17)
 
 
