@@ -1,3 +1,11 @@
+## [0.33.1](https://github.com/uplbtools/gradesim-website/compare/v0.33.0...v0.33.1) (2026-11-17)
+
+
+### Bug Fixes
+
+* **planner:** the compact map shows whole course codes and fits longer plans ([#378](https://github.com/uplbtools/gradesim-website/issues/378)) ([d29be6e](https://github.com/uplbtools/gradesim-website/commit/d29be6ec6e0650b14395651ee5aff8659268552a))
+* **planner:** the compact map widens for eleven sems or more ([#380](https://github.com/uplbtools/gradesim-website/issues/380)) ([ef07b5c](https://github.com/uplbtools/gradesim-website/commit/ef07b5c4b45a4df568d87a3ae7932f29a003a2f4))
+
 # [0.33.0](https://github.com/uplbtools/gradesim-website/compare/v0.32.3...v0.33.0) (2026-11-17)
 
 
