@@ -56,6 +56,8 @@ export const blank = (): Saved => ({
 	checklistFixes: {}
 });
 
+const OLD_HK: Record<string, string> = { 'HK 1': 'HK 11', 'HK 2': 'HK 12', 'HK 3': 'HK 12 (2)', 'HK 4': 'HK 12 (3)' };
+
 function read(): Saved {
 	try {
 		const raw = localStorage.getItem(STORAGE_KEY);
@@ -63,6 +65,10 @@ function read(): Saved {
 		if (s && s.version === 1) {
 			const merged = { ...blank(), ...s };
 			if (!UPLB_PROGRAMS[merged.selectedProgram]) merged.selectedProgram = DEFAULT_PROGRAM;
+			// Marks saved on the old HK 1 to HK 4 slots move to HK 11 and HK 12.
+			for (const k of ['customCourseStatus', 'plannerPins', 'plannerPetitions'] as const) {
+				merged[k] = Object.fromEntries(Object.entries(merged[k] ?? {}).map(([c, v]) => [OLD_HK[c] ?? c, v]));
+			}
 			return merged;
 		}
 	} catch {

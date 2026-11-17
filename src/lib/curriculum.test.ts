@@ -53,8 +53,8 @@ test("generic requirement slots fill from completed courses", () => {
   expect(done.has("GE 1")).toBe(true);
   expect(done.has("GE 2")).toBe(true);
   expect(done.has("GE 3")).toBe(false);
-  expect(done.has("HK 1")).toBe(true);
-  expect(done.has("HK 2")).toBe(false);
+  expect(done.has("HK 11")).toBe(true);
+  expect(done.has("HK 12")).toBe(false);
   expect(done.has("NSTP 1")).toBe(true);
   expect(done.has("NSTP 2")).toBe(false);
 
