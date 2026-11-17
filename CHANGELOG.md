@@ -1,3 +1,10 @@
+## [0.32.1](https://github.com/uplbtools/gradesim-website/compare/v0.32.0...v0.32.1) (2026-11-17)
+
+
+### Bug Fixes
+
+* **grades:** the final CMSC 190 grade counts for all three units ([#342](https://github.com/uplbtools/gradesim-website/issues/342)) ([0c10a73](https://github.com/uplbtools/gradesim-website/commit/0c10a73a1528c22e6160533c29eee886b6a81447))
+
 # [0.32.0](https://github.com/uplbtools/gradesim-website/compare/v0.31.0...v0.32.0) (2026-11-17)
 
 
