@@ -6,7 +6,7 @@ import { UPLB_CATALOG } from './catalog.ts';
 import { getPlannerCourses, isNonGwaCourseCode, UPLB_PROGRAMS } from './curriculum.ts';
 import type { GradesData } from './grades.ts';
 import { compute, DEFAULT_PLANNER_OPTIONS, markConflict, modelFor } from './planner.ts';
-import { amisCourses, applyRemovals, fillRequirementSlots, gradeResult, gwaOutlook, plannerCourseList, remainingRequirements, removalKey, surplusElectives } from './requirements.ts';
+import { amisCourses, applyRemovals, fillRequirementSlots, gradeResult, gwaOutlook, plannerCourseList, remainingRequirements, removalKey, surplusElectives, unlistedCourses } from './requirements.ts';
 import { enrichCourses, scheduleEarliest, semAt } from './scheduler.ts';
 
 test('grade results', () => {
@@ -248,4 +248,12 @@ test('an either-or checklist line takes the other course, and a second one is an
 	const both = fillRequirementSlots(socio, [row('SOC 135'), row('SOC 130')]);
 	expect(both.get('SOC 130')?.code).toBe('SOC 130');
 	expect([...both.values()].some((r) => r.code === 'SOC 135')).toBe(true);
+});
+
+test('unlisted courses are the ones an open slot may have taken', () => {
+	const stat = plannerCourseList(UPLB_PROGRAMS.BSSTAT, null, UPLB_CATALOG);
+	const named = stat.find((c) => !c.genericRequirement && c.code.startsWith('STAT '))!.code;
+	const row = (code: string, result: 'passed' | 'failed' | 'nograde' = 'passed', units = 3) => ({ code, title: '', units, result });
+	const rows = [row(named), row('ECON 130'), row('ECON 130'), row('MGT 111', 'nograde'), row('ECON 131', 'failed'), row('HK 11', 'passed', 2), row('ARTS 1'), row('NSTP 1')];
+	expect(unlistedCourses(stat, rows)).toEqual(['ECON 130', 'MGT 111']);
 });
