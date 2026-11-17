@@ -1,3 +1,10 @@
+# [0.31.0](https://github.com/uplbtools/gradesim-website/compare/v0.30.0...v0.31.0) (2026-11-17)
+
+
+### Features
+
+* **data:** serve each program's course codes at /program-courses.json ([#330](https://github.com/uplbtools/gradesim-website/issues/330)) ([a7f9c1c](https://github.com/uplbtools/gradesim-website/commit/a7f9c1c04bb0a3a9739920cfe080a3bac434ad49))
+
 # [0.30.0](https://github.com/uplbtools/gradesim-website/compare/v0.29.2...v0.30.0) (2026-11-17)
 
 
