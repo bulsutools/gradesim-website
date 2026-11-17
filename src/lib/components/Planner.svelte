@@ -74,10 +74,11 @@
 	// The map needs a wide screen, so phones and narrow windows keep the sheet.
 	const VIEW_KEY = 'gradesim:planView';
 	let wide = $state(false);
-	let mode = $state<'map' | 'sheet'>('map');
+	let mode = $state<'map' | 'compact' | 'sheet'>('map');
 	onMount(() => {
 		try {
-			if (localStorage.getItem(VIEW_KEY) === 'sheet') mode = 'sheet';
+			const saved = localStorage.getItem(VIEW_KEY);
+			if (saved === 'sheet' || saved === 'compact') mode = saved;
 		} catch {
 			/* storage blocked */
 		}
@@ -87,7 +88,7 @@
 		mq.addEventListener('change', onChange);
 		return () => mq.removeEventListener('change', onChange);
 	});
-	function setMode(next: 'map' | 'sheet') {
+	function setMode(next: typeof mode) {
 		mode = next;
 		try {
 			localStorage.setItem(VIEW_KEY, next);
@@ -645,6 +646,7 @@
 			{#if wide}
 				<div class="pl-view" role="group" aria-label="Show the plan as">
 					<button type="button" aria-pressed={mode === 'map'} onclick={() => setMode('map')}>Map</button>
+					<button type="button" aria-pressed={mode === 'compact'} onclick={() => setMode('compact')}>Compact</button>
 					<button type="button" aria-pressed={mode === 'sheet'} onclick={() => setMode('sheet')}>Sheet</button>
 				</div>
 			{/if}
@@ -738,8 +740,8 @@
 			</section>
 		{/if}
 
-		{#if wide && mode === 'map' && view && layout}
-			<PlanMap {view} columns={layout.list} primary={layout.primary} {selected} onselect={select} {detail} />
+		{#if wide && mode !== 'sheet' && view && layout}
+			<PlanMap {view} columns={layout.list} primary={layout.primary} {selected} onselect={select} {detail} compact={mode === 'compact'} />
 		{:else}
 			<div class="pl-sheet" data-testid="planner-sheet" bind:this={sheetEl}>
 				{@render yearList(ahead)}

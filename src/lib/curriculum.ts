@@ -136,7 +136,7 @@ export function genericRequirementCourses(program: Partial<Slim> | null | undefi
 	const countExisting = (predicate: (c: ChecklistCourse) => boolean) => existing.filter(predicate).length;
 	const courses: ChecklistCourse[] = [];
 	const slots = (
-		kind: 'ge' | 'hk' | 'nstp',
+		kind: 'ge' | 'nstp',
 		have: number,
 		need: number,
 		code: string,
@@ -155,14 +155,19 @@ export function genericRequirementCourses(program: Partial<Slim> | null | undefi
 		'General Education',
 		3
 	);
-	slots(
-		'hk',
-		countExisting((c) => /^(HK|PE)\b/.test(normalizeCourseCode(c.code))),
-		program?.hkCoursesRequired == null ? 2 : program.hkCoursesRequired,
-		'HK',
-		'Human Kinetics',
-		2
-	);
+	// HK 11 comes first, then HK 12 once per activity.
+	const hkRequired = program?.hkCoursesRequired == null ? 2 : program.hkCoursesRequired;
+	for (let i = countExisting((c) => /^(HK|PE)\b/.test(normalizeCourseCode(c.code))); i < hkRequired; i++) {
+		courses.push({
+			code: i === 0 ? 'HK 11' : i === 1 ? 'HK 12' : `HK 12 (${i})`,
+			title: i === 0 ? 'Wellness and Basic Injury Management' : 'Human Kinetics Activities',
+			units: 2,
+			...defaultSlot(i),
+			prereqs: [],
+			genericRequirement: 'hk',
+			...(i === 0 && { allow: ['HK 11', 'PE 1'] })
+		});
+	}
 	slots(
 		'nstp',
 		countExisting((c) => normalizeCourseCode(c.code).startsWith('NSTP')),
