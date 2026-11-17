@@ -10,7 +10,7 @@
 />
 
 <div class="wrap">
-	<PageHead title="Privacy policy">Last updated November 17, 2026</PageHead>
+	<PageHead title="Privacy policy">Last updated November 18, 2026</PageHead>
 
 	<article class="prose">
 		<h2>What Elbi GradeSim is</h2>
@@ -59,6 +59,11 @@
 			When you choose Import from the extension, or open this page from the extension, it passes your grades directly to this page inside your
 			browser. After that, this page asks the extension for newer grades each time you open it. They don't travel over the
 			network.
+		</p>
+		<p>
+			The extension also reads which classes AMIS lists you as enlisted in, and keeps each one's course code, section and
+			type. See my classes in Room TBA opens Room TBA's planner in a new tab with those and your program code in the link.
+			It carries no grades.
 		</p>
 
 		<h2>Hosting</h2>
