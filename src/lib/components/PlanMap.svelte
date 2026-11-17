@@ -313,7 +313,19 @@
 
 	.compact .pm-col {
 		flex: 1 0 92px;
+		min-width: 0;
 		max-width: 148px;
+	}
+
+	.compact .pm-name {
+		gap: 4px;
+		overflow: hidden;
+		font-size: 0.9375rem;
+		white-space: nowrap;
+	}
+
+	.compact .pm-tag {
+		padding: 0 5px;
 	}
 
 	.compact .pm-sub {
