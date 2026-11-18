@@ -1,3 +1,15 @@
+# [0.35.0](https://github.com/uplbtools/gradesim-website/compare/v0.34.0...v0.35.0) (2026-11-18)
+
+
+### Bug Fixes
+
+* **planner:** corequisite chains stay together, with random reference tests ([#396](https://github.com/uplbtools/gradesim-website/issues/396)) ([2f2b183](https://github.com/uplbtools/gradesim-website/commit/2f2b183c8cc1af7f2efc1176d16016cbc3aa1547))
+
+
+### Features
+
+* **planner:** look ahead so a course only one sem offers isn't crowded out ([#398](https://github.com/uplbtools/gradesim-website/issues/398)) ([6735c8e](https://github.com/uplbtools/gradesim-website/commit/6735c8e6f22f3c1e8ddfde56501dd0e0b765fe06))
+
 # [0.34.0](https://github.com/uplbtools/gradesim-website/compare/v0.33.2...v0.34.0) (2026-11-17)
 
 
