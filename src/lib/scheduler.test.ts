@@ -284,4 +284,12 @@ const C = (code: string, units: number, sem?: string, prereqs: string[] = []): P
 		startSem: '1'
 	});
 	eq(scarce.assignedTerm.LAB, 0);
+	const ahead = scheduleEarliest({
+		courses: [Y('BASE', 1, '1s,2s'), { ...Y('NEXT', 2, '2s'), prereqs: ['BASE'] }, Y('LAB', 1, '2s')],
+		passed: new Set(),
+		unitCaps: one,
+		startSem: '2'
+	});
+	eq(ahead.assignedTerm.LAB, 0);
+	eq(ahead.gradTermIndex, 3);
 });
