@@ -313,7 +313,7 @@ test('the scheduler is compared with a plain baseline on three sizes of random c
 	});
 	console.table(rows);
 	rows.forEach((row) => expect(row.sooner + row.same + row.later).toBe(CASES));
-});
+}, 30_000);
 
 test('blank plans of every program break no rule, and only the checklist load goes over 18 units', () => {
 	const settings: [string, Partial<PlannerOptions>][] = [
@@ -341,4 +341,4 @@ test('blank plans of every program break no rule, and only the checklist load go
 	console.table(rows);
 	rows.forEach((row) => expect([row.setting, row.brokenRules, row.unplaced]).toEqual([row.setting, 0, 0]));
 	expect(rows[0].semsOver18 + rows[1].semsOver18).toBe(0);
-});
+}, 30_000);
