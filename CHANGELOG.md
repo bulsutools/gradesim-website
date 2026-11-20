@@ -1,3 +1,10 @@
+## [0.37.1](https://github.com/uplbtools/gradesim-website/compare/v0.37.0...v0.37.1) (2026-11-20)
+
+
+### Bug Fixes
+
+* **grades:** every special problem and thesis counts all its units ([#410](https://github.com/uplbtools/gradesim-website/issues/410)) ([054ef45](https://github.com/uplbtools/gradesim-website/commit/054ef45da4cb2a017d720cc9d04cee202b4d7846))
+
 # [0.37.0](https://github.com/uplbtools/gradesim-website/compare/v0.36.0...v0.37.0) (2026-11-20)
 
 
