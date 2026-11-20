@@ -10,7 +10,8 @@
 		primary,
 		selected,
 		onselect,
-		detail
+		detail,
+		compact = false
 	}: {
 		view: View;
 		columns: Column[];
@@ -18,10 +19,11 @@
 		selected: string | null;
 		onselect: (code: string) => void;
 		detail: Snippet<[string]>;
+		compact?: boolean;
 	} = $props();
 
-	const COL_GAP = 40;
-	const ROW_GAP = 14;
+	const COL_GAP = $derived(compact ? 10 : 40);
+	const ROW_GAP = $derived(compact ? 3 : 14);
 
 	let grid: HTMLDivElement | undefined = $state();
 	let scroller: HTMLDivElement | undefined = $state();
@@ -45,6 +47,10 @@
 	let size = $state({ w: 0, h: 0 });
 
 	const model = $derived(view.model);
+	// The details float on the side away from the picked course.
+	const sideLeft = $derived(
+		!!selected && columns.findIndex((col) => col.cards.some((k) => k === primary[selected])) >= columns.length / 2
+	);
 	const chain = $derived.by(() => {
 		if (!selected) return null;
 		const anc = model.graph.ancestors(selected);
@@ -58,6 +64,7 @@
 		const ch = chain;
 		const focus = selected;
 		void columns;
+		void compact;
 		if (!g) return;
 		const frame = requestAnimationFrame(() => {
 			const box = g.getBoundingClientRect();
@@ -87,21 +94,22 @@
 	});
 </script>
 
-<div class="pm-wrap" class:open={selected && model.byCode.has(selected)}>
+{#snippet tag(t: string)}{#if t === 'Now' || t === 'Next'}<span class="pm-tag">{t === 'Now' ? 'now' : 'next'}</span>{/if}{/snippet}
+<div class="pm-wrap" class:wide={compact} class:open={selected && model.byCode.has(selected)} style="--cols: {columns.length}">
 <div class="pm-scroll" bind:this={scroller}>
 	<svg class="pm-arrows" width={size.w} height={size.h} aria-hidden="true">
 		<defs>
-			<marker id="pm-head" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" /></marker>
+			<marker id="pm-head" viewBox="0 0 8 8" markerWidth={compact ? 6 : 8} markerHeight={compact ? 6 : 8} markerUnits={compact ? 'userSpaceOnUse' : undefined} refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" /></marker>
 		</defs>
 		{#each paths as p, k (k)}<path class="pm-edge {p.kind}" d={p.d} marker-end="url(#pm-head)" />{/each}
 	</svg>
-	<div class="pm-grid" data-testid="planner-map" bind:this={grid} style="--gap: {COL_GAP}px; --row: {ROW_GAP}px">
+	<div class="pm-grid" class:compact data-testid="planner-map" bind:this={grid} style="--gap: {COL_GAP}px; --row: {ROW_GAP}px">
 		{#each columns as column (column.abs)}
 			{@const f = columnFacts(column, view)}
 			<section class="pm-col" class:past={f.isPast && f.tag !== 'Now'} data-start={column.abs === view.startAbs ? '' : undefined} aria-label="{f.name} {f.sub}">
 				<header>
-					<span class="pm-name">{f.name}{#if f.tag === 'Now' || f.tag === 'Next'}<span class="pm-tag">{f.tag === 'Now' ? 'now' : 'next'}</span>{/if}</span>
-					<span class="pm-sub">{f.sub}<span class:warn={f.loud}>{f.off ? 'Off' : unitsText(f.units)}</span></span>
+					<span class="pm-name">{f.name}{#if !compact}{@render tag(f.tag)}{/if}</span>
+					<span class="pm-sub">{f.sub}<span class="pm-units"><span class:warn={f.loud}>{f.off ? 'Off' : unitsText(f.units)}</span>{#if compact}{@render tag(f.tag)}{/if}</span></span>
 				</header>
 				{#each column.cards as card (card)}
 					{@const c = model.byCode.get(card.code)!}
@@ -117,10 +125,11 @@
 						data-code={card.code}
 						data-primary={isPrimary ? '1' : undefined}
 						aria-pressed={selected === card.code && isPrimary}
+						title={compact ? c.title : undefined}
 						aria-label="{c.code}, {c.title}. {facts.statusLabel}{facts.crit ? ', take on time' : ''}. {unitsText(Number(c.units) || 0)}{card.grade ? `, grade ${card.grade}` : ''}."
 						onclick={() => onselect(card.code)}
 					>
-						<span class="pm-top"><Icon name={STATUS[card.status][0] as IconName} size={14} /><span class="pm-code">{c.code}</span>{#if card.grade}<span class="pm-grade">{card.grade}</span>{/if}</span>
+						<span class="pm-top"><Icon name={STATUS[card.status][0] as IconName} size={compact ? 12 : 14} /><span class="pm-code">{c.code}</span>{#if card.grade}<span class="pm-grade">{card.grade}</span>{/if}</span>
 						<span class="pm-title">{c.title}</span>
 					</button>
 				{/each}
@@ -128,7 +137,7 @@
 		{/each}
 	</div>
 </div>
-{#if selected && model.byCode.has(selected)}<div class="pm-side">{@render detail(selected)}</div>{/if}
+{#if selected && model.byCode.has(selected)}<div class="pm-side" class:left={sideLeft}>{@render detail(selected)}</div>{/if}
 </div>
 
 <style>
@@ -140,15 +149,30 @@
 		margin-bottom: 16px;
 	}
 
-	.pm-wrap.open {
-		grid-template-columns: minmax(0, 1fr) 340px;
+	/* Widens past the page for 98px columns, up to the window's width. */
+	.pm-wrap.wide {
+		margin-inline: min(0px, max((100% - 100vw) / 2 + 32px, (100% - var(--cols) * 108px + 10px) / 2));
+	}
+
+	.pm-scroll,
+	.pm-side {
+		grid-area: 1 / 1;
 	}
 
 	.pm-side {
+		justify-self: end;
+		width: 340px;
+		z-index: 2;
 		position: sticky;
 		top: 76px;
 		max-height: calc(100vh - 92px);
 		overflow-y: auto;
+		border-radius: var(--radius-md);
+		box-shadow: var(--shadow-lg);
+	}
+
+	.pm-side.left {
+		justify-self: start;
 	}
 
 	.pm-side :global(.pl-detail) {
@@ -301,6 +325,64 @@
 
 	.pm-card.focus {
 		box-shadow: 0 0 0 3px var(--brand);
+	}
+
+	.compact.pm-grid {
+		width: auto;
+	}
+
+	.compact .pm-col {
+		flex: 1 0 88px;
+		min-width: 0;
+		max-width: 148px;
+	}
+
+	.compact header {
+		gap: 0;
+		padding-bottom: 4px;
+		line-height: 1.25;
+	}
+
+	.compact .pm-name {
+		font-size: 0.9375rem;
+		white-space: nowrap;
+	}
+
+	.compact .pm-tag {
+		padding: 0 5px;
+	}
+
+	.compact .pm-sub {
+		flex-direction: column;
+		gap: 0;
+	}
+
+	.pm-units {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 4px;
+	}
+
+	.compact .pm-card {
+		justify-content: center;
+		height: 26px;
+		padding: 2px 5px;
+	}
+
+	.compact .pm-top {
+		gap: 4px;
+	}
+
+	.compact .pm-code {
+		overflow: hidden;
+		font-size: 0.8125rem;
+		text-overflow: ellipsis;
+	}
+
+	.compact .pm-grade,
+	.compact .pm-title {
+		display: none;
 	}
 
 	.pm-edge {

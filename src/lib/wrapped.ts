@@ -27,6 +27,8 @@ export interface Panel {
 	progress?: number;
 	/** One more line on the card. */
 	extra?: string;
+	/** Units in the sem, on the sem card. */
+	units?: number;
 }
 
 interface Sem {
@@ -114,26 +116,13 @@ function thisSemPanel(courses: Course[], d: Data, pick?: number): Panel | null {
 		: g <= 2.5 ? 'Steady sem'
 		: g <= 3.0 ? 'Survived the sem'
 		: 'Bawi next sem';
-	let top: { code: string; grade: number } | null = null;
-	taken.forEach((c) => {
-		const v = numericGrade(c.grade);
-		if (v != null && !isPrefixExcluded(c.code) && (!top || v < top.grade)) top = { code: c.code, grade: v };
-	});
-	const prev = n > 1 ? d.semList[n - 2].gwa : null;
-	const extra =
-		prev == null ? 'My first sem in Elbi'
-		: d.bestSem === sem ? 'My best sem'
-		: prev - g >= 0.01 ? `Up ${(prev - g).toFixed(2)} from last sem`
-		: `${taken.filter((c) => !isPrefixExcluded(c.code)).reduce((u, c) => u + (c.units || 0), 0)} units done this sem`;
-	const t = top as { code: string; grade: number } | null;
 	return {
 		emoji: '🍓',
 		title,
 		value: g.toFixed(4),
 		subtitle: sem.name,
 		message: '',
-		highlights: t ? [{ label: '🏆 Best course', name: t.code, detail: t.grade.toFixed(2) }] : [],
-		extra,
+		units: taken.filter((c) => !isPrefixExcluded(c.code)).reduce((u, c) => u + (c.units || 0), 0),
 		frame: 'sem'
 	};
 }
@@ -247,10 +236,6 @@ export interface IdCard {
 	show?: GwaShow;
 	/** When the grades were read from AMIS, unedited. Empty when they weren't. */
 	amis?: string;
-	/** Show the sem card's top grade. */
-	top?: boolean;
-	/** The student's own line on the sem card. */
-	line?: string;
 	/** Leave a spot for a photo the student adds in Instagram or Facebook. */
 	photo?: boolean;
 }
@@ -400,7 +385,7 @@ export async function drawCard(canvas: HTMLCanvasElement, p: Panel, id: IdCard):
 
 const CREDIT = 'Design by Reann Vargas and Danica Manadong';
 /** Reann Vargas's pages. Each tin, tray and note is tilted, so text is drawn turned with it. */
-const FRAMES = { sem: 'tin-note', id: 'tin-id', tin: 'tin', note: 'tin', tray: 'tray', open: 'tin-red' };
+const FRAMES = { sem: 'tin-stats', id: 'tin-id', tin: 'tin', note: 'tin', tray: 'tray', open: 'tin-red' };
 const INK = '#1c1917';
 const SOFT = '#4a3f3c';
 const RED = '#7b1113';
@@ -455,7 +440,7 @@ async function drawFrame(ctx: CanvasRenderingContext2D, p: Panel, font: string, 
 			ctx.fill();
 		});
 	const photo = new Image();
-	if (id.photo && p.frame !== 'id') {
+	if (id.photo && p.frame !== 'id' && p.frame !== 'sem') {
 		photo.src = '/frames/photo.jpg';
 		await photo.decode();
 	}
@@ -503,59 +488,35 @@ async function drawFrame(ctx: CanvasRenderingContext2D, p: Panel, font: string, 
 	const cw = ctx.measureText(CREDIT).width + 48;
 	ctx.fillStyle = 'rgba(28,25,23,0.82)';
 	ctx.beginPath();
-	ctx.roundRect(540 - cw / 2, 1526, cw, 50, 25);
+	const cy = p.frame === 'sem' ? 1646 : 1526;
+	ctx.roundRect(540 - cw / 2, cy, cw, 50, 25);
 	ctx.fill();
 	ctx.fillStyle = '#ffffff';
-	ctx.fillText(CREDIT, 540, 1561);
+	ctx.fillText(CREDIT, 540, cy + 35);
 
 	if (id.photo && (p.frame === 'tin' || p.frame === 'note')) polaroid(722, 455, 220, 0.12);
 	if (id.photo && (p.frame === 'tray' || p.frame === 'open')) polaroid(842, 420, 230, 0.1);
 
+	// Reann's SEM STATS page. The strips and boxes are tilted, so each value turns with its line.
 	if (p.frame === 'sem') {
-		const top = id.top === false ? undefined : p.highlights?.[0];
 		const [term, ay] = (p.subtitle ?? '').split(' AY ');
-		if (id.photo)
-			at(340, 743, -0.174, () => {
-				ctx.fillStyle = '#ffffff';
-				ctx.fillRect(-216, -216, 432, 432);
-				ctx.drawImage(photo, 0, 10, 280, 280, -194, -194, 388, 388);
-			});
-		at(745, 715, -0.192, () => {
-			text('My', 600, 36, SOFT, -66, 280);
-			text(term, 800, 56, INK, 0, 290);
-			if (ay) text(`AY ${ay}`, 700, 38, RED, 56, 290);
+		ctx.textAlign = 'left';
+		(
+			[
+				[id.name, 540, 615, 300],
+				[ay ? `${term} ${ay}` : term, 552, 716, 290],
+				[id.course, 602, 796, 250]
+			] as const
+		).forEach(([t, x, y, max]) => at(x, y, -0.1, () => text(t, 700, 40, INK, 0, max)));
+		ctx.textAlign = 'center';
+		at(414, 1274, -0.19, () => text(String(p.units ?? ''), 800, 40, INK, 0, 220));
+		at(515, 1404, -0.19, () => text(p.title, 800, 40, /Scholar$/.test(p.title) ? RED : INK, 0, 250));
+		at(817, 1245, -0.1, () => {
+			if (!g) return star(0, 0, 80, 0);
+			text('GWA', 700, 32, SOFT, -48);
+			text(g, 800, 72, RED, 30, 210);
 		});
-		// The stack is centered on the tray, a 787 by 462 cloth.
-		at(590, 1219, -0.195, () => {
-			const scholar = /Scholar$/.test(p.title);
-			const rows: [string, number, number, string][] = [[p.title, 800, scholar ? 58 : g ? 66 : 90, scholar ? '#fff4e0' : INK]];
-			if (g) rows.push([g, 800, 150, RED]);
-			if (id.line || p.extra) rows.push([id.line || p.extra!, 700, 42, INK]);
-			if (top) rows.push([`Best course ${top.name}, ${top.detail}`, 600, 36, SOFT]);
-			rows.push([url, 600, 30, SOFT]);
-			const tall = rows.map(([, , size], k) => (k === 0 && scholar ? 88 : size * 0.74));
-			let y = -(tall.reduce((a, b) => a + b, 0) + 20 * (rows.length - 1)) / 2;
-			rows.forEach(([t, weight, size, color], k) => {
-				if (k === 0 && scholar) {
-					ctx.font = `800 58px ${font}`;
-					const w = ctx.measureText(t).width + 120;
-					ctx.fillStyle = RED;
-					ctx.beginPath();
-					ctx.moveTo(-w / 2 - 40, y);
-					ctx.lineTo(w / 2 + 40, y);
-					ctx.lineTo(w / 2 + 10, y + 44);
-					ctx.lineTo(w / 2 + 40, y + 88);
-					ctx.lineTo(-w / 2 - 40, y + 88);
-					ctx.lineTo(-w / 2 - 10, y + 44);
-					ctx.closePath();
-					ctx.fill();
-					text(t, weight, size, color, y + 64, w - 60);
-					star(-w / 2 + 6, y - 4, 40, -0.3);
-					star(w / 2 - 6, y, 32, 0.25);
-				} else text(t, weight, size, color, y + tall[k], 680);
-				y += tall[k] + 20;
-			});
-		});
+		at(612, 1575, -0.193, () => text(url, 700, 32, INK, 11, 260));
 		return;
 	}
 

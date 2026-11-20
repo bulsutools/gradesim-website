@@ -503,8 +503,8 @@ export interface ScheduleResult {
 	warnings: string[];
 }
 
-/** Greedy topological scheduler. */
-export function scheduleEarliest(opts: ScheduleOptions): ScheduleResult {
+/** One greedy pass over the terms. In the terms of semBound, courses the other sem doesn't offer go first. */
+function schedulePass(opts: ScheduleOptions, semBound: Set<number>): ScheduleResult & { crowded: number[] } {
 	const courses = plannableCourses(opts.courses);
 	const passed = new Set(Array.from(opts.passed || []).map(normCode));
 	const notBefore = opts.notBefore || {};
@@ -585,6 +585,7 @@ export function scheduleEarliest(opts: ScheduleOptions): ScheduleResult {
 	const conditional: Record<string, boolean> = {};
 	const plan: ScheduleResult['plan'] = [];
 	let spare: string[] = [];
+	const crowded: number[] = [];
 	let emptyStreak = 0;
 
 	for (let t = 0; t < maxTerms && remaining.size > 0; t++) {
@@ -625,8 +626,8 @@ export function scheduleEarliest(opts: ScheduleOptions): ScheduleResult {
 		const later = (code: string) => (offeredIn(byCode.get(code)!, otherSem) ? 1 : 0);
 		candidates.sort((a, b) => {
 			const diff = chainLength(b, new Set()) - chainLength(a, new Set());
-			if (diff !== 0) return diff;
-			return later(a) - later(b) || slotOf(a) - slotOf(b) || unitsOf(b) - unitsOf(a);
+			if (semBound.has(t)) return later(a) - later(b) || diff || slotOf(a) - slotOf(b) || unitsOf(b) - unitsOf(a);
+			return diff || later(a) - later(b) || slotOf(a) - slotOf(b) || unitsOf(b) - unitsOf(a);
 		});
 
 		const placed: string[] = [];
@@ -635,11 +636,11 @@ export function scheduleEarliest(opts: ScheduleOptions): ScheduleResult {
 			if (assignedTerm[code] !== undefined) return;
 			const kind = extraKind(code);
 			if (kind && placed.some((c) => extraKind(c) === kind)) return;
-			// Place a course together with its unplaced coreqs, or not at all.
-			const bundle = [
-				code,
-				...coOf.get(code)!.filter((c) => remaining.has(c) && assignedTerm[c] === undefined)
-			];
+			// Place a course together with its unplaced coreqs and theirs, or not at all.
+			const bundle = [code];
+			for (const b of bundle)
+				for (const c of coOf.get(b)!)
+					if (remaining.has(c) && assignedTerm[c] === undefined && !bundle.includes(c)) bundle.push(c);
 			const bundleUnits = bundle.reduce((s, c) => s + unitsOf(c), 0);
 			if (units + bundleUnits > cap) return;
 			units += bundleUnits;
@@ -650,6 +651,7 @@ export function scheduleEarliest(opts: ScheduleOptions): ScheduleResult {
 				if (!offeredIn(byCode.get(c)!, sem)) conditional[c] = true;
 			});
 		});
+		if (placed.some(later) && candidates.some((c) => assignedTerm[c] === undefined && !later(c))) crowded.push(t);
 		if (t === 0) {
 			const kinds = new Set(placed.map(extraKind));
 			spare = candidates.filter((c) => assignedTerm[c] === undefined && !(extraKind(c) && kinds.has(extraKind(c))));
@@ -677,7 +679,26 @@ export function scheduleEarliest(opts: ScheduleOptions): ScheduleResult {
 	}
 
 	const gradTermIndex = plan.length > 0 ? plan[plan.length - 1].termIndex : -1;
-	return { plan, gradTermIndex, assignedTerm, conditional, unschedulable, spare, warnings };
+	return { plan, gradTermIndex, assignedTerm, conditional, unschedulable, spare, warnings, crowded };
+}
+
+/**
+ * Greedy topological scheduler with a look ahead. A term that left out a course only its sem offers
+ * takes such courses first when that ends the plan sooner.
+ */
+export function scheduleEarliest(opts: ScheduleOptions): ScheduleResult {
+	const end = (r: ScheduleResult) => r.unschedulable.length * (opts.maxTerms || 30) + r.gradTermIndex;
+	const semBound = new Set<number>();
+	let best = schedulePass(opts, semBound);
+	for (let t = 0; t < best.gradTermIndex; t++) {
+		if (!best.crowded.includes(t)) continue;
+		const trial = schedulePass(opts, new Set(semBound).add(t));
+		if (end(trial) < end(best)) {
+			best = trial;
+			semBound.add(t);
+		}
+	}
+	return best;
 }
 
 /* ---------- Curricular Analytics metrics ---------- */

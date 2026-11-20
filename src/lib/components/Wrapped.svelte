@@ -21,15 +21,13 @@
 		if (s.source !== 'extension' || s.handEdited || Object.keys(s.removals).length || !s.fetchedAt) return '';
 		return new Date(s.fetchedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 	});
-	let top = $state(true);
-	let line = $state('');
 	const ordinal = ['1st', '2nd', '3rd'];
 	const id = $derived.by(() => {
 		const years = new Set(app.courses.map((c) => c.ay)).size;
-		return { name: name.trim(), year: `${ordinal[years - 1] ?? `${years}th`} year`, course: app.program.code, show: p.frame === 'sem' ? semShow : show, top, line: line.trim(), amis, photo };
+		return { name: name.trim(), year: `${ordinal[years - 1] ?? `${years}th`} year`, course: app.program.code, show: p.frame === 'sem' ? semShow : show, amis, photo };
 	});
 	const alt = $derived(
-		[p.title, (p.frame === 'id' || p.frame === 'sem') && id.show !== 'none' ? `GWA ${shownGwa(p.value, id.show!)}` : '', amis && `from AMIS on ${amis}`, ...(p.frame === 'sem' && !top ? [] : (p.highlights ?? [])).map((h) => `${bare(h.label)} ${h.name}, ${h.detail}`), 'drawn on a picnic blanket']
+		[p.title, (p.frame === 'id' || p.frame === 'sem') && id.show !== 'none' ? `GWA ${shownGwa(p.value, id.show!)}` : '', amis && `from AMIS on ${amis}`, p.frame === 'sem' && `${p.units} units`, ...(p.highlights ?? []).map((h) => `${bare(h.label)} ${h.name}, ${h.detail}`), 'drawn on a picnic blanket']
 			.filter(Boolean)
 			.join(', ')
 	);
@@ -72,7 +70,13 @@
 </script>
 
 <div class="wrapped">
-
+	{#snippet gwaPick(value: GwaShow, set: (v: GwaShow) => void)}
+		<label class="field">GWA on the card
+			<select class="input" {value} onchange={(e) => set(e.currentTarget.value as GwaShow)}>
+				{#each shows as k (k)}<option value={k}>{k === 'none' ? 'Tier only' : shownGwa(p.value, k)}</option>{/each}
+			</select>
+		</label>
+	{/snippet}
 	{#if p.frame}
 		{#if preview}
 			<img class="frame" src={preview} {alt} />
@@ -100,6 +104,7 @@
 			<p class="message">{p.message}</p>
 		</article>
 	{/if}
+	<div class="side">
 	<div class="nav">
 		<button class="btn btn-secondary" type="button" onclick={() => i--} disabled={i === 0}><Icon name="left" />Previous</button>
 		<span class="count" aria-hidden="true">{i + 1} of {panels.length}</span>
@@ -107,13 +112,6 @@
 	</div>
 	<button class="btn btn-primary save" type="button" onclick={save} disabled={busy}><Icon name="download" />{busy ? 'Making your image' : 'Save this card'}</button>
 
-	{#snippet gwaPick(value: GwaShow, set: (v: GwaShow) => void)}
-		<label class="field">GWA on the card
-			<select class="input" {value} onchange={(e) => set(e.currentTarget.value as GwaShow)}>
-				{#each shows as k (k)}<option value={k}>{k === 'none' ? 'Tier only' : shownGwa(p.value, k)}</option>{/each}
-			</select>
-		</label>
-	{/snippet}
 	{#if p.frame}
 		<div class="opts">
 			{#if p.frame === 'sem'}
@@ -122,14 +120,13 @@
 						{#each sems as s, k (s.name)}<option value={k}>{s.name}</option>{/each}
 					</select>
 				</label>
+				<label class="field">Your name on the card<input class="input" bind:value={name} maxlength="40" autocomplete="name" /></label>
 				{@render gwaPick(semShow, (v) => (semShow = v))}
-				<label class="field">Your own line<input class="input" bind:value={line} maxlength="40" placeholder={p.extra} /></label>
-				<label class="check"><input type="checkbox" bind:checked={top} />Show my best course</label>
 			{:else if p.frame === 'id'}
 				<label class="field">Your name on the card<input class="input" bind:value={name} maxlength="40" autocomplete="name" /></label>
 				{@render gwaPick(show, (v) => (show = v))}
 			{/if}
-			{#if p.frame === 'id'}
+			{#if p.frame === 'id' || p.frame === 'sem'}
 				<p class="muted">Add your photo over the picture in Instagram or Facebook.</p>
 			{:else if p.frame}
 				<div>
@@ -142,13 +139,19 @@
 			{/if}
 		</div>
 	{/if}
-
+	</div>
 </div>
 
 <style>
 	.wrapped {
 		max-width: 460px;
 		margin: 0 auto;
+		display: flex;
+		flex-direction: column;
+		gap: 14px;
+	}
+
+	.side {
 		display: flex;
 		flex-direction: column;
 		gap: 14px;
@@ -273,5 +276,26 @@
 	.count {
 		font-weight: 600;
 		color: var(--muted);
+	}
+
+	/* On a wide screen the card fits the window height and the options sit beside it. */
+	@media (min-width: 900px) {
+		.wrapped {
+			max-width: none;
+			flex-direction: row;
+			justify-content: center;
+			align-items: flex-start;
+			gap: 32px;
+		}
+
+		.frame,
+		.panel {
+			flex: none;
+			width: clamp(280px, calc((100dvh - 280px) * 9 / 16), 460px);
+		}
+
+		.side {
+			width: 320px;
+		}
 	}
 </style>

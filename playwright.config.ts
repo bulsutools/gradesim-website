@@ -6,6 +6,7 @@ export default defineConfig({
 	use: { baseURL: 'http://localhost:4173', serviceWorkers: 'block' },
 	projects: [
 		{ name: 'desktop', use: { ...devices['Desktop Chrome'] }, grepInvert: /@phone/ },
-		{ name: 'phone', use: { ...devices['Pixel 7'] }, grep: /@phone/ }
+		{ name: 'phone', use: { ...devices['Pixel 7'] }, grep: /@phone/ },
+		{ name: 'iphone', use: { ...devices['iPhone 14'] }, grep: /@phone|phone bookmark|copied link|plan link/ }
 	]
 });

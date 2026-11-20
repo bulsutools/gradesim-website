@@ -13,6 +13,16 @@ test.beforeEach(async ({ page }, info) => {
 	if (!info.title.includes('@map')) await page.addInitScript(() => localStorage.setItem('gradesim:planView', 'sheet'));
 });
 
+// WebKit has no clipboard permission to grant, so the link tests read what the page copies.
+async function copied(page: Page, button: string) {
+	await page.evaluate(() => {
+		navigator.clipboard.writeText = async (text) => void ((window as unknown as { copied: string }).copied = text);
+	});
+	await page.getByRole('button', { name: button }).click();
+	await expect(page.getByText('The link is copied.')).toBeVisible();
+	return page.evaluate(() => (window as unknown as { copied: string }).copied);
+}
+
 async function importFixture(page: Page) {
 	await open(page);
 	await page.getByTestId('file-input').first().setInputFiles({ name: 'backup.json', mimeType: 'application/json', buffer: backup });
@@ -301,13 +311,10 @@ test('the phone bookmark opens GradeSim with the AMIS grades in the link', async
 	expect(page.url()).toMatch(/#grades$/);
 });
 
-test('a copied link opens the grades in another browser, and asks before it replaces any', async ({ page, context, browser }) => {
-	await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+test('a copied link opens the grades in another browser, and asks before it replaces any', async ({ page, browser }) => {
 	await importFixture(page);
 	await page.getByText('Back up or clear your data').click();
-	await page.getByRole('button', { name: 'Copy a link to my grades' }).click();
-	await expect(page.getByText('The link is copied.')).toBeVisible();
-	const link = await page.evaluate(() => navigator.clipboard.readText());
+	const link = await copied(page, 'Copy a link to my grades');
 
 	const other = await (await browser.newContext()).newPage();
 	await other.goto(link);
@@ -324,17 +331,14 @@ test('a copied link opens the grades in another browser, and asks before it repl
 	await expect(page.getByTestId('gwa')).toHaveText('1.9773');
 });
 
-test('a plan link opens the same plan for someone else, with no grades and nothing saved', async ({ page, context, browser }) => {
-	await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+test('a plan link opens the same plan for someone else, with no grades and nothing saved', async ({ page, browser }) => {
 	await importFixture(page);
 	await page.getByRole('tab', { name: 'Planner' }).click();
 	const grad = await page.getByTestId('grad-term').locator('span').first().textContent();
 	await page.getByText('Plan settings').click();
-	await page.getByRole('button', { name: 'Copy a link to this plan' }).click();
-	await expect(page.getByText('The link is copied.')).toBeVisible();
-	const link = await page.evaluate(() => navigator.clipboard.readText());
+	const link = await copied(page, 'Copy a link to this plan');
 
-	const other = await (await browser.newContext()).newPage();
+	const other = await (await browser.newContext({ viewport: { width: 1280, height: 800 } })).newPage();
 	await other.goto(link);
 	await expect(other.getByText('plan someone shared with you')).toBeVisible();
 	await expect(other.getByTestId('grad-term').locator('span').first()).toHaveText(grad!);
@@ -357,9 +361,7 @@ test('every Wrapped card is drawn on the picnic art, this sem comes first with i
 	await importFixture(page);
 	await page.getByRole('tab', { name: 'Wrapped' }).click();
 	const card = page.getByRole('img', { name: /drawn on a picnic blanket/ });
-	await expect(card).toHaveAccessibleName(/^Solid sem, GWA 1\.8750, Best course KAS 1, 1\.00, drawn/);
-	await page.getByLabel('Show my best course').uncheck();
-	await expect(card).toHaveAccessibleName(/^Solid sem, GWA 1\.8750, drawn/);
+	await expect(card).toHaveAccessibleName(/^Solid sem, GWA 1\.8750, 12 units, drawn/);
 	await page.getByLabel('GWA on the card').selectOption({ label: '1.8x' });
 	await expect(card).toHaveAccessibleName(/GWA 1\.8x,/);
 	await page.getByLabel('GWA on the card').selectOption({ label: '1.8750' });
@@ -412,6 +414,12 @@ test('@map a wide screen shows the plan as a map with arrows, and remembers the 
 	await map.locator('.pm-card[data-primary][data-code="CMSC 123"]').click();
 	await expect(page.getByRole('complementary', { name: 'Details for CMSC 123' })).toBeVisible();
 	await expect(page.locator('.pm-edge.chain').first()).toBeAttached();
+	await page.getByRole('button', { name: 'Compact' }).click();
+	await expect(map.locator('.pm-card[data-primary][data-code="CMSC 123"] .pm-title')).toBeHidden();
+	await expect(page.locator('.pm-edge.chain').first()).toBeAttached();
+	await map.locator('.pm-card[data-primary][data-code="CMSC 123"]').click();
+	await expect.poll(() => page.locator('.pm-scroll').evaluate((e) => e.scrollWidth <= e.clientWidth)).toBe(true);
+	expect(await map.locator('.pm-card[data-primary][data-code="CMSC 123"] .pm-code').evaluate((e) => e.scrollWidth <= e.clientWidth)).toBe(true);
 	await page.getByRole('button', { name: 'Sheet' }).click();
 	await expect(page.getByTestId('planner-sheet')).toBeVisible();
 	await page.reload();
