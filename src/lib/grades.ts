@@ -149,11 +149,11 @@ export interface GwaResult {
 }
 
 /**
- * CMSC 190 is taken twice. The first unit gets an S, and the final grade then
- * counts for all three units. Returns that grade for the S row, or null.
+ * A special problem (190) or thesis (200) is enlisted in parts. The early units get an S,
+ * and the final grade then counts for all of them. Returns that grade for the S row, or null.
  */
 export function carriedGrade(course: Course, courses: Course[]): number | null {
-	if (course.grade !== 'S' || normalizeCourseCode(course.code) !== 'CMSC 190') return null;
+	if (course.grade !== 'S' || !/ (190|200[A-Z]?)$/i.test(normalizeCourseCode(course.code))) return null;
 	const final = courses.map((c) => (c.code === course.code ? numericGrade(c.grade) : null)).find((g) => g != null && g <= 3);
 	return final ?? null;
 }
@@ -174,7 +174,8 @@ export function calculateGWA(courses: Course[], excludedIds: Set<string> = new S
 
 	courses.forEach((course) => {
 		if (isPrefixExcluded(course.code)) return;
-		const units = course.units || 0;
+		// A 1-unit thesis sem extends the work and adds no credit.
+		const units = course.units === 1 && / 200[A-Z]?$/i.test(normalizeCourseCode(course.code)) ? 0 : course.units || 0;
 		const carried = carriedGrade(course, courses);
 		if (carried == null && NON_NUMERIC_GRADES.includes(course.grade)) {
 			if (course.grade === 'S') completedCourses.push({ code: course.code, title: course.title, units, grade: 'S' });
