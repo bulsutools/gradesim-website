@@ -21,15 +21,13 @@
 		if (s.source !== 'extension' || s.handEdited || Object.keys(s.removals).length || !s.fetchedAt) return '';
 		return new Date(s.fetchedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 	});
-	let top = $state(true);
-	let line = $state('');
 	const ordinal = ['1st', '2nd', '3rd'];
 	const id = $derived.by(() => {
 		const years = new Set(app.courses.map((c) => c.ay)).size;
-		return { name: name.trim(), year: `${ordinal[years - 1] ?? `${years}th`} year`, course: app.program.code, show: p.frame === 'sem' ? semShow : show, top, line: line.trim(), amis, photo };
+		return { name: name.trim(), year: `${ordinal[years - 1] ?? `${years}th`} year`, course: app.program.code, show: p.frame === 'sem' ? semShow : show, amis, photo };
 	});
 	const alt = $derived(
-		[p.title, (p.frame === 'id' || p.frame === 'sem') && id.show !== 'none' ? `GWA ${shownGwa(p.value, id.show!)}` : '', amis && `from AMIS on ${amis}`, ...(p.frame === 'sem' && !top ? [] : (p.highlights ?? [])).map((h) => `${bare(h.label)} ${h.name}, ${h.detail}`), 'drawn on a picnic blanket']
+		[p.title, (p.frame === 'id' || p.frame === 'sem') && id.show !== 'none' ? `GWA ${shownGwa(p.value, id.show!)}` : '', amis && `from AMIS on ${amis}`, p.frame === 'sem' && `${p.units} units`, ...(p.highlights ?? []).map((h) => `${bare(h.label)} ${h.name}, ${h.detail}`), 'drawn on a picnic blanket']
 			.filter(Boolean)
 			.join(', ')
 	);
@@ -122,14 +120,13 @@
 						{#each sems as s, k (s.name)}<option value={k}>{s.name}</option>{/each}
 					</select>
 				</label>
+				<label class="field">Your name on the card<input class="input" bind:value={name} maxlength="40" autocomplete="name" /></label>
 				{@render gwaPick(semShow, (v) => (semShow = v))}
-				<label class="field">Your own line<input class="input" bind:value={line} maxlength="40" placeholder={p.extra} /></label>
-				<label class="check"><input type="checkbox" bind:checked={top} />Show my best course</label>
 			{:else if p.frame === 'id'}
 				<label class="field">Your name on the card<input class="input" bind:value={name} maxlength="40" autocomplete="name" /></label>
 				{@render gwaPick(show, (v) => (show = v))}
 			{/if}
-			{#if p.frame === 'id'}
+			{#if p.frame === 'id' || p.frame === 'sem'}
 				<p class="muted">Add your photo over the picture in Instagram or Facebook.</p>
 			{:else if p.frame}
 				<div>
