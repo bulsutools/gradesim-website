@@ -1,3 +1,10 @@
+# [0.37.0](https://github.com/uplbtools/gradesim-website/compare/v0.36.0...v0.37.0) (2026-11-20)
+
+
+### Features
+
+* **planner:** course details float over the map ([#406](https://github.com/uplbtools/gradesim-website/issues/406)) ([e1989e6](https://github.com/uplbtools/gradesim-website/commit/e1989e6e4c90f943d70c406b953bee834baecdaa))
+
 # [0.36.0](https://github.com/uplbtools/gradesim-website/compare/v0.35.0...v0.36.0) (2026-11-20)
 
 
