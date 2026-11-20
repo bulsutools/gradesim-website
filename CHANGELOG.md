@@ -1,3 +1,10 @@
+# [0.39.0](https://github.com/uplbtools/gradesim-website/compare/v0.38.2...v0.39.0) (2026-11-20)
+
+
+### Features
+
+* **planner:** the course check is a form in the planner ([#430](https://github.com/uplbtools/gradesim-website/issues/430)) ([2b1be85](https://github.com/uplbtools/gradesim-website/commit/2b1be85837a822eda3b921080d3604e5d6ef919e))
+
 ## [0.38.2](https://github.com/uplbtools/gradesim-website/compare/v0.38.1...v0.38.2) (2026-11-20)
 
 
