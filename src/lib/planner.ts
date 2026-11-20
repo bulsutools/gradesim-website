@@ -468,6 +468,14 @@ export function optionEffect(v: View, patch: Partial<PlannerOptions>, now = new 
 	return `you'd graduate ${absLabel(w.startAbs + b)}, which is ${b < a ? 'earlier' : 'later'}.`;
 }
 
+/** What midyear classes would do for a delayed plan, or '' when they wouldn't move graduation earlier. */
+export function midyearHint(v: View, now = new Date()): string {
+	const s = summary(v);
+	if (v.input.plannerOptions.midyear || !s.deltaText || s.deltaOk) return '';
+	const text = optionEffect(v, { midyear: true }, now);
+	return text.endsWith('earlier.') ? `With midyear classes, ${text}` : '';
+}
+
 /* ---------- Cards and columns ---------- */
 
 export function offeringLabel(c: PlanCourse): string {

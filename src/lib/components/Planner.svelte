@@ -19,6 +19,7 @@
 		markConflict,
 		modelFor,
 		offeringLabel,
+		midyearHint,
 		optionEffect,
 		planTrack,
 		restricted,
@@ -61,6 +62,7 @@
 	const view = $derived(model ? compute(model, input) : null);
 	const layout = $derived(view ? buildColumns(view) : null);
 	const sum = $derived(view ? summary(view) : null);
+	const midHint = $derived(view ? midyearHint(view) : '');
 	let selected = $state<string | null>(null);
 	let status = $state('');
 	let notice = $state<{ text: string; bad: boolean } | null>(null);
@@ -625,6 +627,7 @@
 				{#if sum.deltaText}<span class="pl-delta" class:ok={sum.deltaOk}><Icon name={sum.deltaOk ? 'check' : 'alert'} />{sum.deltaText}</span>{/if}
 			</h2>
 			<p class="pl-sub">{sum.sub}</p>
+			{#if midHint}<p class="pl-sub">{midHint} <button type="button" class="textbtn" onclick={() => setOptions({ midyear: true })}>Take classes in midyear</button></p>{/if}
 			{#if sum.costs.length || view.conflicts.length}
 				<ul class="pl-costs">
 					{#each sum.costs as c (c.code)}
