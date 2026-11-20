@@ -47,6 +47,10 @@
 	let size = $state({ w: 0, h: 0 });
 
 	const model = $derived(view.model);
+	// The details float on the side away from the picked course.
+	const sideLeft = $derived(
+		!!selected && columns.findIndex((col) => col.cards.some((k) => k === primary[selected])) >= columns.length / 2
+	);
 	const chain = $derived.by(() => {
 		if (!selected) return null;
 		const anc = model.graph.ancestors(selected);
@@ -133,7 +137,7 @@
 		{/each}
 	</div>
 </div>
-{#if selected && model.byCode.has(selected)}<div class="pm-side">{@render detail(selected)}</div>{/if}
+{#if selected && model.byCode.has(selected)}<div class="pm-side" class:left={sideLeft}>{@render detail(selected)}</div>{/if}
 </div>
 
 <style>
@@ -145,20 +149,30 @@
 		margin-bottom: 16px;
 	}
 
-	.pm-wrap.open {
-		grid-template-columns: minmax(0, 1fr) 340px;
-	}
-
 	/* Widens past the page for 98px columns, up to the window's width. */
 	.pm-wrap.wide {
 		margin-inline: min(0px, max((100% - 100vw) / 2 + 32px, (100% - var(--cols) * 108px + 10px) / 2));
 	}
 
+	.pm-scroll,
 	.pm-side {
+		grid-area: 1 / 1;
+	}
+
+	.pm-side {
+		justify-self: end;
+		width: 340px;
+		z-index: 2;
 		position: sticky;
 		top: 76px;
 		max-height: calc(100vh - 92px);
 		overflow-y: auto;
+		border-radius: var(--radius-md);
+		box-shadow: var(--shadow-lg);
+	}
+
+	.pm-side.left {
+		justify-self: start;
 	}
 
 	.pm-side :global(.pl-detail) {
