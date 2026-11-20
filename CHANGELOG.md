@@ -1,3 +1,10 @@
+## [0.38.1](https://github.com/uplbtools/gradesim-website/compare/v0.38.0...v0.38.1) (2026-11-20)
+
+
+### Bug Fixes
+
+* **planner:** a Human Settlements Planning major, EE 198 after second year, and the course check link on three more programs ([#422](https://github.com/uplbtools/gradesim-website/issues/422)) ([86f2062](https://github.com/uplbtools/gradesim-website/commit/86f2062c28b93164784c7948e8ab886d3a06140e))
+
 # [0.38.0](https://github.com/uplbtools/gradesim-website/compare/v0.37.1...v0.38.0) (2026-11-20)
 
 
