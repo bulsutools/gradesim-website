@@ -1,3 +1,10 @@
+# [0.36.0](https://github.com/uplbtools/gradesim-website/compare/v0.35.0...v0.36.0) (2026-11-20)
+
+
+### Features
+
+* **wrapped:** the sem card uses Reann's new SEM STATS tin ([#402](https://github.com/uplbtools/gradesim-website/issues/402)) ([82585e5](https://github.com/uplbtools/gradesim-website/commit/82585e5279b235829b57b21d10da7af43eedee9f))
+
 # [0.35.0](https://github.com/uplbtools/gradesim-website/compare/v0.34.0...v0.35.0) (2026-11-18)
 
 
