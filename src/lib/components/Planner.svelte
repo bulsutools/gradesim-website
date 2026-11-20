@@ -39,6 +39,7 @@
 	import { amisCourses, unlistedCourses } from '#lib/requirements.ts';
 	import { preGroups, type PlanCourse } from '#lib/scheduler.ts';
 	import { buildPlannerSheets, writeXlsx } from '#lib/xlsx.ts';
+	import CourseCheck from './CourseCheck.svelte';
 	import FixForm from './FixForm.svelte';
 	import Icon, { type IconName } from './Icon.svelte';
 	import Notice from './Notice.svelte';
@@ -69,9 +70,12 @@
 	let menu: HTMLDetailsElement | undefined = $state();
 	let planInput: HTMLInputElement | undefined = $state();
 	let sheetEl: HTMLDivElement | undefined = $state();
-	// The course whose fix form is open, or 'add' for a missing course.
+	// The course whose fix form is open, 'add' for a missing course, or 'check' for the course check.
 	let fixing = $state<string | null>(null);
 	let acted = $state<string | null>(null);
+	// The program whose course check this browser already sent.
+	const CHECK_KEY = 'gradesim:courseCheck';
+	let checked = $state('');
 
 	// The map needs a wide screen, so phones and narrow windows keep the sheet.
 	const VIEW_KEY = 'gradesim:planView';
@@ -81,6 +85,7 @@
 		try {
 			const saved = localStorage.getItem(VIEW_KEY);
 			if (saved === 'sheet' || saved === 'compact') mode = saved;
+			checked = localStorage.getItem(CHECK_KEY) ?? '';
 		} catch {
 			/* storage blocked */
 		}
@@ -230,21 +235,28 @@
 		BSDC: 'BS Development Communication (BSDC)',
 		ASDC: 'Associate of Science in Development Communication (ASDC)'
 	};
-	// The check form, filled in with what GradeSim already knows.
-	const confirmForm = $derived.by(() => {
-		const label = CONFIRM_FORM[app.program.code];
-		if (!label || !model) return null;
+	// What the course check form sends without asking.
+	const check = $derived.by(() => {
+		const program = CONFIRM_FORM[app.program.code];
+		if (!program || !model) return null;
 		const years = new Set(app.courses.map((c) => c.ay)).size;
-		const fields = {
-			'entry.1230122317': label,
-			'entry.1556773492': app.program.specializations?.[app.specialization ?? '']?.name,
-			'entry.323619521': ['', '2nd year', '3rd year', '4th year', '5th year'][years - 1],
-			'entry.1973018930': unlistedCourses(model.courses, amisCourses(app.grades), app.s.substitutions).join(', ')
+		return {
+			program,
+			major: app.program.specializations?.[app.specialization ?? '']?.name,
+			year: ['', '2nd year', '3rd year', '4th year', '5th year'][years - 1] || undefined,
+			taken: unlistedCourses(model.courses, amisCourses(app.grades), app.s.substitutions)
 		};
-		const filled = Object.entries(fields).filter((f): f is [string, string] => !!f[1]);
-		return `https://docs.google.com/forms/d/e/1FAIpQLSf3AEKf6DTpsXfq3WZAc3RXGPaX2V3qLydheP21g_gMHtUcXQ/viewform?${new URLSearchParams([['usp', 'pp_url'], ...filled])}`;
 	});
-	const confirmUrl = (c: PlanCourse) => (c.code.startsWith('MAJ ') && !c.allow && !c.options ? confirmForm : null);
+	const canCheck = (c: PlanCourse) => !!check && c.code.startsWith('MAJ ') && !c.allow && !c.options;
+	function checkSent() {
+		checked = app.program.code;
+		fixing = null;
+		try {
+			localStorage.setItem(CHECK_KEY, checked);
+		} catch {
+			/* storage blocked */
+		}
+	}
 	const pickSpec = (c: PlanCourse) =>
 		!app.specialization && Object.values(app.program.specializations ?? {}).some((s) => s.pools?.some((p) => p.slots.includes(c.code)));
 	const subOptions = $derived(substituteOptions(app.program, app.gwa.completedCourses, app.s.substitutions));
@@ -484,12 +496,26 @@
 				</details>
 			{:else if !c.genericRequirement}
 				{@render fixLine(c, fix)}
-			{:else if pickSpec(c)}
-				<p class="pl-muted">Pick your specialization in Plan settings to see which courses count here. {#if confirmUrl(c)}If yours isn't there, <a href={confirmUrl(c)} target="_blank" rel="external noopener">tell us what you took</a>.{/if}</p>
-			{:else if confirmUrl(c)}
-				<p class="pl-muted">GradeSim doesn't know yet which courses count here. <a href={confirmUrl(c)} target="_blank" rel="external noopener">Tell us what you took</a>{#if app.hasData}. The form opens filled in from your grades, so check it and submit.{/if}</p>
+			{:else if pickSpec(c) || canCheck(c)}
+				{@render checkLine(c)}
 			{/if}
 		</aside>
+	{/if}
+{/snippet}
+
+{#snippet checkLine(c: PlanCourse)}
+	{#if fixing === 'check' && check}
+		<CourseCheck {...check} onsent={checkSent} oncancel={() => (fixing = null)} />
+	{:else}
+		<p class="pl-muted">
+			{pickSpec(c) ? 'Pick your specialization in Plan settings to see which courses count here.' : "GradeSim doesn't know yet which courses count here."}
+			{#if canCheck(c) && checked === app.program.code}You told us what you took. Thank you!{/if}
+		</p>
+		{#if canCheck(c)}
+			<p class="pl-fixline">
+				<button type="button" class="textbtn" onclick={() => (fixing = 'check')}>{checked === app.program.code ? 'Send more' : 'Tell us what you took'}</button>
+			</p>
+		{/if}
 	{/if}
 {/snippet}
 

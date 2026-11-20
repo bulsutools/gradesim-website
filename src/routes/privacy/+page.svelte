@@ -10,7 +10,7 @@
 />
 
 <div class="wrap">
-	<PageHead title="Privacy policy">Last updated November 18, 2026</PageHead>
+	<PageHead title="Privacy policy">Last updated November 21, 2026</PageHead>
 
 	<article class="prose">
 		<h2>What Elbi GradeSim is</h2>
@@ -40,9 +40,10 @@
 			review them. Your grades, GWA and plan are never part of it.
 		</p>
 		<p>
-			When GradeSim doesn't know which courses count for a major slot, Tell us what you took opens a Google Form. The
-			link fills in your program, your specialization, your year level and the codes of courses you took that aren't
-			on your checklist. It carries no grades, and nothing is sent unless you submit the form.
+			When GradeSim doesn't know which courses count for a major slot, Tell us what you took opens a short form in the
+			planner. When you press Send, the app sends your program, your specialization, your year level, the course codes
+			you picked, how you know they count and your contact if you gave one to a Google Form that UPLB Tools owns. It
+			carries no grades, and nothing is sent unless you press Send.
 		</p>
 		<p>
 			Plan sections in Room TBA opens Room TBA's planner in a new tab. The link carries the course codes for that sem and
