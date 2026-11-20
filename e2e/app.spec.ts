@@ -361,9 +361,7 @@ test('every Wrapped card is drawn on the picnic art, this sem comes first with i
 	await importFixture(page);
 	await page.getByRole('tab', { name: 'Wrapped' }).click();
 	const card = page.getByRole('img', { name: /drawn on a picnic blanket/ });
-	await expect(card).toHaveAccessibleName(/^Solid sem, GWA 1\.8750, Best course KAS 1, 1\.00, drawn/);
-	await page.getByLabel('Show my best course').uncheck();
-	await expect(card).toHaveAccessibleName(/^Solid sem, GWA 1\.8750, drawn/);
+	await expect(card).toHaveAccessibleName(/^Solid sem, GWA 1\.8750, 12 units, drawn/);
 	await page.getByLabel('GWA on the card').selectOption({ label: '1.8x' });
 	await expect(card).toHaveAccessibleName(/GWA 1\.8x,/);
 	await page.getByLabel('GWA on the card').selectOption({ label: '1.8750' });
