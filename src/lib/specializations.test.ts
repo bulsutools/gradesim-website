@@ -97,6 +97,13 @@ test('a pool with one course per slot plans the real courses with prerequisites'
 	expect(abme.find((c) => c.code === 'ABME 176')?.pre).toEqual([['ABME 174']]);
 });
 
+test('BS Human Ecology has a Human Settlements Planning major, and EE 198 follows second year', () => {
+	const hsp = plannerCourseList(UPLB_PROGRAMS.BSHE, null, UPLB_CATALOG, 'hsp');
+	expect(hsp.some((c) => /^MAJ/.test(c.code))).toBe(false);
+	expect(hsp.find((c) => c.code === 'CERP 166')?.pre).toEqual([['CERP 165']]);
+	expect(UPLB_PROGRAMS.BSEE.majorCourses.find((c) => c.code === 'EE 198')?.year).toBe(2);
+});
+
 test('a BS AAE student who skipped AGRI 21 still has it left and planned', () => {
 	const aae = UPLB_PROGRAMS.BSAAE;
 	const courses = plannerCourseList(aae, 'thesis', UPLB_CATALOG);
