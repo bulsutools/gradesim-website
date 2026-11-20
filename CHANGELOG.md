@@ -1,3 +1,10 @@
+# [0.38.0](https://github.com/uplbtools/gradesim-website/compare/v0.37.1...v0.38.0) (2026-11-20)
+
+
+### Features
+
+* **planner:** a delayed plan says when midyear classes would help ([#418](https://github.com/uplbtools/gradesim-website/issues/418)) ([2f80aa7](https://github.com/uplbtools/gradesim-website/commit/2f80aa7ca9f548eff73a93737ba273ef6e078e54))
+
 ## [0.37.1](https://github.com/uplbtools/gradesim-website/compare/v0.37.0...v0.37.1) (2026-11-20)
 
 
