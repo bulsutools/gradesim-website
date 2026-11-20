@@ -1,3 +1,10 @@
+## [0.38.2](https://github.com/uplbtools/gradesim-website/compare/v0.38.1...v0.38.2) (2026-11-20)
+
+
+### Bug Fixes
+
+* **checklist:** BS Econ's Language Electives take only a foreign language ([#426](https://github.com/uplbtools/gradesim-website/issues/426)) ([6ab33de](https://github.com/uplbtools/gradesim-website/commit/6ab33dea4c21aa46e06d1ef14bbb602b5a8d3f67))
+
 ## [0.38.1](https://github.com/uplbtools/gradesim-website/compare/v0.38.0...v0.38.1) (2026-11-20)
 
 
