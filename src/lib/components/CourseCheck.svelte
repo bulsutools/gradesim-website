@@ -65,7 +65,7 @@
 	{/if}
 	<label class="field">
 		{taken.length ? 'Other courses (optional)' : 'Course codes'}
-		<input class="input" bind:value={others} placeholder="STAT 164, STAT 166" />
+		<input class="input" bind:value={others} placeholder={taken.length ? undefined : 'STAT 164, STAT 166'} />
 	</label>
 	{#if !year}
 		<label class="field">
