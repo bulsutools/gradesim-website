@@ -223,7 +223,6 @@
 		BSABIO: 'BS Agricultural Biotechnology (BSABIO)',
 		BSBIO: 'BS Biology (BSBIO)',
 		BSCHE: 'BS Chemical Engineering (BSCHE)',
-		BSECON: 'BS Economics (BSECON)',
 		BSEE: 'BS Electrical Engineering (BSEE)',
 		BSFOR: 'BS Forestry (BSFOR)',
 		BSHE: 'BS Human Ecology (BSHE)',
