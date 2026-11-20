@@ -63,7 +63,7 @@ test('GWA skips NSTP, HK, PE and non-numeric grades and weights by units', () =>
 	expect(g.completedCourses.some((c) => c.code === 'STS 1')).toBe(false);
 });
 
-test('the final CMSC 190 grade counts for the first unit, which AMIS shows as S', () => {
+test('the final special problem grade counts for the first unit, which AMIS shows as S', () => {
 	const row = (termKey: string, units: number, grade: string) => ({ id: termKey, termKey, termLabel: termKey, ay: '', code: 'CMSC 190', title: 'Special Problem', units, grade });
 	const s = row('1251', 1, 'S');
 	expect(carriedGrade(s, [s])).toBeNull();
@@ -72,6 +72,14 @@ test('the final CMSC 190 grade counts for the first unit, which AMIS shows as S'
 	expect(g.passedUnits).toBe(3);
 	expect(g.gwa).toBeCloseTo(1.5, 10);
 	expect(calculateGWA([row('1252', 2, '5.00'), s]).totalUnits).toBe(2);
+	const stat = { ...s, code: 'STAT 190' };
+	expect(carriedGrade(stat, [stat, { ...row('1252', 2, '2.00'), code: 'STAT 190' }])).toBe(2);
+	expect(carriedGrade(stat, [stat, row('1252', 2, '1.50')])).toBeNull();
+	const thesis = [{ ...row('1261', 3, 'S'), code: 'SOC 200' }, { ...row('1262', 3, '1.25'), code: 'SOC 200' }];
+	expect(calculateGWA(thesis).totalUnits).toBe(6);
+	const late = [thesis[0], { ...thesis[0], termKey: '1262' }, { ...row('1271', 1, 'S'), code: 'SOC 200' }, { ...row('1272', 1, '1.25'), code: 'SOC 200' }];
+	expect(calculateGWA(late).totalUnits).toBe(6);
+	expect(carriedGrade({ ...s, code: 'ABE 200a' }, [{ ...row('1252', 3, '2.00'), code: 'ABE 200a' }])).toBe(2);
 	expect(carriedGrade({ ...s, code: 'CMSC 199' }, [{ ...row('1252', 2, '1.50'), code: 'CMSC 199' }])).toBeNull();
 });
 
