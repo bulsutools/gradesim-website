@@ -195,18 +195,41 @@ test('curricula deep link picks the program in the planner', async ({ page }) =>
 	await expect(page).toHaveURL(/\/#planner$/);
 });
 
-test('an open major slot links to the course check form', async ({ page }) => {
+test('an open major slot takes the course check in the planner', async ({ page }) => {
+	let sent = '';
+	await page.route('https://docs.google.com/**', (route) => {
+		sent = route.request().postData() ?? '';
+		return route.fulfill({ status: 200, body: '' });
+	});
 	await open(page, '/?program=BSSTAT#planner');
 	await page.getByTestId('planner-sheet').locator('.pl-row[data-primary][data-code="MAJ 1"]').click();
-	await expect(page.getByRole('link', { name: 'Tell us what you took' })).toHaveAttribute('href', /entry\.1230122317=BS\+Statistics\+%28BSSTAT%29$/);
+	await page.getByRole('button', { name: 'Tell us what you took' }).click();
+	await page.getByLabel('Course codes').fill('STAT 164');
+	await page.getByLabel('Year level').selectOption('3rd year');
+	await page.getByLabel('How do you know they count?').selectOption("It's my best guess");
+	await page.getByRole('button', { name: 'Send', exact: true }).click();
+	await expect(page.getByText('You told us what you took. Thank you!')).toBeVisible();
+	expect(sent).toContain('entry.1230122317=BS+Statistics+%28BSSTAT%29');
+	expect(sent).toContain('entry.323619521=3rd+year&entry.1973018930=STAT+164');
 });
 
-test('the course check form opens filled in from the grades', async ({ page }) => {
+test('the course check lists courses from the grades', async ({ page }) => {
+	let sent = '';
+	await page.route('https://docs.google.com/**', (route) => {
+		sent = route.request().postData() ?? '';
+		return route.fulfill({ status: 200, body: '' });
+	});
 	await importFixture(page);
 	await open(page, '/?program=BSSTAT#planner');
 	await page.getByTestId('planner-sheet').locator('details').evaluateAll((els) => els.forEach((e) => ((e as HTMLDetailsElement).open = true)));
 	await page.getByTestId('planner-sheet').locator('.pl-row[data-primary][data-code="MAJ 3"]').click();
-	await expect(page.getByRole('link', { name: 'Tell us what you took' })).toHaveAttribute('href', /entry\.323619521=2nd\+year&entry\.1973018930=CMSC\+56%2C\+CMSC\+57$/);
+	await page.getByRole('button', { name: 'Tell us what you took' }).click();
+	await expect(page.getByLabel('CMSC 56', { exact: true })).toBeVisible();
+	await page.getByLabel('CMSC 57', { exact: true }).check();
+	await page.getByLabel('How do you know they count?').selectOption('My checklist lists them');
+	await page.getByRole('button', { name: 'Send', exact: true }).click();
+	await expect(page.getByText('You told us what you took. Thank you!')).toBeVisible();
+	expect(sent).toContain('entry.323619521=2nd+year&entry.1973018930=CMSC+57&');
 });
 
 test('content pages and old trailing-slash URLs', async ({ page, request }) => {
