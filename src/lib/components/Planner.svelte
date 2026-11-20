@@ -220,15 +220,16 @@
 		BSAGRI: 'BS Agriculture (BSAGRI)',
 		BSACHEM: 'BS Agricultural Chemistry (BSACHEM)',
 		BSABE: 'BS Agricultural and Biosystems Engineering (BSABE)',
-		BSAAE: 'BS Agricultural and Applied Economics (BSAAE)',
+		BSABIO: 'BS Agricultural Biotechnology (BSABIO)',
+		BSBIO: 'BS Biology (BSBIO)',
 		BSCHE: 'BS Chemical Engineering (BSCHE)',
 		BSECON: 'BS Economics (BSECON)',
 		BSEE: 'BS Electrical Engineering (BSEE)',
+		BSFOR: 'BS Forestry (BSFOR)',
 		BSHE: 'BS Human Ecology (BSHE)',
 		BSSTAT: 'BS Statistics (BSSTAT)',
 		BSDC: 'BS Development Communication (BSDC)',
-		ASDC: 'Associate of Science in Development Communication (ASDC)',
-		AASS: 'Associate in Arts in Sports Studies (AASS)'
+		ASDC: 'Associate of Science in Development Communication (ASDC)'
 	};
 	// The check form, filled in with what GradeSim already knows.
 	const confirmForm = $derived.by(() => {
