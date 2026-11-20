@@ -13,6 +13,7 @@ import {
 	columnFacts,
 	compute,
 	DEFAULT_PLANNER_OPTIONS,
+	midyearHint,
 	modelFor,
 	optionEffect,
 	whatIfMessage,
@@ -177,4 +178,12 @@ test('the sem that has started is Now, and a course marked as taken now sits in 
 	const col = buildColumns(v).list.find((c) => c.abs === v.startAbs)!;
 	expect(col.cards.find((c) => c.code === code)?.status).toBe('inprogress');
 	deps.forEach((d) => expect(v.now.result.assignedTerm[d]).not.toBe(0));
+});
+
+test('a delayed plan says when midyear classes would move graduation earlier', () => {
+	const m = modelFor('BSCE')!;
+	const plan = (over: Partial<PlannerInput> = {}) => compute(m, { ...input(), gradesData: null, whatif: { code: 'PHYS 71', mode: 'fail' }, ...over }, now);
+	expect(midyearHint(plan(), now)).toMatch(/^With midyear classes, you'd graduate .+, which is earlier\.$/);
+	expect(midyearHint(plan({ plannerOptions: { ...DEFAULT_PLANNER_OPTIONS, midyear: true } }), now)).toBe('');
+	expect(midyearHint(plan({ whatif: null }), now)).toBe('');
 });
