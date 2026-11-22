@@ -282,7 +282,7 @@ export function lightSems(courses: Course[]) {
 
 /**
  * Scholastic standing after the latest regular sem, from the share of academic
- * units with final grades below 3 (UPLB Academic Catalogue, Scholastic Standing).
+ * units with final grades below 3 (BulSU Student Handbook, Scholastic Standing).
  * Midyears, a 4.00 still open for removal, and INC, DRP and W are left out.
  */
 export function standingFor(courses: Course[]) {

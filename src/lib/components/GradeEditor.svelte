@@ -1,10 +1,10 @@
 <script lang="ts" module>
-	import { courseOptions } from '#lib/grades.ts';
-	import { UPLB_PROGRAMS } from '#lib/curriculum.ts';
+	import type { CourseOption } from '#lib/grades.ts';
 
-	// Built once: every catalog and checklist course, for the code autocomplete.
-	let options: ReturnType<typeof courseOptions> | null = null;
-	const getOptions = () => (options ??= courseOptions(Object.values(UPLB_PROGRAMS)));
+	// Course-code suggestions stay empty until a BulSU catalog exists;
+	// the bundled catalog is upstream UPLB data and would suggest wrong codes.
+	const options: CourseOption[] = [];
+	const getOptions = () => options;
 </script>
 
 <script lang="ts">

@@ -135,8 +135,8 @@ function gwaPanel(d: Data): Panel {
 		if (g <= 1.45) return ['⭐', 'Magna tingz', 'Consistent high grades. Ikaw yung type na maayos notes tapos hinahanap ka ng groupmates pag may exam.'];
 		if (g <= 1.75) return ['🎯', 'Cum laude szn', 'Solid GWA. Di ka nag-slack off pero di rin naman nagpaka-robot. Balance talaga.'];
 		if (g <= 2.0) return ['🌟', 'Honor roll', 'Pasok sa honors. May hirap-hirap pero kinaya mo naman. Proud of u.'];
-		if (g <= 2.5) return ['💪', 'Pasang-alam', 'Passing is passing. May mga sem na mabigat talaga, wag ka maguilty. Nasa UP ka pa rin.'];
-		if (g <= 3.0) return ['🎮', 'Survival mode', 'Nandito ka pa, that counts. Minsan ganyan talaga UP. Basta graduate, panalo.'];
+		if (g <= 2.5) return ['💪', 'Pasang-alam', 'Passing is passing. May mga sem na mabigat talaga, wag ka maguilty. Nasa BulSU ka pa rin.'];
+		if (g <= 3.0) return ['🎮', 'Survival mode', 'Nandito ka pa, that counts. Minsan ganyan talaga sa BulSU. Basta graduate, panalo.'];
 		return ['🌱', 'Comeback arc', "Mababa man ngayon, pwede pa 'yan i-improve. Marami nang naka-recover from this. Kaya mo 'yan."];
 	};
 	const [emoji, title, message] = pick();

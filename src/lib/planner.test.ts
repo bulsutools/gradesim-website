@@ -143,7 +143,7 @@ test('Room TBA link converts ALAB SMS term ids both ways', () => {
 test('Room TBA link packs one row per course with no section or type', () => {
 	const url = new URL(roomTbaLink(2026 * 3, ['CMSC 190', 'CMSC 190 (2)', 'STAT 101'], 'BSCS'));
 	const plan = JSON.parse(atob(url.searchParams.get('plan')!.replace(/-/g, '+').replace(/_/g, '/')));
-	expect(url.origin + url.pathname).toBe('https://room-tba.uplb.tools/planner');
+	expect(url.origin + url.pathname).toBe('https://room-tba.bulsu.tools/planner');
 	expect(url.searchParams.get('program')).toBe('BSCS');
 	expect(plan).toEqual({ v: 1, t: 1261, s: [['CMSC 190', '', ''], ['STAT 101', '', '']] });
 });

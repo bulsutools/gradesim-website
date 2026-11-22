@@ -80,7 +80,7 @@ export function amisCourses(gradesData: GradesData | null | undefined): Row[] {
  * course per slot. Returns a map of slot code to row.
  * One course per 3-unit elective slot, so a 6-unit elective fills one.
  */
-// UPLB accepts these in place of the checklist course without a petition.
+// Kept from upstream curriculum data; inactive while no BulSU programs are loaded.
 const BUILT_IN_EQUIVALENTS: [string, string][] = [['KAS 1', 'HIST 1']];
 
 export function fillRequirementSlots<R extends Row>(

@@ -2,14 +2,14 @@
 
 **Human developers:** start with [README.md](README.md).
 
-Org-wide agent defaults: see [room-tba/AGENTS.md](https://github.com/uplbtools/room-tba/blob/main/AGENTS.md). This file tailors that playbook to **gradesim-website**.
+Org-wide agent defaults: see [room-tba/AGENTS.md](https://github.com/bulsutools/room-tba/blob/main/AGENTS.md). This file tailors that playbook to **gradesim-website**.
 
 ## Doc map
 
 | When | Read |
 | --- | --- |
 | Local dev | [README.md](README.md) |
-| Extension source (separate repo, not yet published) | [uplbtools/gradesim](https://github.com/uplbtools/gradesim) (upstream) |
+| Extension source (separate repo, not yet published) | [bulsutools/alab-gradesim](https://github.com/bulsutools/alab-gradesim) (upstream: [uplbtools/gradesim](https://github.com/uplbtools/gradesim)) |
 | PR hygiene | [.github/pull_request_template.md](.github/pull_request_template.md) |
 | Deploy | [.github/workflows/deploy-cloudflare.yml](.github/workflows/deploy-cloudflare.yml) |
 
@@ -58,7 +58,7 @@ src/service-worker/       # offline precache
 static/                   # fonts, icons, og.jpg, _headers
 ```
 
-The app is the main thing; the other pages sit around it. The MV3 extension isn't published for BulSU yet; the upstream one lives in [gradesim](https://github.com/uplbtools/gradesim).
+The app is the main thing; the other pages sit around it. The MV3 extension isn't published for BulSU yet; the BulSU one is [alab-gradesim](https://github.com/bulsutools/alab-gradesim).
 
 ## UI guardrails
 

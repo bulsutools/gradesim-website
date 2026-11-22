@@ -57,7 +57,7 @@ export const absOfAmisTerm = (id: number) => (Math.floor(id / 10) + 1900) * 3 + 
 export function roomTbaLink(abs: number, codes: string[], program: string): string {
 	const s = [...new Set(codes.map((c) => c.replace(/ \(\d+\)$/, '')))].map((c) => [c, '', '']);
 	const plan = btoa(JSON.stringify({ v: 1, t: amisTerm(abs), s }));
-	return `https://room-tba.uplb.tools/planner?plan=${plan.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')}&program=${program}`;
+	return `https://room-tba.bulsu.tools/planner?plan=${plan.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')}&program=${program}`;
 }
 
 /** Courses a student takes in one sem, from Room TBA. A sem that has started marks them in progress, and a later one moves them there. */
