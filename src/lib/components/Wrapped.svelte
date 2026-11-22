@@ -24,10 +24,10 @@
 	const ordinal = ['1st', '2nd', '3rd'];
 	const id = $derived.by(() => {
 		const years = new Set(app.courses.map((c) => c.ay)).size;
-		return { name: name.trim(), year: `${ordinal[years - 1] ?? `${years}th`} year`, course: app.program.code, show: p.frame === 'sem' ? semShow : show, amis, photo };
+		return { name: name.trim(), year: `${ordinal[years - 1] ?? `${years}th`} year`, course: app.program.available ? app.program.code : '', show: p.frame === 'sem' ? semShow : show, amis, photo };
 	});
 	const alt = $derived(
-		[p.title, (p.frame === 'id' || p.frame === 'sem') && id.show !== 'none' ? `GWA ${shownGwa(p.value, id.show!)}` : '', amis && `from AMIS on ${amis}`, p.frame === 'sem' && `${p.units} units`, ...(p.highlights ?? []).map((h) => `${bare(h.label)} ${h.name}, ${h.detail}`), 'drawn on a picnic blanket']
+		[p.title, (p.frame === 'id' || p.frame === 'sem') && id.show !== 'none' ? `GWA ${shownGwa(p.value, id.show!)}` : '', amis && `from ALAB SMS on ${amis}`, p.frame === 'sem' && `${p.units} units`, ...(p.highlights ?? []).map((h) => `${bare(h.label)} ${h.name}, ${h.detail}`), 'drawn on a picnic blanket']
 			.filter(Boolean)
 			.join(', ')
 	);
@@ -59,9 +59,9 @@
 		try {
 			const blob = await card();
 			if (!blob) return;
-			const name = `elbi-gradesim-wrapped-${i + 1}.png`;
+			const name = `alab-gradesim-wrapped-${i + 1}.png`;
 			const file = new File([blob], name, { type: 'image/png' });
-			if (navigator.canShare?.({ files: [file] })) await navigator.share({ files: [file], text: 'Make yours on gradesim.uplb.tools' }).catch(() => {});
+			if (navigator.canShare?.({ files: [file] })) await navigator.share({ files: [file], text: 'Make yours on gradesim.bulsu.tools' }).catch(() => {});
 			else download(name, blob);
 		} finally {
 			busy = false;
@@ -135,7 +135,7 @@
 				</div>
 			{/if}
 			{#if p.frame && !amis}
-				<p class="muted">Get your grades through the extension to add the From AMIS mark.</p>
+				<p class="muted">Get your grades through the extension to add the From ALAB SMS mark.</p>
 			{/if}
 		</div>
 	{/if}

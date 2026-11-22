@@ -5,7 +5,7 @@
 import { UPLB_CATALOG } from './catalog.ts';
 import { isGECourse, isNonGwaCourseCode, normalizeCourseCode, type Program } from './curriculum.ts';
 
-/* ---------- AMIS grades API shape ---------- */
+/* ---------- ALAB SMS grades API shape ---------- */
 
 export interface AmisGradeValue {
 	id?: string | number;
@@ -34,7 +34,7 @@ export type SemNo = 1 | 2 | 3;
 
 /**
  * Absolute term number: academic year start * 3 + (0 = 1st sem, 1 = 2nd,
- * 2 = midyear). AMIS term ids are 1, a two digit year, then the term (1251
+ * 2 = midyear). ALAB SMS term ids are 1, a two digit year, then the term (1251
  * is AY 2025-26 1st sem and 1303 is the AY 2030-31 midyear). Terms added by
  * hand use "<year>-<term>" (2019-1).
  */
@@ -104,7 +104,7 @@ export function numericGrade(g: unknown): number | null {
 export const valueId = (v: AmisGradeValue, termKey: string) =>
 	String(v.id || `${v.course?.course_code || 'Unknown'}-${termKey}`);
 
-/** Flatten the AMIS structure into one row per course attempt. */
+/** Flatten the ALAB SMS structure into one row per course attempt. */
 export function parseAMISData(data: GradesData | null | undefined): Course[] {
 	const courses: Course[] = [];
 	if (!data || !data.student_grades) return courses;

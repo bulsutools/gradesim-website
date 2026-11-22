@@ -1,7 +1,7 @@
 {
-	"name": "Elbi GradeSim",
+	"name": "ALAB GradeSim",
 	"short_name": "GradeSim",
-	"description": "UPLB GWA calculator, Latin honors simulator and course planner. Your grades stay in your browser.",
+	"description": "BulSU GWA calculator, Latin honors simulator and course planner. Your grades stay in your browser.",
 	"start_url": "/",
 	"scope": "/",
 	"display": "standalone",

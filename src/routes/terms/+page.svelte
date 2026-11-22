@@ -4,8 +4,8 @@
 </script>
 
 <Seo
-	title="Terms of use, Elbi GradeSim"
-	description="Terms for using the Elbi GradeSim web app and browser extension. Calculations are estimates and the tool isn't affiliated with UPLB."
+	title="Terms of use, ALAB GradeSim"
+	description="Terms for using the ALAB GradeSim web app and browser extension. Calculations are estimates and the tool isn't affiliated with BulSU."
 	path="/terms/"
 />
 
@@ -14,13 +14,13 @@
 
 	<article class="prose">
 		<h2>Agreement</h2>
-		<p>By using the Elbi GradeSim web app or installing the extension, you agree to these terms. If you don't agree, please don't use them.</p>
+		<p>By using the ALAB GradeSim web app or installing the extension, you agree to these terms. If you don't agree, please don't use them.</p>
 
-		<h2>What Elbi GradeSim does</h2>
+		<h2>What ALAB GradeSim does</h2>
 		<p>
 			The web app computes your GWA, honor targets and a course plan from grades you import or enter, entirely in your browser.
-			The extension reads grade information shown on AMIS pages you visit and stores it on your device. Neither is an official
-			UPLB or AMIS service.
+			The extension reads grade information shown on ALAB SMS pages you visit and stores it on your device. Neither is an official
+			BulSU or ALAB SMS service.
 		</p>
 
 		<h2>Estimates, not records</h2>
@@ -35,12 +35,12 @@
 			Your grades are saved in your browser and you're responsible for them. Clearing your browser data or using Clear my data
 			removes them, and we can't recover them for you. Export a backup if you want a copy.
 		</p>
-		<p>A checklist fix that you send to UPLB Tools becomes a public issue on GitHub, so don't put personal details in its note.</p>
+		<p>A checklist fix that you send to BulSU Tools becomes a public issue on GitHub, so don't put personal details in its note.</p>
 
 		<h2>Acceptable use</h2>
 		<ul>
-			<li>Use Elbi GradeSim for your own academic planning.</li>
-			<li>Don't tamper with AMIS or try to collect data beyond normal browsing.</li>
+			<li>Use ALAB GradeSim for your own academic planning.</li>
+			<li>Don't tamper with ALAB SMS or try to collect data beyond normal browsing.</li>
 			<li>Don't redistribute modified builds in a way that misrepresents the project.</li>
 			<li>Keep personal grades out of curriculum files you contribute on GitHub.</li>
 		</ul>
@@ -51,10 +51,10 @@
 			decisions made from their output.
 		</p>
 
-		<h2>UPLB and AMIS</h2>
+		<h2>BulSU and ALAB SMS</h2>
 		<p>
-			AMIS is operated by UPLB. Elbi GradeSim isn't affiliated with or endorsed by the University of the Philippines Los
-			Baños or the UP System. UP and UPLB marks belong to the UP System. Follow the AMIS terms of use when you access your
+			ALAB SMS is operated by BulSU. ALAB GradeSim isn't affiliated with or endorsed by Bulacan State University.
+			BulSU marks belong to Bulacan State University. Follow the ALAB SMS terms of use when you access your
 			account.
 		</p>
 
@@ -62,12 +62,12 @@
 		<p>The project is distributed under the MIT License in its repository. Forks and contributions are welcome under that license and the project guidelines.</p>
 
 		<h2>Changes</h2>
-		<p>These terms may change. Continuing to use Elbi GradeSim after a change means you accept the revised terms.</p>
+		<p>These terms may change. Continuing to use ALAB GradeSim after a change means you accept the revised terms.</p>
 
 		<h2>Contact</h2>
 		<p>
 			For questions about these terms, open an issue on
-			<a href="https://github.com/uplbtools/gradesim/issues" rel="noopener" target="_blank">GitHub</a>.
+			<a href="https://github.com/bulsutools/gradesim-website/issues" rel="noopener" target="_blank">GitHub</a>.
 		</p>
 	</article>
 </div>

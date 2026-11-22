@@ -58,7 +58,7 @@
 
 	function exportBackup() {
 		const json = JSON.stringify(makeBackup(app.s), null, 2);
-		download(`elbi-gradesim-backup-${today()}.json`, new Blob([json], { type: 'application/json' }));
+		download(`alab-gradesim-backup-${today()}.json`, new Blob([json], { type: 'application/json' }));
 	}
 
 	let link = $state<'copied' | 'failed' | null>(null);

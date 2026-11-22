@@ -47,8 +47,8 @@
 	import StatusLabel from './StatusLabel.svelte';
 	import './planner.css';
 
-	const model = $derived(modelFor(app.s.selectedProgram, planTrack(app.program, app.grades, app.s.track), app.specialization, app.fixes));
-	const quality = $derived(getProgramDataQuality(app.s.selectedProgram));
+	const model = $derived(modelFor(app.program.code, planTrack(app.program, app.grades, app.s.track), app.specialization, app.fixes));
+	const quality = $derived(getProgramDataQuality(app.program.code));
 	const options = $derived(app.s.plannerOptions ?? DEFAULT_PLANNER_OPTIONS);
 	const input = $derived<PlannerInput>({
 		gradesData: app.grades,
@@ -126,7 +126,7 @@
 			notice = { text: 'Sent. A maintainer will review your fixes. Thank you.', bad: false };
 		} else {
 			const issue = fixIssue(program, fixes);
-			window.open(`https://github.com/uplbtools/gradesim/issues/new?${new URLSearchParams(issue)}`, '_blank', 'noopener');
+			window.open(`https://github.com/bulsutools/gradesim-website/issues/new?${new URLSearchParams(issue)}`, '_blank', 'noopener');
 			notice = { text: 'GitHub opened in a new tab with your fixes filled in. Submit the issue there to send them.', bad: false };
 		}
 	}
@@ -423,7 +423,7 @@
 				<button type="button" class="pl-close" aria-label="Close details" onclick={() => select(code)}><Icon name="x" /></button>
 			</div>
 			{#if restricted(c) && i.status !== 'passed'}
-				<p class="pl-muted">{offer === 'Not offered lately' ? "AMIS hasn't offered this lately." : `Offered ${offer.toLowerCase().replace('only', 'sem only')}.`}</p>
+				<p class="pl-muted">{offer === 'Not offered lately' ? "ALAB SMS hasn't offered this lately." : `Offered ${offer.toLowerCase().replace('only', 'sem only')}.`}</p>
 			{/if}
 			{#if i.status !== 'passed' && slip !== undefined}
 				<p class="pl-fact" class:bad={slip > 0}>
@@ -453,7 +453,7 @@
 					{/each}
 					{#if c.standing}<li>This needs {c.standing} standing, which GradeSim counts as {c.standing === 'senior' ? '75' : '50'}% of your units.</li>{/if}
 					{#if c.coi}<li>Consent of instructor (COI) also works</li>{/if}
-					{#if c.note}<li class="pl-muted">AMIS says {c.note}</li>{/if}
+					{#if c.note}<li class="pl-muted">ALAB SMS says {c.note}</li>{/if}
 				</ul>
 			{/if}
 			{#if deps.length}
@@ -525,7 +525,7 @@
 	{:else if fix}
 		<p class="pl-muted">
 			Your fix is in your plan{fix.sent ? ' and was sent' : ''}.
-			{#if !fix.sent}<button type="button" class="textbtn" onclick={sendFixes}>Send to UPLB Tools</button>{/if}
+			{#if !fix.sent}<button type="button" class="textbtn" onclick={sendFixes}>Send to BulSU Tools</button>{/if}
 			<button type="button" class="textbtn" onclick={() => (fixing = c.code)}>Change it</button>
 		</p>
 	{:else}
@@ -764,9 +764,9 @@
 						</li>
 					{/each}
 				</ul>
-				<p class="pl-muted">Your plan already uses these. Sending them lets UPLB Tools fix the checklist for everyone. Only the fixes are sent, never your grades.</p>
+				<p class="pl-muted">Your plan already uses these. Sending them lets BulSU Tools fix the checklist for everyone. Only the fixes are sent, never your grades.</p>
 				<div class="pl-actions">
-					{#if app.fixes.some((f) => !f.sent)}<button type="button" class="btn btn-secondary" onclick={sendFixes}><Icon name="upload" />Send to UPLB Tools</button>{/if}
+					{#if app.fixes.some((f) => !f.sent)}<button type="button" class="btn btn-secondary" onclick={sendFixes}><Icon name="upload" />Send to BulSU Tools</button>{/if}
 				</div>
 			</section>
 		{/if}
@@ -785,7 +785,7 @@
 			</div>
 		{/if}
 
-		<p class="pl-muted pl-how">GradeSim puts each course in the earliest sem its prerequisites and AMIS offerings allow.</p>
+		<p class="pl-muted pl-how">GradeSim puts each course in the earliest sem its prerequisites and ALAB SMS offerings allow.</p>
 
 		<div class="pl-fixes pl-add">
 			{#if fixing === 'add'}

@@ -2,7 +2,7 @@
 // versioned key; nothing is sent anywhere.
 
 import type { ChecklistFix } from './fix.ts';
-import { DEFAULT_PROGRAM, resolveSpecialization, UPLB_PROGRAMS } from './curriculum.ts';
+import { DEFAULT_PROGRAM, PLACEHOLDER_PROGRAM, PROGRAMS, resolveSpecialization } from './curriculum.ts';
 import { calculateGWA, parseAMISData, type GradesData } from './grades.ts';
 import type { GradesPatch } from './importers.ts';
 import { applyRemovals } from './requirements.ts';
@@ -16,7 +16,7 @@ export interface Saved {
 	gradesData: GradesData | null;
 	/** Where the grades came from, for the status line. */
 	source: 'extension' | 'file' | 'manual' | null;
-	/** When the extension last read AMIS for these grades, in ms. */
+	/** When the extension last read ALAB SMS for these grades, in ms. */
 	fetchedAt: number | null;
 	/** A grade was added, changed or removed here since the last import. */
 	handEdited: boolean;
@@ -64,7 +64,7 @@ function read(): Saved {
 		const s = raw ? JSON.parse(raw) : null;
 		if (s && s.version === 1) {
 			const merged = { ...blank(), ...s };
-			if (!UPLB_PROGRAMS[merged.selectedProgram]) merged.selectedProgram = DEFAULT_PROGRAM;
+			if (!PROGRAMS[merged.selectedProgram]) merged.selectedProgram = DEFAULT_PROGRAM;
 			// Marks saved on the old HK 1 to HK 4 slots move to HK 11 and HK 12.
 			for (const k of ['customCourseStatus', 'plannerPins', 'plannerPetitions'] as const) {
 				merged[k] = Object.fromEntries(Object.entries(merged[k] ?? {}).map(([c, v]) => [OLD_HK[c] ?? c, v]));
@@ -93,7 +93,7 @@ class AppState {
 	courses = $derived(parseAMISData(this.grades));
 	excluded = $derived(new Set(this.s.excludedCourses));
 	gwa = $derived(calculateGWA(this.courses, this.excluded));
-	program = $derived(UPLB_PROGRAMS[this.s.selectedProgram] ?? UPLB_PROGRAMS[DEFAULT_PROGRAM]);
+	program = $derived(PROGRAMS[this.s.selectedProgram] ?? PLACEHOLDER_PROGRAM);
 	hasData = $derived(this.courses.length > 0);
 	specialization = $derived(resolveSpecialization(this.program, this.s.selectedSpecializations[this.program.code]));
 	fixes = $derived(this.s.checklistFixes[this.program.code] ?? []);
@@ -117,7 +117,7 @@ class AppState {
 		this.s.source = source;
 		this.s.fetchedAt = patch.fetchedAt ?? null;
 		this.s.handEdited = false;
-		if (patch.selectedProgram) this.s.selectedProgram = patch.selectedProgram;
+		if (patch.selectedProgram) this.s.selectedProgram = PROGRAMS[patch.selectedProgram] ? patch.selectedProgram : DEFAULT_PROGRAM;
 		if (patch.excludedCourses) this.s.excludedCourses = patch.excludedCourses;
 		if (patch.substitutions) this.s.substitutions = patch.substitutions;
 		if (patch.removals) this.s.removals = patch.removals;
@@ -159,7 +159,7 @@ class AppState {
 	}
 
 	applyPlan(plan: PlanFile) {
-		this.s.selectedProgram = plan.program;
+		this.s.selectedProgram = PROGRAMS[plan.program] ? plan.program : DEFAULT_PROGRAM;
 		this.s.customCourseStatus = plan.customCourseStatus;
 		this.s.plannerPins = plan.plannerPins;
 		this.s.plannerPetitions = plan.plannerPetitions;

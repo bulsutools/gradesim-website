@@ -14,7 +14,7 @@ import { enrichCourses, type CatalogEntry, type PlanCourse } from './scheduler.t
 
 export type Result = 'passed' | 'failed' | 'nograde' | 'other';
 
-/** One AMIS grade as passed, failed, nograde, or other (INC, DRP, 4.00). */
+/** One ALAB SMS grade as passed, failed, nograde, or other (INC, DRP, 4.00). */
 export function gradeResult(raw: unknown): Result {
 	const g = (raw == null ? '' : String(raw)).toUpperCase().trim();
 	const n = parseFloat(g);
@@ -56,7 +56,7 @@ export interface Row {
 	termId?: string;
 }
 
-/** Every AMIS row as { code, title, units, grade, result, termId }. */
+/** Every ALAB SMS row as { code, title, units, grade, result, termId }. */
 export function amisCourses(gradesData: GradesData | null | undefined): Row[] {
 	return Object.entries(gradesData?.student_grades || {})
 		.flatMap(([termId, t]) =>
@@ -116,7 +116,7 @@ export function fillRequirementSlots<R extends Row>(
 	const outside = rows.filter((r) => {
 		const code = norm(r);
 		if (named.has(code) || used.has(code) || seen.has(code) || filled.has(code)) return false;
-		// HK 12 repeats once per sport, and AMIS lets a 190, 191, 199 or 200 be taken again.
+		// HK 12 repeats once per sport, and ALAB SMS lets a 190, 191, 199 or 200 be taken again.
 		if (!/^(HK|PE)\b| (19[019]|200)[A-Z]?$/.test(code)) seen.add(code);
 		return true;
 	});

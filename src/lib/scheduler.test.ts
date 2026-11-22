@@ -200,7 +200,7 @@ const C = (code: string, units: number, sem?: string, prereqs: string[] = []): P
 	eq(retake.assignedTerm.ONCE, 3);
 	
 	// --- in-progress counts as passed, planning starts at the next term ---
-	// latest AMIS term is 1st sem with MATH 27 ungraded: start at 2nd sem, MATH 28 at t0
+	// latest ALAB SMS term is 1st sem with MATH 27 ungraded: start at 2nd sem, MATH 28 at t0
 	const inprog = scheduleEarliest({
 	  courses: [K('MATH 27'), K('MATH 28', { pre: [['MATH 27']] })],
 	  passed: new Set(['MATH 27']), startSem: '2',
@@ -248,7 +248,7 @@ const C = (code: string, units: number, sem?: string, prereqs: string[] = []): P
 	], { ...cat, 'CE 200': { units: 1, title: 'Thesis' } });
 	deq(units.map(c => c.units), [3, 6, 3]);
 
-	// A course AMIS only offers in midyear still gets placed when midyear is off.
+	// A course ALAB SMS only offers in midyear still gets placed when midyear is off.
 	const midOnly = scheduleEarliest({
 	  courses: [{ code: 'BA 183', title: 'BA 183', units: 3, sem: '1', prereqs: [], offered: { 1: 0, 2: 0, 3: 2 } }],
 	  passed: new Set<string>(), useMidyear: false,

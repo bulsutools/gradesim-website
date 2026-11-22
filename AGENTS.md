@@ -9,29 +9,30 @@ Org-wide agent defaults: see [room-tba/AGENTS.md](https://github.com/uplbtools/r
 | When | Read |
 | --- | --- |
 | Local dev | [README.md](README.md) |
-| Extension source (separate repo) | [uplbtools/gradesim](https://github.com/uplbtools/gradesim) |
+| Extension source (separate repo, not yet published) | [uplbtools/gradesim](https://github.com/uplbtools/gradesim) (upstream) |
 | PR hygiene | [.github/pull_request_template.md](.github/pull_request_template.md) |
-| Release | [.github/workflows/release.yml](.github/workflows/release.yml), `.releaserc.json` |
+| Deploy | [.github/workflows/deploy-cloudflare.yml](.github/workflows/deploy-cloudflare.yml) |
 
 ## Stack
 
 - **Framework:** SvelteKit 3 (Svelte 5 runes), adapter-static, every page prerendered
 - **Language:** TypeScript
 - **Package manager:** npm (`package-lock.json`)
-- **Deploy:** Vercel: auto-deploy on push to **`main`**
-- **Release:** semantic-release on `main` (tags + GitHub Release)
+- **Deploy:** Cloudflare Pages project `alab-gradesim` via GitHub Actions: `main` is production, `staging` and PRs get previews. Needs secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`.
+- **Functions:** `functions/api/fix.ts` is a Pages Function; `GRADESIM_FIX_TOKEN` is a Pages env var, not a repo secret.
 
 ## Branches and deploy
 
 | Branch | Role |
 | --- | --- |
-| **`staging`** | Default branch on GitHub: integration / draft work |
-| **`main`** | Production: Vercel deploy + semantic-release |
+| **`staging`** | Default branch on GitHub: integration / draft work, Pages preview deploys |
+| **`main`** | Production: Pages production deploy |
+| **`alab-sms`** | BulSU rebrand branch (ALAB SMS) |
 
 **Ship flow:**
 
 1. Feature branch → PR to **`staging`** (integration)
-2. Release PR **`staging` → `main`** → production deploy + release tag
+2. Release PR **`staging` → `main`** → production deploy
 
 When the user says **"ship"**, they mean land on **`main`** / production, not stop at `staging`.
 
@@ -49,14 +50,15 @@ CI (`.github/workflows/ci.yml`) runs check, lint, vitest, build and Playwright.
 
 ```
 src/routes/+page.svelte   # the app: Grades, What if, Planner, Wrapped
-src/routes/{about,install,curricula,privacy,terms}/
+src/routes/{about,install,privacy,terms}/
 src/lib/*.ts              # pure logic ported from the extension, with vitest tests
-src/lib/data/*.json       # curriculum and catalog, generated from the extension
+src/lib/data/*.json       # upstream UPLB curriculum/catalog, kept for tests; PROGRAMS in curriculum.ts is what the app offers (empty until BulSU data lands)
+functions/api/            # Cloudflare Pages Functions
 src/service-worker/       # offline precache
-static/                   # fonts, icons, curriculum images, og.jpg
+static/                   # fonts, icons, og.jpg, _headers
 ```
 
-The app is the main thing; the other pages sit around it. The MV3 extension lives in [gradesim](https://github.com/uplbtools/gradesim).
+The app is the main thing; the other pages sit around it. The MV3 extension isn't published for BulSU yet; the upstream one lives in [gradesim](https://github.com/uplbtools/gradesim).
 
 ## UI guardrails
 
@@ -66,10 +68,10 @@ The app is the main thing; the other pages sit around it. The MV3 extension live
 
 ## Commits
 
-- Conventional Commits required for semantic-release on `main`: `feat:`, `fix:`, `docs:`, `chore:`
+- Conventional Commits: `feat:`, `fix:`, `docs:`, `chore:`
 - Update README when changing deploy behavior or store URLs
 
 ## Security
 
-- No AMIS credentials or grade data ever leave the browser: no analytics, no server calls with grades
-- Do not commit Vercel tokens or `.env.local`
+- No ALAB SMS credentials or grade data ever leave the browser: no analytics, no server calls with grades
+- Do not commit Cloudflare tokens or `.env.local`

@@ -1,7 +1,7 @@
-/* UPLB Tools design tokens for Elbi GradeSim.
-   Light values follow uplbtools.me src/styles/global.css (the Room TBA palette).
+/* BulSU Tools design tokens for ALAB GradeSim.
+   Light values follow the Room TBA palette (the upstream UPLB Tools look).
    Dark values follow the Room TBA wiki dark overrides.
-   Copied from the extension (extension/src/tokens.css); keep the two in sync. */
+   Copied from the extension; keep the two in sync. */
 
 @font-face {
   font-family: "Figtree";

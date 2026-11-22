@@ -25,7 +25,7 @@ import { UPLB_PROGRAMS } from './curriculum.ts';
 const data = backup.gradesData as GradesData;
 const courses = parseAMISData(data);
 
-test('term keys: AMIS ids and hand-entered terms', () => {
+test('term keys: ALAB SMS ids and hand-entered terms', () => {
 	expect(termKeyToAbs('1251')).toBe(2025 * 3);
 	expect(termKeyToAbs('1252')).toBe(2025 * 3 + 1);
 	expect(termKeyToAbs('1243')).toBe(2024 * 3 + 2);
@@ -42,7 +42,7 @@ test('term keys: AMIS ids and hand-entered terms', () => {
 	expect(sortedTermKeys({ student_grades: { '1232': { values: [] }, '1241': { values: [] }, '1231': { values: [] } } })).toEqual(['1241', '1232', '1231']);
 });
 
-test('parses the AMIS shape newest term first, with extension-compatible ids', () => {
+test('parses the ALAB SMS shape newest term first, with extension-compatible ids', () => {
 	expect(courses).toHaveLength(15);
 	expect(courses[0].termKey).toBe('1241');
 	expect(courses.find((c) => c.code === 'CMSC 12')).toMatchObject({ id: '1', units: 3, grade: '1.25', ay: 'AY 2023-24' });
@@ -63,7 +63,7 @@ test('GWA skips NSTP, HK, PE and non-numeric grades and weights by units', () =>
 	expect(g.completedCourses.some((c) => c.code === 'STS 1')).toBe(false);
 });
 
-test('the final special problem grade counts for the first unit, which AMIS shows as S', () => {
+test('the final special problem grade counts for the first unit, which ALAB SMS shows as S', () => {
 	const row = (termKey: string, units: number, grade: string) => ({ id: termKey, termKey, termLabel: termKey, ay: '', code: 'CMSC 190', title: 'Special Problem', units, grade });
 	const s = row('1251', 1, 'S');
 	expect(carriedGrade(s, [s])).toBeNull();

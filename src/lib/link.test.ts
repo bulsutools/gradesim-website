@@ -3,7 +3,7 @@ import backup from './fixtures/backup.json';
 import { packLink, unpackHash } from './link.ts';
 
 test('a backup survives the trip through a link', async () => {
-	const url = await packLink(backup, 'https://gradesim.uplb.tools/');
+	const url = await packLink(backup, 'https://gradesim.bulsu.tools/');
 	expect(url.length).toBeLessThan(JSON.stringify(backup).length);
 	expect(JSON.parse((await unpackHash(new URL(url).hash))!)).toEqual(backup);
 });

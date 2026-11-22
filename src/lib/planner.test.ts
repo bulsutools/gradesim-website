@@ -134,7 +134,7 @@ test('the plan follows the track: SP keeps CMSC 190 and 18 free elective units',
 	expect([fe(sp), fe(thesis)]).toEqual([18, 15]);
 });
 
-test('Room TBA link converts AMIS term ids both ways', () => {
+test('Room TBA link converts ALAB SMS term ids both ways', () => {
 	expect(absOfAmisTerm(1261)).toBe(2026 * 3);
 	expect(absOfAmisTerm(1253)).toBe(2025 * 3 + 2);
 	[1241, 1252, 1253, 1261].forEach((id) => expect(amisTerm(absOfAmisTerm(id))).toBe(id));

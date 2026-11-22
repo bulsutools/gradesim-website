@@ -7,7 +7,7 @@
 </script>
 
 <svelte:head>
-	<title>{missing ? 'Page not found' : 'Something went wrong'}, Elbi GradeSim</title>
+	<title>{missing ? 'Page not found' : 'Something went wrong'}, ALAB GradeSim</title>
 	<meta name="robots" content="noindex" />
 </svelte:head>
 
@@ -21,8 +21,8 @@
 	</PageHead>
 	<p class="next">
 		<a class="btn btn-primary" href={resolve('/')}>Open GradeSim</a>
-		<a class="btn btn-secondary" href={resolve('curricula/')}>Browse checklists</a>
-		<a class="textbtn" href="https://github.com/uplbtools/gradesim/issues" rel="noopener" target="_blank">Report a broken link</a>
+		<a class="btn btn-secondary" href={resolve('install/')}>Get the extension</a>
+		<a class="textbtn" href="https://github.com/bulsutools/gradesim-website/issues" rel="noopener" target="_blank">Report a broken link</a>
 	</p>
 </div>
 

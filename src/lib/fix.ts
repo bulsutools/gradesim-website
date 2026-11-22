@@ -1,4 +1,4 @@
-/** A student's correction to one checklist row. It applies to their own plan and can be sent to UPLB Tools. */
+/** A student's correction to one checklist row. It applies to their own plan and can be sent to BulSU Tools. */
 export type FixSem = '1' | '2' | 'midyear';
 
 export interface ChecklistFix {
@@ -77,7 +77,7 @@ export function fixIssue(program: string, fixes: ChecklistFix[]): { title: strin
 	return {
 		title: `Checklist fix: ${program} ${fixes.map((f) => f.code).join(', ')}`.slice(0, 120),
 		body: [
-			`A student sent this from gradesim.uplb.tools for **${program}**.`,
+			`A student sent this from gradesim.bulsu.tools for **${program}**.`,
 			'',
 			'| Course | Change | Note |',
 			'|---|---|---|',
