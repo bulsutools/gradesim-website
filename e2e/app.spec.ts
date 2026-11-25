@@ -53,7 +53,9 @@ test('manual entry: add courses by hand and the GWA shows', async ({ page }) => 
 	await open(page);
 	await page.getByRole('button', { name: 'Enter grades by hand' }).click();
 	await page.getByLabel('Course code').fill('CMSC 12');
-	await expect(page.getByLabel('Title')).toHaveValue('Foundations of Computer Science');
+	// No BulSU catalog yet, so codes don't autofill; the title is typed by hand.
+	await expect(page.getByLabel('Title')).toHaveValue('');
+	await page.getByLabel('Title').fill('Foundations of Computer Science');
 	await page.getByLabel('Grade', { exact: true }).selectOption('1.50');
 	await page.getByRole('button', { name: 'Add course' }).click();
 	await expect(page.getByTestId('gwa')).toHaveText('1.5000');
