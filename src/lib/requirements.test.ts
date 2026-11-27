@@ -257,7 +257,7 @@ test('an either-or checklist line takes the other course, and a second one is an
 	const both = fillRequirementSlots(socio, [row('SOC 135'), row('SOC 130')]);
 	expect(both.get('SOC 130')?.code).toBe('SOC 130');
 	expect([...both.values()].some((r) => r.code === 'SOC 135')).toBe(true);
-	// AMIS offers Major Farm Practice as AAE 200.
+	// ALAB SMS offers Major Farm Practice as AAE 200.
 	const mfp = fillRequirementSlots(plannerCourseList(UPLB_PROGRAMS.BSAAE, 'mfp', UPLB_CATALOG), [row('AAE 200'), row('AAE 200')]);
 	expect(mfp.has('AAE 200A') && mfp.has('AAE 200A (2)')).toBe(true);
 });

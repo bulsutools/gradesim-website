@@ -6,14 +6,13 @@
 	<div class="wrap">
 		<nav aria-label="Footer">
 			<a href={resolve('about/')}>About</a>
-			<a href={resolve('curricula/')}>Checklists</a>
 			<a href={resolve('install/')}>Get the extension</a>
 			<a href={resolve('privacy/')}>Privacy</a>
 			<a href={resolve('terms/')}>Terms</a>
-			<a href="https://github.com/uplbtools/gradesim" rel="noopener" target="_blank">GitHub</a>
-			<a href="https://github.com/uplbtools/gradesim/discussions/categories/q-a" rel="noopener" target="_blank">Ask a question</a>
+			<a href="https://github.com/bulsutools/gradesim-website" rel="noopener" target="_blank">GitHub</a>
+			<a href="https://github.com/bulsutools/gradesim-website/discussions/categories/q-a" rel="noopener" target="_blank">Ask a question</a>
 		</nav>
-		<p>A student project by <a href="https://uplb.tools" rel="noopener" target="_blank">UPLB Tools</a>. It isn't an official UPLB website.</p>
+		<p>A student project by <a href="https://github.com/bulsutools" rel="noopener" target="_blank">BulSU Tools</a>. It isn't an official BulSU website.</p>
 	</div>
 </footer>
 

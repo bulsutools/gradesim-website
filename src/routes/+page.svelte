@@ -3,7 +3,7 @@
 	import { app } from '#lib/app.svelte.ts';
 	import { getExtensionGrades, probeExtension } from '#lib/bridge.ts';
 	import { unpackHash } from '#lib/link.ts';
-	import { UPLB_PROGRAMS } from '#lib/curriculum.ts';
+	import { PROGRAMS, UPLB_PROGRAMS } from '#lib/curriculum.ts';
 	import { parseBackup, parseImport } from '#lib/importers.ts';
 	import { absLabel, absOfAmisTerm, takeCourses } from '#lib/planner.ts';
 	import Seo from '#lib/components/Seo.svelte';
@@ -85,7 +85,7 @@
 		const take = url.searchParams.get('take');
 		const term = Number(url.searchParams.get('term'));
 		if (take && Number.isInteger(term) && term > 0) {
-			const checklist = new Set(UPLB_PROGRAMS[app.s.selectedProgram]?.majorCourses.map((c) => c.code));
+			const checklist = new Set(app.program.majorCourses.map((c) => c.code));
 			const codes = take.split(',').map((c) => c.trim()).filter((c) => checklist.has(c));
 			const abs = absOfAmisTerm(term);
 			Object.assign(app.s, takeCourses(codes, abs, app.s));
@@ -94,7 +94,7 @@
 				? { text: `Room TBA put ${codes.join(', ')} in ${absLabel(abs)}.`, tone: 'ok' }
 				: { text: "None of the courses from Room TBA are on your checklist, so nothing changed.", tone: 'bad' };
 		}
-		if (program && UPLB_PROGRAMS[program]?.available) {
+		if (program && PROGRAMS[program]?.available) {
 			app.s.selectedProgram = program;
 			app.blank = true;
 		} else if (!app.hasData && tab === 'planner' && !fromPopup) app.blank = true;
@@ -113,7 +113,7 @@
 			}
 			if (!r?.hasGrades || !r.fetchedAt || s.source !== 'extension' || !s.fetchedAt || r.fetchedAt === s.fetchedAt) return;
 			if (s.handEdited) {
-				message = { text: 'The extension has newer grades from AMIS. Importing them replaces the grades you edited by hand.', tone: 'ok' };
+				message = { text: 'The extension has newer grades from ALAB SMS. Importing them replaces the grades you edited by hand.', tone: 'ok' };
 				return;
 			}
 			const patch = parseBackup(await getExtensionGrades());
@@ -178,8 +178,8 @@
 <svelte:window onhashchange={readHash} />
 
 <Seo
-	title="Elbi GradeSim, the UPLB GWA calculator and course planner"
-	description="Compute your UPLB GWA, see what you need for Latin honors, and plan your remaining terms around prerequisites. Free, open source, and your grades stay in your browser."
+	title="ALAB GradeSim, the BulSU GWA calculator and course planner"
+	description="Compute your BulSU GWA, see what you need for Latin honors, and plan your remaining terms around prerequisites. Free, open source, and your grades stay in your browser."
 	path="/"
 />
 
@@ -208,10 +208,10 @@
 	<div class="dash wrap">
 		<p class="blank">
 			{#if app.shared != null}
-				This is a {app.program.name} plan someone shared with you. Nothing here is saved in this browser.
+				This is a plan someone shared with you. Nothing here is saved in this browser.
 				<button class="textbtn" type="button" onclick={() => { app.closeShared(); setTab('grades'); }}>Close it</button>
 			{:else}
-				This is the {app.program.name} checklist planned from a blank transcript.
+				This is a checklist planned from a blank transcript.
 				<button class="textbtn" type="button" onclick={() => { app.blank = false; setTab('grades'); }}>Add your grades</button> to plan from where you are.
 			{/if}
 		</p>

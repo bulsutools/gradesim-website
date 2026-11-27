@@ -14,7 +14,7 @@
 	const SURE = [
 		'My adviser or college secretary said so',
 		'My checklist lists them',
-		'They counted in my AMIS checklist or evaluation',
+		'They counted in my ALAB SMS checklist or evaluation',
 		"It's my best guess"
 	];
 

@@ -12,7 +12,7 @@ test('reads the extension JSON backup', () => {
 	expect(Object.keys(r.patch.gradesData.student_grades)).toHaveLength(3);
 });
 
-test('accepts a bare AMIS grades response', () => {
+test('accepts a bare ALAB SMS grades response', () => {
 	const r = parseImport(JSON.stringify(backup.gradesData));
 	expect(r.kind).toBe('grades');
 });
@@ -33,7 +33,7 @@ test('round-trips its own backup', () => {
 	});
 });
 
-test('a backup carries the track, the plan and when AMIS was read', () => {
+test('a backup carries the track, the plan and when ALAB SMS was read', () => {
 	const plan = {
 		customCourseStatus: { 'CMSC 21': 'failed' as const },
 		plannerPins: { 'CMSC 22': 4 },
@@ -70,7 +70,7 @@ test('reads a saved plan and refuses a damaged one', () => {
 	expect(parseImport(JSON.stringify({ ...plan, version: 2 }))).toMatchObject({ kind: 'error', message: expect.stringContaining('newer') });
 });
 
-test('manual entry builds the same AMIS shape', () => {
+test('manual entry builds the same ALAB SMS shape', () => {
 	let d = addCourse(null, 2025, 1, { code: 'cmsc  12', title: '', units: 3, grade: '1.50' }, 'm-1');
 	d = addCourse(d, 2025, 1, { code: 'MATH 27', title: 'Calculus', units: 3, grade: '' }, 'm-2');
 	d = addCourse(d, 2024, 2, { code: 'ARTS 1', title: 'Arts', units: 3, grade: '2.00' }, 'm-3');

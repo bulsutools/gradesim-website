@@ -48,7 +48,25 @@ export interface Program {
 }
 
 export const UPLB_PROGRAMS = programsJson as unknown as Record<string, Program>;
-export const DEFAULT_PROGRAM = 'BSCS';
+
+/**
+ * Programs the app offers. BulSU curricula aren't in GradeSim yet, so this is
+ * empty: the picker shows nothing and the planner says it has no checklist.
+ * UPLB_PROGRAMS stays for the test suite and the planner's plan-file checks.
+ */
+export const PROGRAMS: Record<string, Program> = {};
+
+/** Stands in when no program is picked, so the UI can say "no checklist yet". */
+export const PLACEHOLDER_PROGRAM: Program = {
+	code: '',
+	name: 'your program',
+	college: '',
+	collegeName: '',
+	available: false,
+	majorCourses: []
+};
+
+export const DEFAULT_PROGRAM = '';
 
 export const COLLEGES: Record<string, string> = {
 	CAS: 'College of Arts and Sciences',
@@ -67,7 +85,7 @@ export function programsByCollege(): { college: string; name: string; programs: 
 		.map(([college, name]) => ({
 			college,
 			name,
-			programs: Object.values(UPLB_PROGRAMS)
+			programs: Object.values(PROGRAMS)
 				.filter((p) => p.college === college)
 				.sort((a, b) => a.name.localeCompare(b.name))
 		}))
@@ -319,7 +337,7 @@ export function getCompletedRequirementSlotCodes(
 }
 
 /**
- * The student's track (SP or thesis) from AMIS rows. Any enrollment counts,
+ * The student's track (SP or thesis) from ALAB SMS rows. Any enrollment counts,
  * including the course being taken now (no grade yet) and a failed attempt.
  * Only a drop or withdrawal doesn't.
  */
@@ -373,11 +391,10 @@ export function getProgramDataQuality(programCode: string, catalog: Record<strin
 	return { confident: reasons.length === 0, prereqShare, reasons };
 }
 
-/** Curriculum checklist image slugs (static/curricula) to program codes. */
 /**
- * Each program's course codes for other UPLB Tools apps, served at
- * /program-courses.json. An elective entry is a course code or a subject
- * such as MATH, which stands for every course of that subject.
+ * Each program's course codes, kept for the test suite. An elective entry is
+ * a course code or a subject such as MATH, which stands for every course of
+ * that subject.
  */
 export function programCourses() {
 	const base = (code: string) => normalizeCourseCode(code).replace(/ \(\d+\)$/, '');
@@ -399,41 +416,3 @@ export function programCourses() {
 		])
 	);
 }
-
-export const CHECKLIST_PROGRAM: Record<string, string> = {
-	'BS-Chemistry': 'BSCHEM',
-	'BS-Biology': 'BSBIO',
-	'BS-Applied-Mathematics': 'BSAPMATH',
-	'BS-Applied-Physics': 'BSAPPHY',
-	'BS-Mathematics': 'BSMATH',
-	'BS-Mathematics-and-Science-Teaching': 'BSMST',
-	'BS-Statistics': 'BSSTAT',
-	'BA-Communication-Arts': 'BACOMM',
-	'BA-Philosophy': 'BAPHILO',
-	'BA-Sociology': 'BASOCIO',
-	'BS-Agriculture': 'BSAGRI',
-	'BS-Agricultural-Biotechnology': 'BSABIO',
-	'BS-Food-Science-and-Technology': 'BSFST',
-	'BS-Agricultural-and-Applied-Economics': 'BSAAE',
-	'BS-Agribusiness-Management-Entrepreneurship': 'BSABME',
-	'BS-Economics': 'BSECON',
-	'BS-Chemical-Engineering': 'BSCHE',
-	'BS-Civil-Engineering': 'BSCE',
-	'BS-Electrical-Engineering': 'BSEE',
-	'BS-Industrial-Engineering': 'BSIE',
-	'BS-Mechanical-Engineering': 'BSME',
-	'BS-Forestry': 'BSFOR',
-	'BS-Human-Ecology': 'BSHE',
-	'BS-Nutrition': 'BSNUTRI',
-	'Doctor-of-Veterinary-Medicine': 'DVM',
-	'BS-Development-Communication': 'BSDC',
-	'BS-Agricultural-Chemistry': 'BSACHEM',
-	'BS-Computer-Science': 'BSCS',
-	'BS-Accountancy': 'BSACCT',
-	'BS-Agricultural-and-Biosystems-Engineering': 'BSABE',
-	'BS-Materials-Engineering': 'BSMATE',
-	'AA-Sports-Studies': 'AASS',
-	'AA-Entrepreneurship': 'AAENTREP',
-	'Associate-in-Forestry': 'AAFOR',
-	'AS-Development-Communication': 'ASDC'
-};

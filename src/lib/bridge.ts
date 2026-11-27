@@ -1,4 +1,4 @@
-// Ask the GradeSim extension for the grades it captured from AMIS. Nothing
+// Ask the GradeSim extension for the grades it captured from ALAB SMS. Nothing
 // leaves the device: the extension answers this page directly.
 //
 // Chrome, Edge, Opera and Brave: the extension lists this site under
@@ -7,9 +7,9 @@
 // small content script on this site that answers window.postMessage requests.
 //
 // Two requests: GRADESIM_PING says whether grades exist and when the extension
-// last read AMIS (sent on load), GRADESIM_GET_GRADES hands them over. It's sent
+// last read ALAB SMS (sent on load), GRADESIM_GET_GRADES hands them over. It's sent
 // when the student clicks Import, and on load once they have imported before
-// and the extension has read AMIS since.
+// and the extension has read ALAB SMS since.
 
 /** Store ids. Opera and Brave install from the Chrome Web Store, so they share its id. */
 export const EXTENSION_IDS = [
@@ -70,7 +70,7 @@ async function ask(type: Request, timeout: number): Promise<unknown> {
 	return replies.find((r) => r != null) ?? null;
 }
 
-/** Whether the extension has grades and when it last read AMIS, or null when nothing answered. */
+/** Whether the extension has grades and when it last read ALAB SMS, or null when nothing answered. */
 export async function probeExtension(timeout = 800): Promise<{ hasGrades: boolean; fetchedAt: number | null } | null> {
 	const r = (await ask('GRADESIM_PING', timeout)) as { hasGrades?: boolean; fetchedAt?: unknown } | null;
 	if (!r) return null;

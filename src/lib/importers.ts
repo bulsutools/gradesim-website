@@ -7,7 +7,7 @@ import { checkPlan, type PlanFile, type PlannerInput, type PlannerOptions } from
 
 const isObj = (x: unknown): x is Record<string, unknown> => x != null && typeof x === 'object' && !Array.isArray(x);
 
-/** True when the value looks like the AMIS grades API response. */
+/** True when the value looks like the ALAB SMS grades API response. */
 export function isGradesData(x: unknown): x is GradesData {
 	return isObj(x) && isObj(x.student_grades) && Object.values(x.student_grades).every((t) => isObj(t) && Array.isArray(t.values));
 }
@@ -20,7 +20,7 @@ export interface GradesPatch {
 	substitutions?: Record<string, string>;
 	removals?: Record<string, string>;
 	selectedSpecializations?: Record<string, string>;
-	/** When the extension last read AMIS, in ms. */
+	/** When the extension last read ALAB SMS, in ms. */
 	fetchedAt?: number;
 	track?: string;
 	plan?: Pick<PlannerInput, 'customCourseStatus' | 'plannerPins' | 'plannerPetitions'> & { plannerOptions: PlannerOptions };
@@ -29,12 +29,12 @@ export interface GradesPatch {
 /**
  * The extension's export (popup "Export JSON") or its bridge reply:
  * { source: 'elbi-gradesim', selectedProgram, excludedCourses, substitutions, gradesData }.
- * A bare AMIS grades response is accepted too.
+ * A bare ALAB SMS grades response is accepted too.
  */
 export function parseBackup(obj: unknown): GradesPatch | string {
 	if (isGradesData(obj)) return { gradesData: obj };
 	if (!isObj(obj) || obj.source !== 'elbi-gradesim') return "That file isn't a GradeSim backup, so nothing changed. Pick a file from Save backup, or a plan from Save plan.";
-	if (!isGradesData(obj.gradesData)) return 'That backup has no grades in it yet. Open AMIS with the extension installed, then save a new backup.';
+	if (!isGradesData(obj.gradesData)) return 'That backup has no grades in it yet. Open ALAB SMS with the extension installed, then save a new backup.';
 	const patch: GradesPatch = { gradesData: obj.gradesData };
 	if (typeof obj.selectedProgram === 'string' && UPLB_PROGRAMS[obj.selectedProgram]) patch.selectedProgram = obj.selectedProgram;
 	if (Array.isArray(obj.excludedCourses)) patch.excludedCourses = obj.excludedCourses.map(String);

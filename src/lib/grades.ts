@@ -5,7 +5,7 @@
 import { UPLB_CATALOG } from './catalog.ts';
 import { isGECourse, isNonGwaCourseCode, normalizeCourseCode, type Program } from './curriculum.ts';
 
-/* ---------- AMIS grades API shape ---------- */
+/* ---------- ALAB SMS grades API shape ---------- */
 
 export interface AmisGradeValue {
 	id?: string | number;
@@ -17,6 +17,9 @@ export interface AmisGradeValue {
 	grade_term?: { term?: string; ay?: string };
 	/** The 4.00 a removal exam result replaced. */
 	removalFrom?: string;
+	/** ALAB SMS flags records that stay out of the GWA (false). */
+	include_in_gwa?: boolean;
+	is_nstp?: boolean;
 }
 
 export interface AmisTerm {
@@ -34,7 +37,7 @@ export type SemNo = 1 | 2 | 3;
 
 /**
  * Absolute term number: academic year start * 3 + (0 = 1st sem, 1 = 2nd,
- * 2 = midyear). AMIS term ids are 1, a two digit year, then the term (1251
+ * 2 = midyear). ALAB SMS term ids are 1, a two digit year, then the term (1251
  * is AY 2025-26 1st sem and 1303 is the AY 2030-31 midyear). Terms added by
  * hand use "<year>-<term>" (2019-1).
  */
@@ -84,6 +87,8 @@ export interface Course {
 	units: number;
 	grade: string;
 	removalFrom?: string;
+	/** ALAB SMS says this record stays out of the GWA (include_in_gwa=false). Absent means it counts. */
+	includeInGwa?: boolean;
 }
 
 export const NON_NUMERIC_GRADES = ['S', 'U', 'INC', 'DRP', 'W', 'P', 'DFG'];
@@ -104,7 +109,7 @@ export function numericGrade(g: unknown): number | null {
 export const valueId = (v: AmisGradeValue, termKey: string) =>
 	String(v.id || `${v.course?.course_code || 'Unknown'}-${termKey}`);
 
-/** Flatten the AMIS structure into one row per course attempt. */
+/** Flatten the ALAB SMS structure into one row per course attempt. */
 export function parseAMISData(data: GradesData | null | undefined): Course[] {
 	const courses: Course[] = [];
 	if (!data || !data.student_grades) return courses;
@@ -123,7 +128,8 @@ export function parseAMISData(data: GradesData | null | undefined): Course[] {
 				title: v.course?.title || 'Unknown',
 				units: parseInt(String(v.unit_taken ?? '')) || 0,
 				grade: gradeText(v.grade),
-				removalFrom: v.removalFrom
+				removalFrom: v.removalFrom,
+				includeInGwa: v.include_in_gwa !== false
 			});
 		}
 	}
@@ -174,6 +180,8 @@ export function calculateGWA(courses: Course[], excludedIds: Set<string> = new S
 
 	courses.forEach((course) => {
 		if (isPrefixExcluded(course.code)) return;
+		// ALAB SMS flags records that stay out of the GWA (include_in_gwa=false).
+		if (course.includeInGwa === false) return;
 		// A 1-unit thesis sem extends the work and adds no credit.
 		const units = course.units === 1 && / 200[A-Z]?$/i.test(normalizeCourseCode(course.code)) ? 0 : course.units || 0;
 		const carried = carriedGrade(course, courses);
@@ -282,7 +290,7 @@ export function lightSems(courses: Course[]) {
 
 /**
  * Scholastic standing after the latest regular sem, from the share of academic
- * units with final grades below 3 (UPLB Academic Catalogue, Scholastic Standing).
+ * units with final grades below 3 (BulSU Student Handbook, Scholastic Standing).
  * Midyears, a 4.00 still open for removal, and INC, DRP and W are left out.
  */
 export function standingFor(courses: Course[]) {

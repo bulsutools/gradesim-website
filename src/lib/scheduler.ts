@@ -65,10 +65,10 @@ export interface PlanCourse extends ChecklistCourse {
 
 export const SEM_CYCLE: Sem[] = ['1', '2', 'midyear'];
 const SEM_DIGIT: Record<Sem, 1 | 2 | 3> = { '1': 1, '2': 2, midyear: 3 };
-// Load rules from the UPLB catalog: 18 units a regular sem (21 with lab
+// Load rules from the BulSU catalog: 18 units a regular sem (21 with lab
 // courses), midyear 6 (the Dean may allow 9).
 export const DEFAULT_UNIT_CAPS: Record<Sem, number> = { '1': 18, '2': 18, midyear: 6 };
-// Assumption: UPLB doesn't publish standing thresholds in the catalog we have;
+// Assumption: BulSU doesn't publish standing thresholds in the catalog we have;
 // junior = 50% and senior = 75% of the program's total units.
 export const STANDING_FRACTION: Record<Standing, number> = { junior: 0.5, senior: 0.75 };
 
@@ -121,7 +121,7 @@ function absorb(groups: string[][]): string[][] {
 }
 
 /**
- * Parse one AMIS req_courses string into CNF: pre is an AND of OR-groups.
+ * Parse one ALAB SMS req_courses string into CNF: pre is an AND of OR-groups.
  * "ABT 101 or COI" gives coi and no group (COI counts as satisfied).
  * "(CMSC 57 and CMSC 21)" gives [["CMSC 57"], ["CMSC 21"]].
  * "MATH 27 or Equivalent" gives [["MATH 27"]] (equivalents aren't modelled).
@@ -247,7 +247,7 @@ export function parseRequisite(str: string | null | undefined): Requisite {
 }
 
 /**
- * Combine all AMIS requisite rows for one course. Several PRE rows are
+ * Combine all ALAB SMS requisite rows for one course. Several PRE rows are
  * alternatives (old/new curriculum variants), so they are OR-ed together.
  */
 export function combineRequisites(rows: { req_type: string; req_courses: string }[] | null | undefined) {
@@ -324,7 +324,7 @@ export function semAt(termIndex: number, startSem: Sem): Sem {
 type OfferingInput = Pick<PlanCourse, 'offered' | 'catalogSem' | 'sem'>;
 
 /**
- * Order: observed offerings (sections seen in AMIS terms), then the catalog's
+ * Order: observed offerings (sections seen in ALAB SMS terms), then the catalog's
  * sem_offered, then the checklist slot. Midyear only counts when observed,
  * except a checklist that places the course in midyear (practicums).
  */
@@ -392,7 +392,7 @@ const CLEAN_CODE_RE = /^[A-Z]{2,6} \d{1,3}(\.\d{1,2})?[A-Z]?( \(\d\))?$/;
  * requisites. Catalog requisites and units win over the checklist when present,
  * since PDF parsing garbled some checklist units (CHEM 18 at 51).
  */
-// SP and thesis courses (190, 200, 200A) keep checklist units. AMIS
+// SP and thesis courses (190, 200, 200A) keep checklist units. ALAB SMS
 // lists them as variable 1-unit enrollments, so the catalog number undercounts.
 const VARIABLE_UNIT_RE = / (190|200)[A-Z]?$/;
 function unitsFor(course: ChecklistCourse, c: CatalogEntry | null): number {
@@ -599,7 +599,7 @@ function schedulePass(opts: ScheduleOptions, semBound: Set<number>): ScheduleRes
 			const course = byCode.get(code)!;
 			if (!offeredIn(course, sem) && !course.petition) return false;
 			// Most students skip midyear. Only checklist midyear courses, and courses
-			// AMIS only ever offers in midyear (BA 183), go there unless opted in.
+			// ALAB SMS only ever offers in midyear (BA 183), go there unless opted in.
 			if (
 				sem === 'midyear' &&
 				opts.useMidyear === false &&

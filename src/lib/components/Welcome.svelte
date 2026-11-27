@@ -25,22 +25,22 @@
 	<div class="hero">
 		<div class="copy" id="start">
 			<h1>Your GWA, Latin honors and graduation plan</h1>
-			<p class="lede">GradeSim computes your GWA the way UPLB does and plans the sems you have left.</p>
+			<p class="lede">GradeSim computes your GWA the way BulSU does and plans the sems you have left.</p>
 
 			<div class="start" class:waiting={extension === 'checking'}>
 				{#if extension === 'found'}
 					<button class="btn btn-primary btn-lg" type="button" onclick={onExtension}>
 						<Icon name="plug" />Import from the extension
 					</button>
-					<p class="hint">The extension on this browser already has your grades from AMIS.</p>
+					<p class="hint">The extension on this browser already has your grades from ALAB SMS.</p>
 				{:else if extension === 'empty'}
 					<Notice>
-						The extension is installed but hasn't seen your grades yet. Log in to AMIS, open your grades, then reload this
+						The extension is installed but hasn't seen your grades yet. Log in to ALAB SMS, open your grades, then reload this
 						page.
 					</Notice>
 				{:else}
 					<a class="btn btn-primary btn-lg laptop" href={resolve('install/')}>Get the extension</a>
-					<a class="btn btn-primary btn-lg phone" href="{resolve('install/')}#phone">Get my grades from AMIS</a>
+					<a class="btn btn-primary btn-lg phone" href="{resolve('install/')}#phone">Get my grades from ALAB SMS</a>
 					<p class="hint phone">A phone can't install the extension, so a bookmark brings your grades over.</p>
 				{/if}
 			</div>
@@ -52,7 +52,7 @@
 						<Icon name="pencil" />Enter grades by hand
 					</button>
 				</div>
-				<p class="hint">No grades yet? <a href={resolve('curricula/')}>See your program's checklist</a>.</p>
+				<p class="hint">No grades yet? <a href={resolve('install/')}>See the install page</a> to read them for you.</p>
 			</div>
 
 			<p class="privacy"><Icon name="shield" />Your grades stay in this browser.</p>
@@ -79,7 +79,7 @@
 	<div class="features">
 		<section class="feature">
 			<div>
-				<h2>Your GWA, counted the UPLB way</h2>
+				<h2>Your GWA, counted the BulSU way</h2>
 				<p>GradeSim weighs each grade by its units, leaves out HK and NSTP, and shows the GWA of every sem.</p>
 			</div>
 			<figure class="stage">
@@ -98,7 +98,7 @@
 		<section class="feature">
 			<div>
 				<h2>A plan for the sems you have left</h2>
-				<p>The planner puts each course in the earliest sem its prerequisites and AMIS offerings allow. It shows what failing CHEM 18, a full section or a sem off does to your graduation. If you're shifting, pick your new program and credit the courses you already passed.</p>
+				<p>The planner puts each course in the earliest sem its prerequisites and ALAB SMS offerings allow. It shows what failing CHEM 18, a full section or a sem off does to your graduation. If you're shifting, pick your new program and credit the courses you already passed.</p>
 			</div>
 			<figure class="stage">
 				<ThemedShot name="planner-phone" alt="The planner. Graduation is the 2nd sem of 2029, and the next sem lists six courses with the retake of MATH 27." width={680} height={1222} />

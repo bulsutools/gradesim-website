@@ -25,13 +25,13 @@
 
 <header class="site-header">
 	<div class="bar">
-		<a class="brand" href={resolve('/')} aria-label="Elbi GradeSim home">
+		<a class="brand" href={resolve('/')} aria-label="ALAB GradeSim home">
 			<img src="/plumbob.svg" alt="" width="20" height="30" />
-			<span class="name">Elbi GradeSim</span>
-			<span class="by">by UPLB Tools</span>
+			<span class="name">ALAB GradeSim</span>
+			<span class="by">by BulSU Tools</span>
 		</a>
 
-		{#if onApp && app.ready && (app.hasData || app.blank)}
+		{#if onApp && app.ready && (app.hasData || app.blank) && groups.length}
 			<label class="program">
 				<span class="visually-hidden">Your degree program</span>
 				<select class="select" bind:value={app.s.selectedProgram}>
@@ -56,16 +56,15 @@
 				<nav class="menu-pop" aria-label="Site">
 					<a href={resolve('/')}>Grades</a>
 					<a href={resolve('about/')}>About</a>
-					<a href={resolve('curricula/')}>Checklists</a>
 					<a href={resolve('install/')}>Get the extension</a>
 					<a href={resolve('privacy/')}>Privacy</a>
 					<a href={resolve('terms/')}>Terms</a>
 					<hr />
-					<a href="https://github.com/uplbtools/gradesim" rel="noopener" target="_blank">
+					<a href="https://github.com/bulsutools/gradesim-website" rel="noopener" target="_blank">
 						GitHub <Icon name="external" size={14} />
 					</a>
-					<a href="https://uplb.tools" rel="noopener" target="_blank">
-						More from UPLB Tools <Icon name="external" size={14} />
+					<a href="https://github.com/bulsutools" rel="noopener" target="_blank">
+						More from BulSU Tools <Icon name="external" size={14} />
 					</a>
 				</nav>
 			</details>

@@ -1,4 +1,4 @@
-// Elbi GradeSim Wrapped, ported from the extension popup. The panels are data
+// ALAB GradeSim Wrapped, ported from the extension popup. The panels are data
 // here; Wrapped.svelte shows them and drawCard() paints the shareable image.
 
 import { groupGWA, isPrefixExcluded, NON_NUMERIC_GRADES, numericGrade, scholarFor, scholarHolds, termKeyToAbs, type Course } from './grades.ts';
@@ -135,12 +135,12 @@ function gwaPanel(d: Data): Panel {
 		if (g <= 1.45) return ['⭐', 'Magna tingz', 'Consistent high grades. Ikaw yung type na maayos notes tapos hinahanap ka ng groupmates pag may exam.'];
 		if (g <= 1.75) return ['🎯', 'Cum laude szn', 'Solid GWA. Di ka nag-slack off pero di rin naman nagpaka-robot. Balance talaga.'];
 		if (g <= 2.0) return ['🌟', 'Honor roll', 'Pasok sa honors. May hirap-hirap pero kinaya mo naman. Proud of u.'];
-		if (g <= 2.5) return ['💪', 'Pasang-alam', 'Passing is passing. May mga sem na mabigat talaga, wag ka maguilty. Nasa UP ka pa rin.'];
-		if (g <= 3.0) return ['🎮', 'Survival mode', 'Nandito ka pa, that counts. Minsan ganyan talaga UP. Basta graduate, panalo.'];
+		if (g <= 2.5) return ['💪', 'Pasang-alam', 'Passing is passing. May mga sem na mabigat talaga, wag ka maguilty. Nasa BulSU ka pa rin.'];
+		if (g <= 3.0) return ['🎮', 'Survival mode', 'Nandito ka pa, that counts. Minsan ganyan talaga sa BulSU. Basta graduate, panalo.'];
 		return ['🌱', 'Comeback arc', "Mababa man ngayon, pwede pa 'yan i-improve. Marami nang naka-recover from this. Kaya mo 'yan."];
 	};
 	const [emoji, title, message] = pick();
-	return { emoji, title, value: g > 0 ? g.toFixed(4) : '--', subtitle: 'My Elbi GWA', message, frame: g > 0 ? 'id' : undefined };
+	return { emoji, title, value: g > 0 ? g.toFixed(4) : '--', subtitle: 'My ALAB GWA', message, frame: g > 0 ? 'id' : undefined };
 }
 
 function semesterPanel(d: Data): Panel {
@@ -224,7 +224,7 @@ export function wrappedPanels(courses: Course[], totalRequired = 155, pick?: num
 /* ---------- Shareable card ---------- */
 
 /**
- * Paint a panel as a 1080 by 1920 story card in the UPLB Tools colors.
+ * Paint a panel as a 1080 by 1920 story card in the BulSU Tools colors.
  * The extension drew a transparent overlay; the web app makes a full card so it
  * reads on its own when shared.
  */
@@ -234,7 +234,7 @@ export interface IdCard {
 	course: string;
 	/** How much of the GWA to show. */
 	show?: GwaShow;
-	/** When the grades were read from AMIS, unedited. Empty when they weren't. */
+	/** When the grades were read from ALAB SMS, unedited. Empty when they weren't. */
 	amis?: string;
 	/** Leave a spot for a photo the student adds in Instagram or Facebook. */
 	photo?: boolean;
@@ -306,7 +306,7 @@ export async function drawCard(canvas: HTMLCanvasElement, p: Panel, id: IdCard):
 	ctx.fillStyle = '#ffffff';
 	ctx.textAlign = 'left';
 	ctx.font = `800 56px ${display}`;
-	ctx.fillText('Elbi GradeSim', cx - 190, 225);
+	ctx.fillText('ALAB GradeSim', cx - 190, 225);
 	ctx.textAlign = 'center';
 
 	let y = 520;
@@ -379,7 +379,7 @@ export async function drawCard(canvas: HTMLCanvasElement, p: Panel, id: IdCard):
 	});
 	ctx.font = `600 36px ${body}`;
 	ctx.fillStyle = '#f3c9c1';
-	ctx.fillText('gradesim.uplb.tools', cx, H - 110);
+	ctx.fillText('gradesim.bulsu.tools', cx, H - 110);
 }
 
 
@@ -455,11 +455,11 @@ async function drawFrame(ctx: CanvasRenderingContext2D, p: Panel, font: string, 
 			ctx.restore();
 			ctx.drawImage(photo, -w / 2, -h / 2, w, h);
 		});
-	const url = 'gradesim.uplb.tools';
+	const url = 'gradesim.bulsu.tools';
 	const g = shownGwa(p.value, id.show);
 
 	if (id.amis) {
-		const label = `From AMIS, ${id.amis}`;
+		const label = `From ALAB SMS, ${id.amis}`;
 		ctx.font = `700 34px ${font}`;
 		const w = ctx.measureText(label).width + 100;
 		ctx.fillStyle = 'rgba(28,25,23,0.88)';
@@ -535,7 +535,7 @@ async function drawFrame(ctx: CanvasRenderingContext2D, p: Panel, font: string, 
 				text(p.title, 800, 64, INK, 95);
 			} else {
 				text(p.title, 800, 120, RED, 20, 700);
-				text('My Elbi GWA tier', 700, 44, INK, 95);
+				text('My ALAB GWA tier', 700, 44, INK, 95);
 			}
 			text(`Make yours on ${url}`, 600, 36, SOFT, 160);
 		});

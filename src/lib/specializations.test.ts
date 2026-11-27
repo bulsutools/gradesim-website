@@ -15,7 +15,7 @@ test('BS AAE, BS ABME and BS Economics list their catalog specializations', () =
 	expect(Object.keys(UPLB_PROGRAMS.BSECON.specializations!)).toEqual(['development', 'environmental']);
 });
 
-// These are in the catalog PDFs but had no AMIS class in the terms we have.
+// These are in the catalog PDFs but had no ALAB SMS class in the terms we have.
 const NOT_IN_AMIS = new Set(['SFI 123', 'SFI 143', 'AF 199', 'SOIL 191', 'FRM 110', 'BIO 151', 'BIO 130A', 'BIO 130B', 'MCB 101', 'BOT 110', 'BOT 140', 'ZOO 140', 'ZOO 113', 'CHEM 102', 'PHYS 193.1', 'WLDL 101']);
 
 test('every specialization course is real, not already required, and fills MAJ elective rows', () => {

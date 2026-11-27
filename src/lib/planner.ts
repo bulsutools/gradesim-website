@@ -49,7 +49,7 @@ export function absLabel(abs: number): string {
 }
 export const ayLabel = ayOfAbs;
 
-/** The AMIS term id of a sem, such as 1261 for 1st sem 2026 and 1253 for midyear 2026. */
+/** The ALAB SMS term id of a sem, such as 1261 for 1st sem 2026 and 1253 for midyear 2026. */
 export const amisTerm = (abs: number) => (Math.floor(abs / 3) - 1900) * 10 + (abs % 3) + 1;
 export const absOfAmisTerm = (id: number) => (Math.floor(id / 10) + 1900) * 3 + (id % 10) - 1;
 
@@ -57,7 +57,7 @@ export const absOfAmisTerm = (id: number) => (Math.floor(id / 10) + 1900) * 3 + 
 export function roomTbaLink(abs: number, codes: string[], program: string): string {
 	const s = [...new Set(codes.map((c) => c.replace(/ \(\d+\)$/, '')))].map((c) => [c, '', '']);
 	const plan = btoa(JSON.stringify({ v: 1, t: amisTerm(abs), s }));
-	return `https://room-tba.uplb.tools/planner?plan=${plan.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')}&program=${program}`;
+	return `https://room-tba.bulsu.tools/planner?plan=${plan.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')}&program=${program}`;
 }
 
 /** Courses a student takes in one sem, from Room TBA. A sem that has started marks them in progress, and a later one moves them there. */
@@ -360,7 +360,7 @@ export function compute(model: Model, input: PlannerInput, now = new Date()) {
 			if (f.past && !active.includes(f)) p.add(f.code);
 		});
 		const notBefore = { ...pinNotBefore };
-		// Courses marked as taken now with no AMIS row fill the sem that has started.
+		// Courses marked as taken now with no ALAB SMS row fill the sem that has started.
 		const reserved: Record<number, number> = { 0: taking };
 		const attemptAt: Record<string, number> = {};
 		const future = failures.filter((f) => !f.past && active.includes(f));

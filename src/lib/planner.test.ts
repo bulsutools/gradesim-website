@@ -134,7 +134,7 @@ test('the plan follows the track: SP keeps CMSC 190 and 18 free elective units',
 	expect([fe(sp), fe(thesis)]).toEqual([18, 15]);
 });
 
-test('Room TBA link converts AMIS term ids both ways', () => {
+test('Room TBA link converts ALAB SMS term ids both ways', () => {
 	expect(absOfAmisTerm(1261)).toBe(2026 * 3);
 	expect(absOfAmisTerm(1253)).toBe(2025 * 3 + 2);
 	[1241, 1252, 1253, 1261].forEach((id) => expect(amisTerm(absOfAmisTerm(id))).toBe(id));
@@ -143,7 +143,7 @@ test('Room TBA link converts AMIS term ids both ways', () => {
 test('Room TBA link packs one row per course with no section or type', () => {
 	const url = new URL(roomTbaLink(2026 * 3, ['CMSC 190', 'CMSC 190 (2)', 'STAT 101'], 'BSCS'));
 	const plan = JSON.parse(atob(url.searchParams.get('plan')!.replace(/-/g, '+').replace(/_/g, '/')));
-	expect(url.origin + url.pathname).toBe('https://room-tba.uplb.tools/planner');
+	expect(url.origin + url.pathname).toBe('https://room-tba.bulsu.tools/planner');
 	expect(url.searchParams.get('program')).toBe('BSCS');
 	expect(plan).toEqual({ v: 1, t: 1261, s: [['CMSC 190', '', ''], ['STAT 101', '', '']] });
 });

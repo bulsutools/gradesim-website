@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest';
-import { POST } from '../../api/fix.ts';
+import { POST } from '../../functions/api/fix.ts';
 import { fixIssue, validateFix, type ChecklistFix } from './fix.ts';
 import { modelFor } from './planner.ts';
 
@@ -27,10 +27,7 @@ test('fixes change the plan model', () => {
 });
 
 test('the function refuses requests until it is set up, and from other sites', async () => {
-	const request = () => new Request('https://gradesim.uplb.tools/api/fix', { method: 'POST', headers: { origin: 'https://example.com' }, body: '{}' });
-	delete process.env.GRADESIM_FIX_TOKEN;
-	expect((await POST(request())).status).toBe(503);
-	process.env.GRADESIM_FIX_TOKEN = 'test';
-	expect((await POST(request())).status).toBe(403);
-	delete process.env.GRADESIM_FIX_TOKEN;
+	const request = () => new Request('https://gradesim.bulsu.tools/api/fix', { method: 'POST', headers: { origin: 'https://example.com' }, body: '{}' });
+	expect((await POST(request(), {})).status).toBe(503);
+	expect((await POST(request(), { GRADESIM_FIX_TOKEN: 'test' })).status).toBe(403);
 });

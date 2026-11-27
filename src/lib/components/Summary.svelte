@@ -25,10 +25,10 @@
 	const light = $derived(honor ? lightSems(app.courses) : []);
 	const standing = $derived(standingFor(app.courses));
 	const STANDING = {
-		warning: "Under UPLB's rules on scholastic standing, that gets a warning from your Dean.",
+		warning: "Under BulSU's rules on scholastic standing, that gets a warning from your Dean.",
 		probation: 'That puts you on probation next sem, and your Dean may limit your load. Passing more than half your units next sem lifts it.',
-		dropped: "Under UPLB's rules that can drop you from your college. Talk to your College Secretary about readmission.",
-		barred: "Under UPLB's rules that can bar you from readmission. Talk to your College Secretary soon."
+		dropped: "Under BulSU's rules that can drop you from your college. Talk to your College Secretary about readmission.",
+		barred: "Under BulSU's rules that can bar you from readmission. Talk to your College Secretary soon."
 	};
 </script>
 

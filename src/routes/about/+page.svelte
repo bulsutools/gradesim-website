@@ -6,8 +6,8 @@
 
 	const faq = [
 		{
-			q: 'Is this an official UPLB tool?',
-			a: "No. GradeSim is built by students under UPLB Tools and isn't affiliated with or endorsed by UPLB, the UP System, or AMIS. Treat every number here as an estimate and confirm anything important with your college secretary or the Office of the University Registrar."
+			q: 'Is this an official BulSU tool?',
+			a: "No. GradeSim is built by students under BulSU Tools and isn't affiliated with or endorsed by BulSU or ALAB SMS. Treat every number here as an estimate and confirm anything important with your college secretary or the Office of the University Registrar."
 		},
 		{
 			q: 'Where do my grades go?',
@@ -23,27 +23,27 @@
 		},
 		{
 			q: 'How does the planner decide when I graduate?',
-			a: 'It places every remaining course in the earliest sem that meets its prerequisites, that AMIS has offered the course in (from class listings for 2023 to 2026) and that fits your unit cap. It flags a course when taking it a sem later moves your graduation.'
+			a: 'BulSU program checklists are coming soon, so the planner shows a notice instead of a plan for now. Once a checklist is in, it places every remaining course in the earliest sem that meets its prerequisites, that ALAB SMS has offered the course in and that fits your unit cap.'
 		},
 		{
 			q: 'My program is missing or a course looks wrong.',
-			a: 'The checklists come from the official ones and are checked by volunteers. In the planner, select the course and choose Fix this course. Your plan uses the fix right away, and you can send it to UPLB Tools so the checklist is fixed for everyone. For a missing program, open an issue on GitHub.'
+			a: 'BulSU checklists are still being added. When yours is in, select the course in the planner and choose Fix this course if something looks wrong. Your plan uses the fix right away, and you can send it to BulSU Tools so the checklist is fixed for everyone.'
 		},
 		{
 			q: 'Can I use it on my phone?',
-			a: 'Yes. Install it from your browser menu (Add to Home Screen) and it works offline after the first visit. Firefox for Android can install the extension, and in Chrome or Safari the bookmark on the Get the extension page opens GradeSim with your AMIS grades.'
+			a: 'Yes. Install it from your browser menu (Add to Home Screen) and it works offline after the first visit. The bookmark on the Get the extension page opens GradeSim with your ALAB SMS grades on phones.'
 		}
 	];
 </script>
 
 <Seo
-	title="About Elbi GradeSim"
-	description="What Elbi GradeSim does, how it computes your UPLB GWA and graduation plan, how it keeps your grades private, and who builds it."
+	title="About ALAB GradeSim"
+	description="What ALAB GradeSim does, how it computes your BulSU GWA and graduation plan, how it keeps your grades private, and who builds it."
 	path="/about/"
 />
 
 <div class="wrap">
-	<PageHead title="A GWA calculator and course planner for UPLB students">
+	<PageHead title="A GWA calculator and course planner for BulSU students">
 		GradeSim shows your GWA, what you need for Latin honors and a sem by sem plan to graduation.
 	</PageHead>
 
@@ -73,14 +73,14 @@
 			</details>
 		{/each}
 		<p>
-			Still stuck? <a href="https://github.com/uplbtools/gradesim/discussions/categories/q-a" rel="noopener" target="_blank">Ask on GitHub</a>
+			Still stuck? <a href="https://github.com/bulsutools/gradesim-website/discussions/categories/q-a" rel="noopener" target="_blank">Ask on GitHub</a>
 			and we'll answer there.
 		</p>
 
 		<h2>Credits</h2>
 		<p>
-			GradeSim is part of <a href="https://uplb.tools" rel="noopener" target="_blank">UPLB Tools</a>. The code is open source on
-			<a href="https://github.com/uplbtools/gradesim" rel="noopener" target="_blank">GitHub</a>.
+			GradeSim is part of <a href="https://github.com/bulsutools" rel="noopener" target="_blank">BulSU Tools</a>. The code is open source on
+			<a href="https://github.com/bulsutools/gradesim-website" rel="noopener" target="_blank">GitHub</a>.
 		</p>
 		<p><a class="btn btn-primary" href={resolve('/')}>Open GradeSim</a></p>
 	</div>

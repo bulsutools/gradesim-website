@@ -4,10 +4,10 @@
 		description,
 		path,
 		image = 'og.jpg',
-		imageAlt = 'Elbi GradeSim, the UPLB GWA calculator and course planner'
+		imageAlt = 'ALAB GradeSim, the BulSU GWA calculator and course planner'
 	}: { title: string; description: string; path: string; image?: string; imageAlt?: string } =
 		$props();
-	const url = $derived(`https://gradesim.uplb.tools${path}`);
+	const url = $derived(`https://gradesim.bulsu.tools${path}`);
 </script>
 
 <svelte:head>
@@ -15,11 +15,11 @@
 	<meta name="description" content={description} />
 	<link rel="canonical" href={url} />
 	<meta property="og:type" content="website" />
-	<meta property="og:site_name" content="Elbi GradeSim" />
+	<meta property="og:site_name" content="ALAB GradeSim" />
 	<meta property="og:title" content={title} />
 	<meta property="og:description" content={description} />
 	<meta property="og:url" content={url} />
-	<meta property="og:image" content="https://gradesim.uplb.tools/{image}" />
+	<meta property="og:image" content="https://gradesim.bulsu.tools/{image}" />
 	<meta property="og:image:width" content="1200" />
 	<meta property="og:image:height" content="630" />
 	<meta property="og:image:alt" content={imageAlt} />
