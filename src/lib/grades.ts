@@ -17,6 +17,9 @@ export interface AmisGradeValue {
 	grade_term?: { term?: string; ay?: string };
 	/** The 4.00 a removal exam result replaced. */
 	removalFrom?: string;
+	/** ALAB SMS flags records that stay out of the GWA (false). */
+	include_in_gwa?: boolean;
+	is_nstp?: boolean;
 }
 
 export interface AmisTerm {
@@ -84,6 +87,8 @@ export interface Course {
 	units: number;
 	grade: string;
 	removalFrom?: string;
+	/** ALAB SMS says this record stays out of the GWA (include_in_gwa=false). Absent means it counts. */
+	includeInGwa?: boolean;
 }
 
 export const NON_NUMERIC_GRADES = ['S', 'U', 'INC', 'DRP', 'W', 'P', 'DFG'];
@@ -123,7 +128,8 @@ export function parseAMISData(data: GradesData | null | undefined): Course[] {
 				title: v.course?.title || 'Unknown',
 				units: parseInt(String(v.unit_taken ?? '')) || 0,
 				grade: gradeText(v.grade),
-				removalFrom: v.removalFrom
+				removalFrom: v.removalFrom,
+				includeInGwa: v.include_in_gwa !== false
 			});
 		}
 	}
@@ -174,6 +180,8 @@ export function calculateGWA(courses: Course[], excludedIds: Set<string> = new S
 
 	courses.forEach((course) => {
 		if (isPrefixExcluded(course.code)) return;
+		// ALAB SMS flags records that stay out of the GWA (include_in_gwa=false).
+		if (course.includeInGwa === false) return;
 		// A 1-unit thesis sem extends the work and adds no credit.
 		const units = course.units === 1 && / 200[A-Z]?$/i.test(normalizeCourseCode(course.code)) ? 0 : course.units || 0;
 		const carried = carriedGrade(course, courses);

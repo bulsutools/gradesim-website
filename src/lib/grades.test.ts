@@ -92,6 +92,26 @@ test('excluding a course takes it out of the GWA and tallies it', () => {
 	expect(g.gwa).toBeCloseTo(50.25 / 30, 10);
 });
 
+test('a record ALAB SMS flags include_in_gwa=false stays out of the GWA but still shows', () => {
+	const flagged: GradesData = {
+		student_grades: {
+			'1251': {
+				values: [
+					{ id: 'a', grade: '5.00', unit_taken: '3', course: { course_code: 'MATH 27', title: 'Calc' } },
+					{ id: 'b', grade: '1.00', unit_taken: '3', course: { course_code: 'CMSC 12', title: 'CS' }, include_in_gwa: false }
+				]
+			}
+		}
+	};
+	const parsed = parseAMISData(flagged);
+	expect(parsed).toHaveLength(2); // the row still parses for display
+	const g = calculateGWA(parsed);
+	// Only MATH 27 counts: the flagged 1.00 stays out of the GWA and completed list.
+	expect(g.totalUnits).toBe(3);
+	expect(g.gwa).toBe(5);
+	expect(g.completedCourses).toHaveLength(0);
+});
+
 test('honors: Latin honors only, none with zero graded units', () => {
 	expect(honorFor(0, 0)).toBeNull();
 	expect(honorFor(1, 0)).toBeNull();
